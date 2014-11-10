@@ -1,0 +1,254 @@
+# ====================  TITLE  =================================================
+VERSION ?= $(TARGET_NOW)
+VERSION_NUMBER ?= "UNDEFINED"
+
+BIN_NAME ?= "a.out"
+BINARY_NAME = $(BIN_NAME) # @TODO: with architecture name
+# ====================  TARGET, BIN, OBJ  ======================================
+TARGET ?= debug release
+TARGET_NOW ?= debug
+
+BIN ?= bin
+BIN_TARGET := $(foreach target, $(TARGET), $(BIN)/$(target))
+BIN_NOW    := $(filter %$(TARGET_NOW), $(BIN_TARGET))
+
+OBJ ?= obj
+OBJ_TARGET := $(foreach target, $(TARGET), $(OBJ)/$(target))
+OBJ_NOW    := $(filter %$(TARGET_NOW), $(OBJ_TARGET))
+# ====================  FLAGS  =================================================
+# ------------------  COMMON FLAGS  --------------------------------------------
+COMMON := -DPROGRAM_NAME=\"$(PROGRAM_NAME)\" -DVERSION=\"$(VERSION)\" -DVERSION_NUMBER=\"$(VERSION_NUMBER)\"
+ifeq ($(DEBUG_MODE), 1)
+    COMMON += -DDEBUG_MODE
+endif
+
+ASFLAGSCOMMON  +=
+CFLAGSCOMMON   += $(COMMON)
+CUFLAGSCOMMON  += $(COMMON)
+CXXFLAGSCOMMON += $(COMMON)
+FFLAGSCOMMON   += -cpp $(COMMON)
+TEXFLAGSCOMMON +=
+# ------------------  GOAL FLAGS  ----------------------------------------------
+ASFLAGSGOAL  +=
+CFLAGSGOAL   += $(FLAGSGOAL)
+CUFLAGSGOAL  += $(FLAGSGOAL)
+CXXFLAGSGOAL += $(FLAGSGOAL)
+FFLAGSGOAL   += $(FLAGSGOAL)
+TEXFLAGSGOAL +=
+# ------------------  INCLUDE FLAGS  -------------------------------------------
+ASFLAGSINCLUDES  +=
+CFLAGSINCLUDES   += $(FLAGSINCLUDES) $(addprefix -I, $(INCLUDE_DIR))
+CUFLAGSINCLUDES  += $(FLAGSINCLUDES) $(addprefix -I, $(INCLUDE_DIR))
+CXXFLAGSINCLUDES += $(FLAGSINCLUDES) $(addprefix -I, $(INCLUDE_DIR))
+FFLAGSINCLUDES   += $(FLAGSINCLUDES)
+TEXFLAGSINCLUDES +=
+# ------------------  LIBRARY FLAGS  -------------------------------------------
+ASFLAGSLIB  +=
+CFLAGSLIB   += $(FLAGSLIB) $(addprefix -L, $(LIB_DIR)) $(addprefix -l, $(LIBRARY))
+CUFLAGSLIB  += $(FLAGSLIB) $(addprefix -L, $(LIB_DIR)) $(addprefix -l, $(LIBRARY))
+CXXFLAGSLIB += $(FLAGSLIB) $(addprefix -L, $(LIB_DIR)) $(addprefix -l, $(LIBRARY))
+FFLAGSLIB   += $(FLAGSLIB)
+TEXFLAGSLIB +=
+
+# ------------------  UNION FLAGS  ---------------------------------------------
+FLAGS := $(FLAGSCOMMON) $(FLAGSGOAL) $(FLAGSINCLUDES) $(FLAGSLIB) 
+ASFLAGS := $(AFLAGSCOMMON) $(AFLAGSGOAL) $(AFLAGSINCLUDES) $(AFLAGSLIB) 
+CFLAGS := $(CFLAGSCOMMON) $(CFLAGSGOAL) $(CFLAGSINCLUDES) $(CFLAGSLIB) 
+CUFLAGS := $(CUFLAGSCOMMON) $(CUFLAGSGOAL) $(CUFLAGSINCLUDES) $(CUFLAGSLIB) 
+CXXFLAGS := $(CXXFLAGSCOMMON) $(CXXFLAGSGOAL) $(CXXFLAGSINCLUDES) $(CXXFLAGSLIB) 
+FFLAGS := $(FFLAGSCOMMON) $(FFLAGSGOAL) $(FFLAGSINCLUDES) $(FFLAGSLIB) 
+TEXFLAGS := $(TEXFLAGSCOMMON) $(TEXFLAGSGOAL) $(TEXFLAGSINCLUDES) $(TEXFLAGSLIB) 
+# ==============================================================================
+
+
+# определение всех имен через директории
+
+SRC_EXTENSION := cpp cu c f90 py
+INC_EXTENSION := h hpp
+OBJ_EXTENSION := o
+
+SRC_MODULES := $(foreach extension, $(SRC_EXTENSION), $(notdir $(wildcard $(SRC_DIR)/*.$(extension))))
+INC_MODULES := $(foreach extension, $(INC_EXTENSION), $(notdir $(wildcard $(INC_DIR)/*.$(extension))))
+
+OBJ_MODULES := $(foreach extension, $(SRC_EXTENSION), $(patsubst %.$(extension), %.$(OBJ_EXTENSION), $(filter %.$(extension), $(SRC_MODULES))))
+
+LIB_MODULES := $(LIBRARY)
+
+
+CODE_DIR    := $(INCLUDE_DIR) $(SRC_DIR)
+
+
+DATE := `date '+%H:%M:%S'`
+
+
+# включение файла зависимостей
+#-include deps.mk
+
+# пути поиска шаблонов
+vpath %.h   $(INCLUDE_DIR)
+vpath %.hpp $(INCLUDE_DIR)
+vpath %.c   $(SRC_DIR)
+vpath %.cpp $(SRC_DIR)
+vpath %.cu  $(SRC_DIR)
+vpath %.py  $(SRC_DIR)
+vpath %.f90 $(SRC_DIR)
+vpath %.o   $(OBJ_NOW)
+vpath %.mod $(OBJ_NOW)
+
+# ====================  ОПРЕДЕЛЕНИЕ КОМПИЛЯТОРОВ  ==============================
+LD  ?= ld
+AS  ?= as
+CC  ?= gcc
+CUC ?= nvcc
+CXX ?= g++
+FC  ?= gfortran
+TEX ?= latex
+# ==============================================================================
+
+# ==================  ШАБЛОНЫ КОМПИЛИРОВАНИЯ  ==================================
+
+# ------------------  ASSEMBLER  -----------------------------------------------
+# AS - compiler, ASFLAGS - flag
+
+# ------------------  C  -------------------------------------------------------
+%.o: %.c %.h
+	$(PRINT)$(CC) $(CFLAGS) -c $<  -o $(OBJ_NOW)/$@
+%.o: %.c
+	$(PRINT)$(CC) $(CFLAGS) -c $<  -o $(OBJ_NOW)/$@
+
+# ------------------  CUDA  ----------------------------------------------------
+%.o: %.cu %.h
+	$(PRINT)$(CUC) $(CUFLAGS) -c $<  -o $(OBJ_NOW)/$@
+%.o: %.cu
+	$(PRINT)$(CUC) $(CUFLAGS) -c $<  -o $(OBJ_NOW)/$@
+
+# ------------------  CPP  -----------------------------------------------------
+%.o: %.cpp %.h
+	$(PRINT)$(CXX) $(CXXFLAGS) -c $<  -o $(OBJ_NOW)/$@
+%.o: %.cpp %.hpp
+	$(PRINT)$(CXX) $(CXXFLAGS) -c $<  -o $(OBJ_NOW)/$@
+%.o: %.cpp
+	$(PRINT)$(CXX) $(CXXFLAGS) -c $<  -o $(OBJ_NOW)/$@
+
+# ------------------  FORTRAN  -------------------------------------------------
+%.o: %.f90 %.h
+	$(PRINT)$(FC) $(FFLAGS) -c $<  -o $(OBJ_NOW)/$@
+%.o: %.f90
+	$(PRINT)$(FC) $(FFLAGS) -c $<  -o $(OBJ_NOW)/$@
+%.o: %.f77 %.h
+	$(PRINT)$(FC) $(FFLAGS) -c $<  -o $(OBJ_NOW)/$@
+%.o: %.f77
+	$(PRINT)$(FC) $(FFLAGS) -c $<  -o $(OBJ_NOW)/$@
+%.mod: %.f90 %.h
+	$(PRINT)$(FC) $(FFLAGS) -c $<  -o $(OBJ_NOW)/$@
+%.mod: %.f90
+	$(PRINT)$(FC) $(FFLAGS) -c $<  -o $(OBJ_NOW)/$@
+%.mod: %.f77 %.h
+	$(PRINT)$(FC) $(FFLAGS) -c $<  -o $(OBJ_NOW)/$@
+%.mod: %.f77
+	$(PRINT)$(FC) $(FFLAGS) -c $<  -o $(OBJ_NOW)/$@
+
+# ------------------  LATEX  ---------------------------------------------------
+# TEX - compiler
+
+# ==============================================================================
+# =====================  DEFINE RUN PROGRAM  ===================================
+ifeq ($(MACHINE), HOST)
+    RUN := 
+else ifeq ($(MACHINE), MPI)
+    RUN := mpirun -n $(NUMBER_PROC)
+else ifeq ($(MACHINE), LOMONOSOV)
+    RUN := mpirun
+else ifeq ($(MACHINE), BLUEGENE)
+    RUN := mpirun
+else
+    RUN := 
+endif
+
+
+
+# компиляторы
+#CC            = mpicxx
+#CC_CUDA       = nvcc
+#CFLAGSDEBUG   = -g -Wall -pedantic #-Werror
+#CFLAGSRELEASE =
+#CFLAGSINCLUDE = $(addprefix -I, $(INCLUDE_DIR))
+#CFLAGSLIB     = $(addprefix -L, $(LIB_DIR)) $(addprefix -l, $(LIBMODULES))
+#CFLAGS        = $(CFLAGSDEBUG) $(CFLAGSINCLUDE) $(CFLAGSLIB) -openmp
+#CFLAGS_CUDA   = $(CFLAGSINCLUDE) $(CFLAGSLIB)
+
+
+# опции компилятора
+#FFLAGSDEBUG   = -g
+#FFLAGSRELEASE = -Werror -Wall -pedantic
+#FFLAGSINCLUDE = $(addprefix -I , $(INCLUDE_DIR)) $(addprefix -I , $(OBJ_NOW))
+#FFLAGSLIB     = $(addprefix -L, $(LIB_DIR)) $(addprefix -l, $(LIBMODULES))
+
+# ===================  GOALS  ==================================================
+
+all: build
+
+help:
+	@echo "HELP"
+
+debug:
+	@echo "---------- config.mk ---------------"
+	@echo "PROGRAM_NAME = $(PROGRAM_NAME)"
+	@echo "VERSION_NUMBER = $(VERSION_NUMBER)"
+	@echo "INPUT_DIR = $(INPUT_DIR)"
+	@echo "INPUT_FILE = $(INPUT_FILE)"
+	@echo "OUTPUT_DIR = $(OUTPUT_DIR)"
+	@echo "OUTPUT_FILE = $(OUTPUT_FILE)"
+	@echo "ARGUMENTS = $(ARGUMENTS)"
+	@echo "MACHINE = $(MACHINE)"
+	@echo "NODE = $(NODE)"
+	@echo "NUMBER_PROC = $(NUMBER_PROC)"
+	@echo "QUEUE = $(QUEUE)"
+	@echo "TIME = $(TIME)"
+	@echo "---------- makefile ---------------"
+	@echo "BIN_NAME = $(BIN_NAME)"
+	@echo "TARGET = $(TARGET)"
+	@echo "TARGET_NOW = $(TARGET_NOW)"
+	@echo "INCLUDE_DIR = $(INCLUDE_DIR)"
+	@echo "SRC_DIR = $(SRC_DIR)"
+	@echo "LIB_DIR = $(LIB_DIR)"
+	@echo "LIBRARY = $(LIBRARY)"
+	@echo "---------- makefile.skel ---------------"
+	@echo "BINARY_NAME = $(BINARY_NAME)"
+	@echo "VERSION = $(VERSION)"
+	@echo "BIN = $(BIN)"
+	@echo "BIN_TARGET = $(BIN_TARGET)"
+	@echo "BIN_NOW = $(BIN_NOW)"
+	@echo "OBJ = $(OBJ)"
+	@echo "OBJ_TARGET = $(OBJ_TARGET)"
+	@echo "OBJ_NOW = $(OBJ_NOW)"
+	@echo "CODE_DIR = $(CODE_DIR)"
+	@echo "DATE = $(DATE)"
+	@echo "COMMON = $(COMMON)"
+	@echo "ASFLAGSCOMMON = $(ASFLAGSCOMMON)"
+	@echo "CFLAGSCOMMON = $(CFLAGSCOMMON)"
+	@echo "CUFLAGSCOMMON = $(CUFLAGSCOMMON)"
+	@echo "CXXFLAGSCOMMON = $(CXXFLAGSCOMMON)"
+	@echo "FFLAGSCOMMON = $(FFLAGSCOMMON)"
+	@echo "TEXFLAGSCOMMON = $(TEXFLAGSCOMMON)"
+	@echo "SRC_EXTENSION = $(SRC_EXTENSION)"
+	@echo "INC_EXTENSION = $(INC_EXTENSION)"
+	@echo "OBJ_EXTENSION = $(OBJ_EXTENSION)"
+	@echo "SRC_MODULES = $(SRC_MODULES)"
+	@echo "INC_MODULES = $(INC_MODULES)"
+	@echo "OBJ_MODULES = $(OBJ_MODULES)"
+	@echo "LIB_MODULES = $()"
+	@echo "AS = $(AS)"
+	@echo "CC = $(CC)"
+	@echo "CUC = $(CUC)"
+	@echo "CXX = $(CXX)"
+	@echo "FC = $(FC)"
+	@echo "TEX = $(TEX)"
+	@echo "RUN = $(RUN)"
+	@echo "CFLAGS = $(CFLAGS)"
+	@echo "CXXFLAGS = $(CXXFLAGS)"
+	@echo "CUFLAGS = $(CUFLAGS)"
+	@echo " = $()"
+
+vim:
+	@vim -s project/vim_file

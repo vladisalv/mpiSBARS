@@ -53,8 +53,10 @@ TARGET_NOW ?= debug
 # -----------------------  CODE DIRECTORY  -------------------------------------
 INCLUDE_DIR ?= include /opt/cuda/include
 SRC_DIR ?= src
-LIB_DIR ?= /usr/local/cuda/lib64/
-LIBRARY ?= cudart cublas
+LIB_DIR ?= 
+LIBRARY ?= 
+#LIB_DIR ?= /usr/local/cuda/lib64/
+#LIBRARY ?= cudart cublas
 # ----------------------------  FLAGS  -----------------------------------------
 
 # FLAGS := $(FLAGSCOMMON) $(FLAGSGOAL) $(FLAGSINCLUDES) $(FLAGLIBS) 
@@ -79,7 +81,7 @@ build: mkdir $(OBJ_MODULES)
 
 # запуск
 run:
-	$(PRINT)$(RUN) ./$(BIN_NOW)/$(BINARY_NAME) $(ARGUMENTS)
+	$(RUN) ./$(BIN_NOW)/$(BINARY_NAME) $(ARGUMENTS)
 
 rebuild: clean_exec build
 

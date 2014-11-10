@@ -78,7 +78,7 @@ LIB_MODULES := $(LIBRARY)
 CODE_DIR    := $(INCLUDE_DIR) $(SRC_DIR)
 
 
-DATE := `date '+%H:%M:%S'`
+DATE := `date '+%H-%M-%S'`
 
 
 # включение файла зависимостей
@@ -152,13 +152,13 @@ TEX ?= latex
 # TEX - compiler
 
 # ==============================================================================
-# =====================  DEFINE RUN PROGRAM  ===================================
+# =====================  DEFINE MACHINE OPTION  ================================
 ifeq ($(MACHINE), HOST)
     RUN := 
 else ifeq ($(MACHINE), MPI)
     RUN := mpirun -n $(NUMBER_PROC)
 else ifeq ($(MACHINE), LOMONOSOV)
-    RUN := mpirun
+    RUN := sbatch --nodes=$(NODE) --ntasks=$(NUMBER_PROC) --partition=$(QUEUE) --time=$(TIME) ompi 
 else ifeq ($(MACHINE), BLUEGENE)
     RUN := mpirun
 else

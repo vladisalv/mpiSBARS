@@ -13,23 +13,23 @@ INPUT_FILE := file50K
 OUTPUT_DIR := ./picture
 OUTPUT_FILE = pic_$(DATE)
 
-ARGUMENTS := -f $(INPUT_DIR)/$(INPUT_FILE) -o $(OUTPUT_DIR)/$(OUTPUT_FILE) \
-             --profiling-window   $(PROFILING_WINDOW)   \
-             --decompose-window   $(DECOMPOSE_WINDOW)   \
-             --step-decompose     $(STEP_DECOMPOSE)     \
-             --number-coefficient $(NUMBER_COEFFICIENT) \
-             --eps                $(EPS)
+ARGUMENTS = -f $(INPUT_DIR)/$(INPUT_FILE) -o $(OUTPUT_DIR)/$(OUTPUT_FILE) \
+            --profiling-window   $(PROFILING_WINDOW)   \
+            --decompose-window   $(DECOMPOSE_WINDOW)   \
+            --step-decompose     $(STEP_DECOMPOSE)     \
+            --number-coefficient $(NUMBER_COEFFICIENT) \
+            --eps                $(EPS)
 
 # HOST, MPI, LOMONOSOV or BLUEGENE
-MACHINE := MPI
+MACHINE := LOMONOSOV
 
 # short name NUMBER_PROC
 N           = 4
 NUMBER_PROC = $(N)
 
 NODE        = 1
-QUEUE       =
-TIME        =
+QUEUE       = test
+TIME        = 10:00
 
 #redefine compiler
 CXX = mpicxx

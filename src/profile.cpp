@@ -1,7 +1,7 @@
 #include "profile.h"
 
 Profile::Profile(MyMPI me)
-    : ArrayMPI(me)
+    : ArrayMPI<TypeProfile, ulong>(me)
 {
 }
 

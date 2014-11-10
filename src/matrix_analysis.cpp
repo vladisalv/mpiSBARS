@@ -1,7 +1,7 @@
 #include "matrix_analysis.h"
 
 MatrixAnalysis::MatrixAnalysis(MyMPI me)
-    : MatrixMPI(me)
+    : MatrixMPI<TypeAnalysis, ulong>(me)
 {
 }
 

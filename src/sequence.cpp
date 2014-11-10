@@ -1,7 +1,7 @@
 #include "sequence.h"
 
 Sequence::Sequence(MyMPI me)
-    : ArrayMPI(me)
+    : ArrayMPI<TypeSequence, ulong>(me)
 {
 }
 

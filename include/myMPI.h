@@ -9,6 +9,8 @@
 #include "support.h"
 #include "types.h"
 
+#include <stdarg.h>
+
 #define NUMBER_OF_ROOT 0
 
 class TimeMeasure;

@@ -4,6 +4,7 @@
 typedef unsigned int uint;
 typedef unsigned long ulong;
 
+typedef char   TypeSequence;
 typedef uint   TypeProfile;
 typedef double TypeDecomposition;
 typedef bool   TypeGomology;

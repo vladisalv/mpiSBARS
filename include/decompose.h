@@ -2,8 +2,9 @@
 #define __DECOMPOSE_HEADER__
 
 #include "myMPI.h"
-#include "decomposition.h"
 #include "profile.h"
+#include "decomposition.h"
+#include "decomposition_gpu.h"
 #include "types.h"
 
 #include <math.h> // ceil()

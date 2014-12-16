@@ -3,6 +3,7 @@
 
 #include "myMPI.h"
 #include "matrix_analysis.h"
+#include "matrix_gomology.h"
 #include "types.h"
 
 #include <math.h>
@@ -16,12 +17,12 @@ typedef struct TMyPixel
 
 class Image {
     MyMPI me;
-    void drawBmpMPI(MatrixAnalysis& matrixAnalysis, char *file_name);
+    void drawBmpMPI(MatrixGomology& matrixGomology, char *file_name);
 public:
     Image(MyMPI me);
     ~Image();
 
-    void drawImage(MatrixAnalysis& matrixAnalysis, char *file_name);
+    void drawImage(MatrixGomology& matrixGomology, char *file_name);
 };
 
 #endif /* __IMAGE_HEADER__ */

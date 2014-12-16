@@ -30,7 +30,7 @@ public:
     MyMPI(const MyMPI &other);
     ~MyMPI();
 
-    void iSend(void *buf, uint count, MPI_Datatype type, 
+    void iSend(void *buf, uint count, MPI_Datatype type,
                 int dest, int tag, MPI_Request *request);
     void iRecv(void *buf, uint count, MPI_Datatype type,
                 int sourse, int tag, MPI_Request *request);

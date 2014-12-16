@@ -35,8 +35,10 @@ int main(int argc, char *argv[])
             opt.helpPrint();
         return 0;
     }
-    if (me.isRoot())
+    if (me.isRoot()) {
         DEBUG(opt.info();)
+        printf("number process = %d\n", me.getSize());
+    }
 
     Sequence sequence1(me), sequence2(me);
     if (opt.downloadSequence()) {
@@ -93,7 +95,8 @@ int main(int argc, char *argv[])
             profile2GC.free();
             profile2GA.free();
         }
-        if (opt.saveDecompose()) {
+        //if (opt.saveDecompose()) {
+        if (false) {
             decomposition1GC.writeFile(opt.getFileDecompositionSave1GC());
             decomposition1GA.writeFile(opt.getFileDecompositionSave1GA());
             if (!opt.selfMode()) {
@@ -117,13 +120,13 @@ int main(int argc, char *argv[])
         Compare compare(me);
         if (opt.selfMode()) {
             matrixGomology = compare.doCompare(decomposition1GC, decomposition1GA,
-                                                opt.getEps());
+                                                opt.getEps(), opt.gpuMode());
             decomposition1GC.free();
             decomposition1GA.free();
         } else {
             matrixGomology = compare.doCompare(decomposition1GC, decomposition1GA,
                                                decomposition2GC, decomposition2GA,
-                                                opt.getEps());
+                                                opt.getEps(), opt.gpuMode());
             decomposition2GC.free();
             decomposition2GA.free();
         }
@@ -134,22 +137,21 @@ int main(int argc, char *argv[])
         matrixGomology.readFile(opt.getFileMatrixGomologyLoad());
     double compare_time = me.getTime() - begin_time;
 
+    Image image(me);
+    if (opt.drawMode())
+        image.drawImage(matrixGomology, opt.getFileOutput());
+    double draw_time = me.getTime() - begin_time;
+
     MatrixAnalysis matrixAnalysis(me);
-    if (opt.analysisMode()) {
+    if (false) {
+    //if (opt.analysisMode()) {
         Analyze analyze(me);
-        matrixAnalysis = analyze.doAnalyze(matrixGomology);
-        //matrixGomology.free();
+        matrixAnalysis = analyze.doAnalyze(matrixGomology, 0, opt.gpuMode());
+        matrixGomology.free();
         if (opt.saveAnalysis())
             matrixAnalysis.writeFile(opt.getFileMatrixAnalysisSave());
     }
-    if (opt.downloadAnalysis())
-        matrixAnalysis.readFile(opt.getFileMatrixAnalysisLoad());
     double analyze_time = me.getTime() - begin_time;
-
-    Image image(me);
-    if (opt.drawMode())
-        image.drawImage(matrixAnalysis, opt.getFileOutput());
-    double draw_time = me.getTime() - begin_time;
 
     double total_time = me.getTime() - begin_time;
     me.rootMessage("Total time = %lf\n", total_time);
@@ -157,8 +159,8 @@ int main(int argc, char *argv[])
     me.rootMessage("profile.   Time = %5.2lf. Clear time = %5.2lf. This is %3.1lf%% of time\n", profile_time, profile_time, profile_time / total_time * 100);
     me.rootMessage("decompose. Time = %5.2lf. Clear time = %5.2lf. This is %3.1lf%% of time\n", decompose_time, decompose_time - profile_time, (decompose_time - profile_time) / total_time * 100);
     me.rootMessage("compare.   Time = %5.2lf. Clear time = %5.2lf. This is %3.1lf%% of time\n", compare_time, compare_time - decompose_time, (compare_time - decompose_time) / total_time * 100);
-    me.rootMessage("analyze.   Time = %5.2lf. Clear time = %5.2lf. This is %3.1lf%% of time\n", analyze_time, analyze_time - compare_time, (analyze_time - compare_time) / total_time * 100);
-    me.rootMessage("draw.      Time = %5.2lf. Clear time = %5.2lf. This is %3.1lf%% of time\n", draw_time, (draw_time - analyze_time), (draw_time - analyze_time) / total_time * 100);
+    me.rootMessage("draw.      Time = %5.2lf. Clear time = %5.2lf. This is %3.1lf%% of time\n", draw_time, (draw_time - compare_time), (draw_time - compare_time) / total_time * 100);
+    me.rootMessage("analyze.   Time = %5.2lf. Clear time = %5.2lf. This is %3.1lf%% of time\n", analyze_time, analyze_time - draw_time, (analyze_time - draw_time) / total_time * 100);
 
     return 0;
 }

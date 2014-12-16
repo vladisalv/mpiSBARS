@@ -60,6 +60,7 @@ LIBRARY ?=
 # ----------------------------  FLAGS  -----------------------------------------
 
 # FLAGS := $(FLAGSCOMMON) $(FLAGSGOAL) $(FLAGSINCLUDES) $(FLAGLIBS) 
+CUFLAGSGOAL = -arch=sm_20 -Xptxas -v
 
 PRINT = @
 
@@ -77,11 +78,11 @@ all: build
 
 build: mkdir $(OBJ_MODULES)
 	echo Compiling program.....
-	$(PRINT)$(CXX) $(CFLAGS) $(filter-out mkdir, $^) -o $(BIN_NOW)/$(BINARY_NAME) $(CFLAGSLIB)
+	$(PRINT)$(CXX) $(CFLAGS) -L/opt/cuda/lib64 $(filter-out mkdir, $^) -o $(BIN_NOW)/$(BINARY_NAME) $(CFLAGSLIB) -lcudart
 
 # запуск
 run:
-	$(RUN) ./$(BIN_NOW)/$(BINARY_NAME) $(ARGUMENTS)
+	$(PRINT)$(RUN) ./$(BIN_NOW)/$(BINARY_NAME) $(ARGUMENTS)
 
 rebuild: clean_exec build
 

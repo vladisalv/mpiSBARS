@@ -8,7 +8,5 @@ class MatrixAnalysis : public MatrixMPI<TypeAnalysis, ulong> {
 public:
     MatrixAnalysis(MyMPI me);
     ~MatrixAnalysis();
-    friend class Analyze;
-    friend class Image;
 };
 #endif /* __MATRIX_ANALYSIS_HEADER__ */

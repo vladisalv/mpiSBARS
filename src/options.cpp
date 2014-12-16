@@ -474,6 +474,7 @@ void Options::defineMode()
 
 void Options::info()
 {
+    /*
     printf("\n");
     printf("Information about options:\n");
     printf("length_window_profile = %d\n", length_window_profile);
@@ -483,6 +484,9 @@ void Options::info()
     printf("eps = %f\n", eps);
     printf("name f = %s\n", sequence_load_first);
     printf("name F = %s\n", sequence_load_second);
+    */
+    printf("name f = %s\n", sequence_load_first);
+    printf("use gpu = %s\n", gpu_mode ? "true" : "false");
     printf("\n");
 }
 

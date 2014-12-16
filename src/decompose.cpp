@@ -89,7 +89,8 @@ Decomposition Decompose::doDecompose(Profile &profile, uint window, uint step, u
 
     // do decompose with my profile
     if (use_gpu) {
-        ;
+        doDecomposeGPU(decomposition.data, number_my_window, number_coef,
+                        profile.data, window, step);
     } else {
         for (uint i = 0; i < number_my_window; i++)
             decomposeFourier(&decomposition.data[i * number_coef], number_coef,
@@ -106,7 +107,8 @@ Decomposition Decompose::doDecompose(Profile &profile, uint window, uint step, u
 
         // do decompose with buf
         if (use_gpu) {
-            ;
+            doDecomposeGPU(&decomposition.data[number_coef * number_my_window],
+                        number_another_window, number_coef, buf_recv, window, step);
         } else {
             for (uint i = 0; i < number_another_window; i++)
                 decomposeFourier(&decomposition.data[(i + number_my_window) * number_coef],
@@ -128,36 +130,37 @@ void Decompose::decomposeFourier(TypeDecomposition *u, uint m, TypeProfile *y, u
     TypeDecomposition q1, q2, q3;
     TypeDecomposition ti;
     TypeDecomposition c = M_PI / k;
+    double sqrt2  =  sqrt(2.0);
 
     for (uint j = 0; j < m; j++)
         u[j] = 0.0;
 
     for (uint i = 0; i < k; i++) {
-        ti = c*(2*i+1-k);
-        costi = 2*cos(ti);
+        ti = c * (2 * i + 1 - k);
+        costi = 2 * cos(ti);
         yi = (TypeDecomposition)y[i];
 
         p1 = 0;
-        p2 = yi*sin(ti);
-        u[0]+= yi/sqrt(2.0);
-        q2 = yi*costi/2.0;
+        p2 = yi * sin(ti);
+        u[0] += yi / sqrt2;
+        q2 = yi * costi / 2.0;
         q1 = yi;
         for (uint j = 1; j < m; j++) {
-            if (j&1) {
+            if (j & 1) {
                 p3 = p2;
                 p2 = p1;
-                p1 = costi*p2-p3;
-                u[j]+=p1;
+                p1 = costi * p2 - p3;
+                u[j] += p1;
             } else {
                 q3 = q2;
                 q2 = q1;
-                q1 = costi*q2-q3;
-                u[j]+=q1;
+                q1 = costi * q2 - q3;
+                u[j] += q1;
             }
         }
     }
 
     for (uint j = 0; j < m; j++)
-        u[j] /= k/2;
+        u[j] /= k / 2;
 
 }

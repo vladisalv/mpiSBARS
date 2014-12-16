@@ -14,11 +14,11 @@ MyMPI::MyMPI(MPI_Comm new_comm, int argc, char *argv[])
 
     comm = new_comm;
     numberObject++;
-    
+
     MPI_Comm_rank(comm, &rank);
     MPI_Comm_size(comm, &size);
 
-    root_is = NUMBER_OF_ROOT; 
+    root_is = NUMBER_OF_ROOT;
     first_is = 0;
     last_is = size - 1;
 
@@ -36,11 +36,11 @@ MyMPI::MyMPI(const MyMPI& other)
 {
     comm = other.comm;
     numberObject++;
-    
+
     MPI_Comm_rank(comm, &rank);
     MPI_Comm_size(comm, &size);
 
-    root_is = NUMBER_OF_ROOT; 
+    root_is = NUMBER_OF_ROOT;
     first_is = 0;
     last_is = size - 1;
 
@@ -278,10 +278,10 @@ void MyMPI::rootMessage(const char *format, ...)
 void MyMPI::allMessage(const char *format, ...)
 {
     fflush(stdout);
+    Synchronize();
     if (rank == root)
         printf("\n");
     for (int i = 0; i < size; i++) {
-        Synchronize();
         if (i == rank) {
             printf("[%s]:\n", rank_str);
             va_list arg;
@@ -293,7 +293,8 @@ void MyMPI::allMessage(const char *format, ...)
         Synchronize();
     }
     if (rank == root)
-        printf("\n");
+        printf("\n\n");
+    Synchronize();
     fflush(stdout);
 }
 

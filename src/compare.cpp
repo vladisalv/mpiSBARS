@@ -10,9 +10,10 @@ Compare::~Compare()
 }
 
 
-MatrixGomology Compare::doCompare(Decomposition &decompose1GC, Decomposition &decompose1GA, double new_eps)
+MatrixGomology Compare::doCompare(Decomposition &decompose1GC, Decomposition &decompose1GA, double new_eps, bool gpu_mode)
 {
     eps = new_eps;
+    use_gpu = gpu_mode;
     MatrixGomology matGC(me), matGA(me), matrixGomology(me);
     matGC = compareSelf(decompose1GC);
     matGA = compareSelf(decompose1GA);
@@ -21,9 +22,10 @@ MatrixGomology Compare::doCompare(Decomposition &decompose1GC, Decomposition &de
 }
 
 MatrixGomology Compare::doCompare(Decomposition &decompose1GC, Decomposition &decompose1GA,
-                          Decomposition &decompose2GC, Decomposition &decompose2GA, double new_eps)
+                          Decomposition &decompose2GC, Decomposition &decompose2GA, double new_eps, bool gpu_mode)
 {
     eps = new_eps;
+    use_gpu = gpu_mode;
     MatrixGomology matGC(me), matGA(me), matrixGomology(me);
     matGC = compareTwo(decompose1GC, decompose2GC);
     matGA = compareTwo(decompose1GA, decompose2GA);
@@ -33,23 +35,15 @@ MatrixGomology Compare::doCompare(Decomposition &decompose1GC, Decomposition &de
 
 MatrixGomology Compare::compareSelf(Decomposition &decomposition)
 {
-    ulong length_all[me.getSize()];
-    //ulong *length = new ulong [me.getSize()]; ????
-    me.Allgather(&decomposition.height, 1, MPI_UNSIGNED_LONG,
-                 &length_all,           1, MPI_UNSIGNED_LONG);
+    ulong *length_all, *sum_length_array;
+    ulong *decompose_other_begin = new ulong [me.getSize()];
+    ulong sum_all = decomposition.offsetLength(length_all, sum_length_array, &decomposition.height);
+    for (int i = 0; i < me.getSize(); i++)
+        decompose_other_begin[i] = sum_length_array[i] * decomposition.width;
 
     MPI_Request *req_send = new MPI_Request [me.getSize()];
     for (int i = 0; i < me.getSize(); i++)
         me.iSend(decomposition.data, decomposition.length, MPI_TFLOAT, i, 0, &req_send[i]);
-
-    ulong sum_all = 0;
-    ulong *decompose_other_begin = new ulong [me.getSize()];
-    ulong *sum_length_array  =  new ulong [me.getSize()];
-    for (int i = 0; i < me.getSize(); i++) {
-        decompose_other_begin[i] = sum_all * decomposition.width;
-        sum_length_array[i] = sum_all;
-        sum_all += length_all[i];
-    }
 
     TypeDecomposition *decompose_other = new TypeDecomposition [sum_all * decomposition.width];
     MPI_Request *req_recv = new MPI_Request [me.getSize()];
@@ -83,11 +77,18 @@ MatrixGomology Compare::compareSelf(Decomposition &decomposition)
             }
         }
     }
+    delete [] length_all;
+    delete [] sum_length_array;
+    delete [] decompose_other_begin;
+    delete [] decompose_other;
+    delete [] req_recv;
+    delete [] send_flag;
     return matrixGomology;
 }
 
 MatrixGomology Compare::compareTwo(Decomposition &decomposition1, Decomposition &decomposition2)
 {
+    // TEST!!! above use offsetLength
     ulong length_all[me.getSize()];
     //ulong *length = new ulong [me.getSize()]; ????
     me.Allgather(&decomposition2.height, 1, MPI_UNSIGNED_LONG,
@@ -154,6 +155,16 @@ MatrixGomology Compare::comparisonMatrix(MatrixGomology mat1, MatrixGomology mat
 void Compare::compareDecomposition(TypeDecomposition *decompose1, ulong length_decompose1,
                                    TypeDecomposition *decompose2, ulong length_decompose2,
                                    ulong width, TypeGomology *data, ulong begin, ulong sum_all)
+{
+    if (use_gpu)
+        compareDecompositionGpu(decompose1, length_decompose1, decompose2, length_decompose2, width, data, begin, sum_all, eps * eps);
+    else
+        compareDecompositionHost(decompose1, length_decompose1, decompose2, length_decompose2, width, data, begin, sum_all);
+}
+
+void Compare::compareDecompositionHost(TypeDecomposition *decompose1, ulong length_decompose1,
+                                       TypeDecomposition *decompose2, ulong length_decompose2,
+                                       ulong width, TypeGomology *data, ulong begin, ulong sum_all)
 {
     bool answer;
     for (int i = 0; i < length_decompose1; i++)

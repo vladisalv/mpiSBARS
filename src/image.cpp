@@ -10,17 +10,17 @@ Image::~Image()
 }
 
 
-void Image::drawImage(MatrixAnalysis& matrixAnalysis, char *file_name)
+void Image::drawImage(MatrixGomology& matrixGomology, char *file_name)
 {
-    drawBmpMPI(matrixAnalysis, file_name);
+    drawBmpMPI(matrixGomology, file_name);
 }
 
-void Image::drawBmpMPI(MatrixAnalysis& matrixAnalysis, char *file_name)
+void Image::drawBmpMPI(MatrixGomology& matrixGomology, char *file_name)
 {
     ulong height_common, *offsetHeight, *sumOffsetHeight;
-    height_common = matrixAnalysis.offsetLength(offsetHeight, sumOffsetHeight, &matrixAnalysis.height);
+    height_common = matrixGomology.offsetLength(offsetHeight, sumOffsetHeight, &matrixGomology.height);
 
-    size_t sizeRowPix = sizeof(Pix) * matrixAnalysis.width;
+    size_t sizeRowPix = sizeof(Pix) * matrixGomology.width;
     size_t sizeRowNull = sizeRowPix % 4;
     size_t sizeRowBMP = sizeRowPix + sizeRowNull;
 
@@ -35,7 +35,7 @@ void Image::drawBmpMPI(MatrixAnalysis& matrixAnalysis, char *file_name)
         unsigned int bfSize = bfOffBits + height_common * sizeRowBMP;
         //-----INFO HEADER-----------------
         unsigned int       biSize          = 0x28;
-        unsigned int       biWidth         = matrixAnalysis.width;  //long
+        unsigned int       biWidth         = matrixGomology.width;  //long
         unsigned int       biHeight        = height_common; //long
         unsigned short int biPlanes        = 1;
         unsigned short int biBitCount      = 24;
@@ -72,7 +72,7 @@ void Image::drawBmpMPI(MatrixAnalysis& matrixAnalysis, char *file_name)
     MPI_Type_contiguous(3, MPI_UNSIGNED_CHAR, &PixType);
     MPI_Type_commit(&PixType);
     MPI_Datatype PixTypeRow;
-    MPI_Type_contiguous(matrixAnalysis.width, PixType, &PixTypeRow);
+    MPI_Type_contiguous(matrixGomology.width, PixType, &PixTypeRow);
     MPI_Type_commit(&PixTypeRow);
     MPI_Datatype BmpTypeRow;
     MPI_Type_hvector(1, 1, sizeRowBMP, PixTypeRow, &BmpTypeRow);
@@ -85,9 +85,9 @@ void Image::drawBmpMPI(MatrixAnalysis& matrixAnalysis, char *file_name)
     Pix pixBlack, pixWhite;
     pixBlack.Blue = pixBlack.Green = pixBlack.Red = 0;
     pixWhite.Blue = pixWhite.Green = pixWhite.Red = 255;
-    for (int i = matrixAnalysis.height - 1; i >= 0; i--) {
-        for (int j = 0; j < matrixAnalysis.width; j++) {
-            if (matrixAnalysis.data[i * matrixAnalysis.width + j])
+    for (int i = matrixGomology.height - 1; i >= 0; i--) {
+        for (int j = 0; j < matrixGomology.width; j++) {
+            if (matrixGomology.data[i * matrixGomology.width + j])
                 tmpPix[j] = pixBlack;
             else
                 tmpPix[j] = pixWhite;

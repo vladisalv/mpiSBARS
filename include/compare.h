@@ -3,10 +3,12 @@
 
 #include "decomposition.h"
 #include "matrix_gomology.h"
+#include "compare_gpu.h"
 
 class Compare {
     MyMPI me;
     double eps;
+    bool use_gpu;
 
     MatrixGomology compareSelf(Decomposition &decomposition);
     MatrixGomology compareTwo(Decomposition &decomposition1, Decomposition &decomposition2);
@@ -16,14 +18,18 @@ class Compare {
     void compareDecomposition(TypeDecomposition *decompose1, ulong length_decompose1,
                               TypeDecomposition *decompose2, ulong length_decompose2,
                               ulong width, TypeGomology *data, ulong begin, ulong sum_all);
+    void compareDecompositionHost(TypeDecomposition *decompose1, ulong length_decompose1,
+                                  TypeDecomposition *decompose2, ulong length_decompose2,
+                                  ulong width, TypeGomology *data, ulong begin, ulong sum_all);
     bool compareVector(TypeDecomposition *vec1, TypeDecomposition *vec2, ulong length);
 public:
     Compare(MyMPI me);
     ~Compare();
 
-    MatrixGomology doCompare(Decomposition &decompose1GC, Decomposition &decompose1GA, double eps);
+    MatrixGomology doCompare(Decomposition &decompose1GC, Decomposition &decompose1GA, double eps, bool use_gpu);
     MatrixGomology doCompare(Decomposition &decompose1GC, Decomposition &decompose1GA,
-                              Decomposition &decompose2GC, Decomposition &decompose2GA, double eps);
+                             Decomposition &decompose2GC, Decomposition &decompose2GA,
+                             double eps, bool use_gpu);
 };
 
 #endif /* __COMPARE_HEADER__ */

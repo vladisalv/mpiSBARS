@@ -9,6 +9,7 @@ public:
     MatrixGomology(MyMPI me);
     ~MatrixGomology();
     friend class Compare;
+    friend class Image;
     friend class Analyze;
 };
 

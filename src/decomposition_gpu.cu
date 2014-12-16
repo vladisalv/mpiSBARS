@@ -59,11 +59,11 @@ __global__ void kernel(TypeDecomposition *decompose, uint number_coef, TypeProfi
 }
 
 
-__global__ void kernel_divide(TypeDecomposition *decompose, ulong window_size, ulong length_profile)
+__global__ void kernel_divide(TypeDecomposition *decompose, ulong window_size, ulong length_decompose)
 {
     double k = window_size / 2;
     ulong i = blockIdx.x * blockDim.x + threadIdx.x;
-    while (i < length_profile) {
+    while (i < length_decompose) {
         decompose[i] /= k;
         i += gridDim.x * blockDim.x;
     }
@@ -73,9 +73,9 @@ void doDecomposeGPU(TypeDecomposition *decomposeHost, uint number_window, uint n
                     TypeProfile *profileHost, uint window_size, uint step)
 {
     ulong length_profile = step * (number_window - 1) + window_size;
-    ulong length_decompose = number_window * number_coef;;
-    size_t size_decompose = length_decompose * sizeof(TypeDecomposition);
+    ulong length_decompose = number_window * number_coef;
     size_t size_profile = length_profile * sizeof(TypeProfile);
+    size_t size_decompose = length_decompose * sizeof(TypeDecomposition);
 
     TypeDecomposition *decomposeDevice;
     TypeProfile *profileDevice;
@@ -86,7 +86,7 @@ void doDecomposeGPU(TypeDecomposition *decomposeHost, uint number_window, uint n
     HANDLE_ERROR(cudaMemcpy(profileDevice, profileHost, size_profile, cudaMemcpyHostToDevice));
 
     kernel<<< 128, 128 >>>(decomposeDevice, number_coef, profileDevice, step, length_profile, window_size);
-    kernel_divide<<< 128, 128 >>>(decomposeDevice, window_size, length_profile);
+    kernel_divide<<< 128, 128 >>>(decomposeDevice, window_size, length_decompose);
 
     HANDLE_ERROR(cudaMemcpy(decomposeHost, decomposeDevice, size_decompose, cudaMemcpyDeviceToHost));
     HANDLE_ERROR(cudaFree(decomposeDevice));

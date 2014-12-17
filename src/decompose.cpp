@@ -88,8 +88,7 @@ Decomposition Decompose::doDecompose(Profile &profile, uint window, uint step, u
     decomposition.data = new TypeDecomposition [decomposition.length];
 
     // do decompose with my profile
-    bool use_gpu = true;
-    if (use_gpu) {
+    if (gpu.isUse()) {
         gpu.doDecomposeGPU(decomposition.data, number_my_window, number_coef,
                         profile.data, window, step);
     } else {
@@ -107,7 +106,7 @@ Decomposition Decompose::doDecompose(Profile &profile, uint window, uint step, u
         me.wait(&req_recv, &status_recv);
 
         // do decompose with buf
-        if (use_gpu) {
+        if (gpu.isUse()) {
             gpu.doDecomposeGPU(&decomposition.data[number_coef * number_my_window],
                         number_another_window, number_coef, buf_recv, window, step);
         } else {

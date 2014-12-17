@@ -27,7 +27,7 @@ class Analyze {
     MatrixGomology matrix;
     ulong length;
     ulong my_global_height;
-    bool use_gpu;
+    GpuComputing gpu;
     MatrixAnalysis result_matrix;
 
     list<struct Repeat> repeat_answer;

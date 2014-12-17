@@ -29,11 +29,11 @@ Analyze::~Analyze()
 }
 
 
-MatrixAnalysis Analyze::doAnalyze(MatrixGomology matrixGomology, ulong nlength, GpuComputing gpu)
+MatrixAnalysis Analyze::doAnalyze(MatrixGomology matrixGomology, ulong nlength, GpuComputing new_gpu)
 {
     matrix = matrixGomology;
     length = nlength;
-    use_gpu = true; // !!!
+    gpu = new_gpu;
 
     ulong *offset, *sum_offset;
     matrix.offsetLength(offset, sum_offset, &matrix.height);
@@ -47,12 +47,12 @@ MatrixAnalysis Analyze::doAnalyze(MatrixGomology matrixGomology, ulong nlength, 
 
     initFlagEnd();
     /*
-    if (use_gpu)
+    if (gpu.isUse())
         localSearch1_n_GPU();
     */
     localSearch0();
     initFlagEndPrev();
-    if (!use_gpu)
+    if (!gpu.isUse())
         localSearch1_n();
     analysisRepeatBegin();
     analysisRepeatAlien();

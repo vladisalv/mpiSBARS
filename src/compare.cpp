@@ -156,8 +156,7 @@ void Compare::compareDecomposition(TypeDecomposition *decompose1, ulong length_d
                                    TypeDecomposition *decompose2, ulong length_decompose2,
                                    ulong width, TypeGomology *data, ulong begin, ulong sum_all)
 {
-    bool use_gpu = true;
-    if (use_gpu)
+    if (gpu.isUse())
         gpu.compareDecompositionGpu(decompose1, length_decompose1, decompose2, length_decompose2, width, data, begin, sum_all, eps * eps);
     else
         compareDecompositionHost(decompose1, length_decompose1, decompose2, length_decompose2, width, data, begin, sum_all);

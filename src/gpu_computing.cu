@@ -22,6 +22,11 @@ GpuComputing::~GpuComputing()
 {
 }
 
+bool GpuComputing::isUse()
+{
+    return use_gpu;
+}
+
 __global__ void kernelDecompose(TypeDecomposition *decompose, uint number_coef, TypeProfile *profile,
                        uint step, uint length_profile, uint window_size)
 {

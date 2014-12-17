@@ -10,10 +10,10 @@ Compare::~Compare()
 }
 
 
-MatrixGomology Compare::doCompare(Decomposition &decompose1GC, Decomposition &decompose1GA, double new_eps, bool gpu_mode)
+MatrixGomology Compare::doCompare(Decomposition &decompose1GC, Decomposition &decompose1GA, double new_eps, GpuComputing new_gpu)
 {
     eps = new_eps;
-    use_gpu = gpu_mode;
+    gpu = new_gpu;
     MatrixGomology matGC(me), matGA(me), matrixGomology(me);
     matGC = compareSelf(decompose1GC);
     matGA = compareSelf(decompose1GA);
@@ -22,10 +22,10 @@ MatrixGomology Compare::doCompare(Decomposition &decompose1GC, Decomposition &de
 }
 
 MatrixGomology Compare::doCompare(Decomposition &decompose1GC, Decomposition &decompose1GA,
-                          Decomposition &decompose2GC, Decomposition &decompose2GA, double new_eps, bool gpu_mode)
+                          Decomposition &decompose2GC, Decomposition &decompose2GA, double new_eps, GpuComputing new_gpu)
 {
     eps = new_eps;
-    use_gpu = gpu_mode;
+    gpu = new_gpu;
     MatrixGomology matGC(me), matGA(me), matrixGomology(me);
     matGC = compareTwo(decompose1GC, decompose2GC);
     matGA = compareTwo(decompose1GA, decompose2GA);
@@ -156,8 +156,9 @@ void Compare::compareDecomposition(TypeDecomposition *decompose1, ulong length_d
                                    TypeDecomposition *decompose2, ulong length_decompose2,
                                    ulong width, TypeGomology *data, ulong begin, ulong sum_all)
 {
+    bool use_gpu = true;
     if (use_gpu)
-        compareDecompositionGpu(decompose1, length_decompose1, decompose2, length_decompose2, width, data, begin, sum_all, eps * eps);
+        gpu.compareDecompositionGpu(decompose1, length_decompose1, decompose2, length_decompose2, width, data, begin, sum_all, eps * eps);
     else
         compareDecompositionHost(decompose1, length_decompose1, decompose2, length_decompose2, width, data, begin, sum_all);
 }

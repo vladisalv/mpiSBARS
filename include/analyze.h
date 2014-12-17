@@ -2,6 +2,7 @@
 #define __ANALYZE_HEADER__
 
 #include "myMPI.h"
+#include "gpu_computing.h"
 #include "matrix_gomology.h"
 #include "matrix_analysis.h"
 
@@ -60,7 +61,7 @@ public:
     Analyze(MyMPI me);
     ~Analyze();
 
-    MatrixAnalysis doAnalyze(MatrixGomology matrixGomology, ulong length, bool use_gpu);
+    MatrixAnalysis doAnalyze(MatrixGomology matrixGomology, ulong length, GpuComputing gpu);
 };
 
 #endif /* __ANALYZE_HEADER__ */

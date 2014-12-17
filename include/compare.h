@@ -1,14 +1,14 @@
 #ifndef __COMPARE_HEADER__
 #define __COMPARE_HEADER__
 
+#include "gpu_computing.h"
 #include "decomposition.h"
 #include "matrix_gomology.h"
-#include "compare_gpu.h"
 
 class Compare {
     MyMPI me;
     double eps;
-    bool use_gpu;
+    GpuComputing gpu;
 
     MatrixGomology compareSelf(Decomposition &decomposition);
     MatrixGomology compareTwo(Decomposition &decomposition1, Decomposition &decomposition2);
@@ -26,10 +26,10 @@ public:
     Compare(MyMPI me);
     ~Compare();
 
-    MatrixGomology doCompare(Decomposition &decompose1GC, Decomposition &decompose1GA, double eps, bool use_gpu);
+    MatrixGomology doCompare(Decomposition &decompose1GC, Decomposition &decompose1GA, double eps, GpuComputing gpu);
     MatrixGomology doCompare(Decomposition &decompose1GC, Decomposition &decompose1GA,
                              Decomposition &decompose2GC, Decomposition &decompose2GA,
-                             double eps, bool use_gpu);
+                             double eps, GpuComputing gpu);
 };
 
 #endif /* __COMPARE_HEADER__ */

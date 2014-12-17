@@ -1,5 +1,6 @@
 #include "myMPI.h"
 #include "options.h"
+#include "gpu_computing.h"
 
 #include "sequence.h"
 #include "profiling.h"
@@ -39,6 +40,8 @@ int main(int argc, char *argv[])
         DEBUG(opt.info();)
         printf("number process = %d\n", me.getSize());
     }
+
+    GpuComputing gpu(me, opt.gpuMode());
 
     Sequence sequence1(me), sequence2(me);
     if (opt.downloadSequence()) {
@@ -82,16 +85,16 @@ int main(int argc, char *argv[])
     if (opt.decomposeMode()) {
         Decompose decompose(me);
         decomposition1GC = decompose.doDecompose(profile1GC, opt.getLengthWindowDecompose(),
-            opt.getStepDecompose(), opt.getNumberCoefDecompose(), opt.gpuMode());
+            opt.getStepDecompose(), opt.getNumberCoefDecompose(), gpu);
         decomposition1GA = decompose.doDecompose(profile1GA, opt.getLengthWindowDecompose(),
-            opt.getStepDecompose(), opt.getNumberCoefDecompose(), opt.gpuMode());
+            opt.getStepDecompose(), opt.getNumberCoefDecompose(), gpu);
         profile1GC.free();
         profile1GA.free();
         if (!opt.selfMode()) {
             decomposition2GC = decompose.doDecompose(profile2GC, opt.getLengthWindowDecompose(),
-                opt.getStepDecompose(), opt.getNumberCoefDecompose(), opt.gpuMode());
+                opt.getStepDecompose(), opt.getNumberCoefDecompose(), gpu);
             decomposition2GA = decompose.doDecompose(profile2GA, opt.getLengthWindowDecompose(),
-                opt.getStepDecompose(), opt.getNumberCoefDecompose(), opt.gpuMode());
+                opt.getStepDecompose(), opt.getNumberCoefDecompose(), gpu);
             profile2GC.free();
             profile2GA.free();
         }
@@ -120,13 +123,13 @@ int main(int argc, char *argv[])
         Compare compare(me);
         if (opt.selfMode()) {
             matrixGomology = compare.doCompare(decomposition1GC, decomposition1GA,
-                                                opt.getEps(), opt.gpuMode());
+                                                opt.getEps(), gpu);
             decomposition1GC.free();
             decomposition1GA.free();
         } else {
             matrixGomology = compare.doCompare(decomposition1GC, decomposition1GA,
                                                decomposition2GC, decomposition2GA,
-                                                opt.getEps(), opt.gpuMode());
+                                                opt.getEps(), gpu);
             decomposition2GC.free();
             decomposition2GA.free();
         }
@@ -146,7 +149,7 @@ int main(int argc, char *argv[])
     if (false) {
     //if (opt.analysisMode()) {
         Analyze analyze(me);
-        matrixAnalysis = analyze.doAnalyze(matrixGomology, 0, opt.gpuMode());
+        matrixAnalysis = analyze.doAnalyze(matrixGomology, 0, gpu);
         matrixGomology.free();
         if (opt.saveAnalysis())
             matrixAnalysis.writeFile(opt.getFileMatrixAnalysisSave());

@@ -60,7 +60,7 @@ LIBRARY ?=
 # ----------------------------  FLAGS  -----------------------------------------
 
 # FLAGS := $(FLAGSCOMMON) $(FLAGSGOAL) $(FLAGSINCLUDES) $(FLAGLIBS) 
-CUFLAGSGOAL = -arch=sm_20 -Xptxas -v
+CUFLAGSGOAL = -arch=sm_20 -Xptxas -v -ccbin mpiCC
 
 PRINT = @
 

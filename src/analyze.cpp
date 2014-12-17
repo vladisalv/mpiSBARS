@@ -29,11 +29,11 @@ Analyze::~Analyze()
 }
 
 
-MatrixAnalysis Analyze::doAnalyze(MatrixGomology matrixGomology, ulong nlength, bool gpu_mode)
+MatrixAnalysis Analyze::doAnalyze(MatrixGomology matrixGomology, ulong nlength, GpuComputing gpu)
 {
     matrix = matrixGomology;
     length = nlength;
-    use_gpu = gpu_mode;
+    use_gpu = true; // !!!
 
     ulong *offset, *sum_offset;
     matrix.offsetLength(offset, sum_offset, &matrix.height);

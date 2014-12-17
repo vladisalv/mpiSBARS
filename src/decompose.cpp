@@ -10,7 +10,7 @@ Decompose::~Decompose()
 }
 
 
-Decomposition Decompose::doDecompose(Profile &profile, uint window, uint step, uint number_coef, bool use_gpu)
+Decomposition Decompose::doDecompose(Profile &profile, uint window, uint step, uint number_coef, GpuComputing gpu)
 {
     ulong length_other; // for last process. He must know length another process
     if (me.isRoot()) {
@@ -88,8 +88,9 @@ Decomposition Decompose::doDecompose(Profile &profile, uint window, uint step, u
     decomposition.data = new TypeDecomposition [decomposition.length];
 
     // do decompose with my profile
+    bool use_gpu = true;
     if (use_gpu) {
-        doDecomposeGPU(decomposition.data, number_my_window, number_coef,
+        gpu.doDecomposeGPU(decomposition.data, number_my_window, number_coef,
                         profile.data, window, step);
     } else {
         for (uint i = 0; i < number_my_window; i++)
@@ -107,7 +108,7 @@ Decomposition Decompose::doDecompose(Profile &profile, uint window, uint step, u
 
         // do decompose with buf
         if (use_gpu) {
-            doDecomposeGPU(&decomposition.data[number_coef * number_my_window],
+            gpu.doDecomposeGPU(&decomposition.data[number_coef * number_my_window],
                         number_another_window, number_coef, buf_recv, window, step);
         } else {
             for (uint i = 0; i < number_another_window; i++)

@@ -5,6 +5,13 @@
 #include "decomposition.h"
 #include "matrix_gomology.h"
 
+#include "analyze.h"
+
+#include <vector>
+#include <math.h>
+
+typedef vector<Repeat> TypeNew;
+
 class Compare {
     MyMPI me;
     double eps;
@@ -13,8 +20,6 @@ class Compare {
     MatrixGomology compareSelf(Decomposition &decomposition);
     MatrixGomology compareTwo(Decomposition &decomposition1, Decomposition &decomposition2);
 
-    MatrixGomology comparisonMatrix(MatrixGomology mat1, MatrixGomology mat2);
-
     void compareDecomposition(TypeDecomposition *decompose1, ulong length_decompose1,
                               TypeDecomposition *decompose2, ulong length_decompose2,
                               ulong width, TypeGomology *data, ulong begin, ulong sum_all);
@@ -22,14 +27,17 @@ class Compare {
                                   TypeDecomposition *decompose2, ulong length_decompose2,
                                   ulong width, TypeGomology *data, ulong begin, ulong sum_all);
     bool compareVector(TypeDecomposition *vec1, TypeDecomposition *vec2, ulong length);
+
 public:
-    Compare(MyMPI me);
+    Compare(MyMPI me, GpuComputing gpu, double eps);
     ~Compare();
 
-    MatrixGomology doCompare(Decomposition &decompose1GC, Decomposition &decompose1GA, double eps, GpuComputing gpu);
-    MatrixGomology doCompare(Decomposition &decompose1GC, Decomposition &decompose1GA,
-                             Decomposition &decompose2GC, Decomposition &decompose2GA,
-                             double eps, GpuComputing gpu);
+    MatrixGomology doCompare(Decomposition &decompose);
+    MatrixGomology doCompare(Decomposition &decompose1, Decomposition &decompose2);
+    MatrixGomology comparisonMatrix(MatrixGomology matrix1, MatrixGomology matrix2);
+
+    double getEps();
+    void setEps(double eps_new);
 };
 
 #endif /* __COMPARE_HEADER__ */

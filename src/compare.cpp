@@ -1,7 +1,7 @@
 #include "compare.h"
 
-Compare::Compare(MyMPI new_me)
-    : eps(0), me(new_me)
+Compare::Compare(MyMPI new_me, GpuComputing new_gpu, double eps_new)
+    : me(new_me), gpu(new_gpu), eps(eps_new)
 {
 }
 
@@ -9,28 +9,20 @@ Compare::~Compare()
 {
 }
 
-
-MatrixGomology Compare::doCompare(Decomposition &decompose1GC, Decomposition &decompose1GA, double new_eps, GpuComputing new_gpu)
+MatrixGomology Compare::doCompare(Decomposition &decompose)
 {
-    eps = new_eps;
-    gpu = new_gpu;
-    MatrixGomology matGC(me), matGA(me), matrixGomology(me);
-    matGC = compareSelf(decompose1GC);
-    matGA = compareSelf(decompose1GA);
-    matrixGomology = comparisonMatrix(matGC, matGA);
-    return matrixGomology;
+    return compareSelf(decompose);
 }
 
-MatrixGomology Compare::doCompare(Decomposition &decompose1GC, Decomposition &decompose1GA,
-                          Decomposition &decompose2GC, Decomposition &decompose2GA, double new_eps, GpuComputing new_gpu)
+MatrixGomology Compare::doCompare(Decomposition &decompose1, Decomposition &decompose2)
 {
-    eps = new_eps;
-    gpu = new_gpu;
-    MatrixGomology matGC(me), matGA(me), matrixGomology(me);
-    matGC = compareTwo(decompose1GC, decompose2GC);
-    matGA = compareTwo(decompose1GA, decompose2GA);
-    matrixGomology = comparisonMatrix(matGC, matGA);
-    return matrixGomology;
+    return compareTwo(decompose1, decompose2);
+}
+
+MatrixGomology Compare::comparisonMatrix(MatrixGomology matrix1, MatrixGomology matrix2)
+{
+    MatrixGomology mat(me);
+    return mat;
 }
 
 MatrixGomology Compare::compareSelf(Decomposition &decomposition)
@@ -142,16 +134,6 @@ MatrixGomology Compare::compareTwo(Decomposition &decomposition1, Decomposition 
     return matrixGomology;
 }
 
-MatrixGomology Compare::comparisonMatrix(MatrixGomology mat1, MatrixGomology mat2)
-{
-    for (int i = 0; i < mat1.length; i++)
-        mat1.data[i] = (mat1.data[i] && mat2.data[i]);
-    mat2.free();
-    MatrixGomology matrixGomology(me);
-    matrixGomology = mat1;
-    return matrixGomology;
-}
-
 void Compare::compareDecomposition(TypeDecomposition *decompose1, ulong length_decompose1,
                                    TypeDecomposition *decompose2, ulong length_decompose2,
                                    ulong width, TypeGomology *data, ulong begin, ulong sum_all)
@@ -187,4 +169,14 @@ bool Compare::compareVector(TypeDecomposition *vec1, TypeDecomposition *vec2, ul
         return false;
     else
         return true;
+}
+
+double Compare::getEps()
+{
+    return eps;
+}
+
+void Compare::setEps(double eps_new)
+{
+    eps = eps_new;
 }

@@ -17,7 +17,7 @@ public:
                               TypeDecomposition *decompose2, ulong length_decompose2,
                               ulong width, TypeGomology *data, ulong begin,
                               ulong sum_all, double eps);
-    
+
     bool isUse();
 };
 

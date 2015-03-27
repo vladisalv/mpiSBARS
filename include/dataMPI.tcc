@@ -13,6 +13,12 @@ DataMPI<DataType, LengthData>::~DataMPI()
 
 
 template <class DataType, class LengthData>
+bool DataMPI<DataType, LengthData>::isEmpty()
+{
+    return data ? false : true;
+}
+
+template <class DataType, class LengthData>
 void DataMPI<DataType, LengthData>::readFile(char *file_name)
 {
     readMPI(file_name);

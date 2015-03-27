@@ -8,10 +8,15 @@ Options::Options(int argc, char *argv[])
     eps = 0.;
     length_window_profile = length_window_decompose = 0;
     step_decompose = number_coef_decompose = 0;
+    min_length_repeat = 1;
+    fidelity_repeat = 1.;
+    limit_memory = 100 * 1048576; // 100 Mb
 
-    profile_mode = decompose_mode = gomology_mode = analysis_mode = draw_mode = false;
+    profile_mode = decompose_mode = gomology_mode = analysis_mode = false;
     gpu_mode = false;
     self_mode = true;
+    gc_mode = ga_mode = true;
+    use_matrix = false;
 
     save_profile = download_profile = false;
     save_profile = download_profile = false;
@@ -30,8 +35,8 @@ Options::Options(int argc, char *argv[])
     decomposition_save_firstGC = decomposition_save_secondGC = 0;
     decomposition_save_firstGA = decomposition_save_secondGA = 0;
     matrix_gomology_load = matrix_gomology_save = 0;
-    matrix_analysis_load = matrix_analysis_save = 0;
-    output_file = 0;
+    analysis_load = analysis_save = 0;
+    image_save = image_load = 0;
 
     parseOptions(argc, argv);
 }
@@ -71,13 +76,19 @@ void Options::parse(int argc, char *argv[])
     struct option longopts[] = {
         {"help",                    no_argument,       NULL, 'h'},
         {"version",                 no_argument,       NULL, 'v'},
-        {"gpu",                     no_argument,       NULL, 'g'},
         {"debug-mode",              required_argument, NULL, 'd'},
+        {"gpu",                     no_argument,       NULL, 'g'},
+        {"gc-only",                 no_argument,       NULL,  25},
+        {"ga-only",                 no_argument,       NULL,  26},
+        {"use-matrix",              no_argument,       NULL,  27},
+        {"limit-memory",            required_argument, NULL,  30},
         {"eps",                     required_argument, NULL, 'e'},
         {"number-coefficient",      required_argument, NULL, 'c'},
         {"profiling-window",        required_argument, NULL, 'w'},
         {"decompose-window",        required_argument, NULL, 'a'},
         {"step-decompose",          required_argument, NULL, 's'},
+        {"fidelity-repeat",         required_argument, NULL,  28},
+        {"min-length-repeat",       required_argument, NULL,  29},
         {"sequence-load-first",     required_argument, NULL, 'f'},
         {"sequence-load-second",    required_argument, NULL, 'F'},
         {"sequence-save-first",     required_argument, NULL,   2},
@@ -100,14 +111,15 @@ void Options::parse(int argc, char *argv[])
         {"decompose-save-secondGA", required_argument, NULL,  19},
         {"matrix-gomology-load",    required_argument, NULL,  20},
         {"matrix-gomology-save",    required_argument, NULL,  21},
-        {"matrix-analysis-load",    required_argument, NULL,  22},
-        {"matrix-analysis-save",    required_argument, NULL,  23},
-        {"output",                  required_argument, NULL, 'o'},
+        {"repeats-analysis-load",   required_argument, NULL,  22},
+        {"repeats-analysis-save",   required_argument, NULL, 'o'},
+        {"image-save",              required_argument, NULL, 'O'},
+        {"image-load",              required_argument, NULL,  24},
         {0, 0, 0, 0}
     };
     int oc;
     int longindex = -1;
-    const char *optstring = ":hvgd:e:c:w:a:s:f:F:o:"; // opterr = 0, because ":..."
+    const char *optstring = ":hvgd:e:c:w:a:s:f:F:o:O:"; // opterr = 0, because ":..."
     while ((oc = getopt_long(argc, argv, optstring, longopts, &longindex)) != -1) {
         switch (oc) {
         case 'h':
@@ -118,6 +130,18 @@ void Options::parse(int argc, char *argv[])
             break;
         case 'g':
             gpu_mode = true;
+            break;
+        case 25:
+            ga_mode = false;
+            break;
+        case 26:
+            gc_mode = false;
+            break;
+        case 27:
+            use_matrix = true;
+            break;
+        case 30:
+            limit_memory = atol(optarg);
             break;
         case 'd':
             debug_mode = true;
@@ -137,6 +161,12 @@ void Options::parse(int argc, char *argv[])
             break;
         case 's':
             step_decompose = atoi(optarg);
+            break;
+        case 28:
+            fidelity_repeat = atof(optarg);
+            break;
+        case 29:
+            min_length_repeat = atol(optarg);
             break;
         case 'f':
             sequence_load_first = optarg;
@@ -205,13 +235,16 @@ void Options::parse(int argc, char *argv[])
             matrix_gomology_save = optarg;
             break;
         case 22:
-            matrix_analysis_load = optarg;
-            break;
-        case 23:
-            matrix_analysis_save = optarg;
+            analysis_load = optarg;
             break;
         case 'o':
-            output_file = optarg;
+            analysis_save = optarg;
+            break;
+        case 'O':
+            image_save = optarg;
+            break;
+        case 24:
+            image_load = optarg;
             break;
         case 0: // nothing do
             break;
@@ -233,14 +266,8 @@ void Options::checkOptions()
 {
     checkParameters();
     haveFirst();
-    haveGCandGA();
-}
-
-void Options::setMode()
-{
-    defineDownload();
-    defineSave();
-    defineMode();
+    haveDownloadAndSave();
+    onlyGCorGA();
 }
 
 void Options::checkParameters()
@@ -302,61 +329,39 @@ void Options::haveFirst()
     }
 }
 
-void Options::haveGCandGA()
+void Options::haveDownloadAndSave()
 {
-    // if have GC but have not GA
-    if (profile_load_firstGC && !profile_load_firstGA) {
+    if (!sequence_load_first && !profile_load_firstGC && !profile_load_firstGA &&
+        !decomposition_load_firstGC && !decomposition_load_firstGA &&
+        !matrix_gomology_load && !image_load && !analysis_load) {
         error_mode = true;
     }
-    if (profile_load_secondGC && !profile_load_secondGA) {
-        error_mode = true;
-    }
-    if (profile_save_firstGC && !profile_save_firstGA) {
-        error_mode = true;
-    }
-    if (profile_save_secondGC && !profile_save_secondGA) {
-        error_mode = true;
-    }
-    if (decomposition_load_firstGC && !decomposition_load_firstGA) {
-        error_mode = true;
-    }
-    if (decomposition_load_secondGC && !decomposition_load_secondGA) {
-        error_mode = true;
-    }
-    if (decomposition_save_firstGC && !decomposition_save_firstGA) {
-        error_mode = true;
-    }
-    if (decomposition_save_secondGC && !decomposition_save_secondGA) {
-        error_mode = true;
-    }
-
-    // if have GA but have not GC
-    if (profile_load_firstGA && !profile_load_firstGC) {
-        error_mode = true;
-    }
-    if (profile_load_secondGA && !profile_load_secondGC) {
-        error_mode = true;
-    }
-    if (profile_save_firstGA && !profile_save_firstGC) {
-        error_mode = true;
-    }
-    if (profile_save_secondGA && !profile_save_secondGC) {
-        error_mode = true;
-    }
-    if (decomposition_load_firstGA && !decomposition_load_firstGC) {
-        error_mode = true;
-    }
-    if (decomposition_load_secondGA && !decomposition_load_secondGC) {
-        error_mode = true;
-    }
-    if (decomposition_save_firstGA && !decomposition_save_firstGC) {
-        error_mode = true;
-    }
-    if (decomposition_save_secondGA && !decomposition_save_secondGC) {
+    if (!sequence_save_first && !profile_save_firstGC && !profile_save_firstGA &&
+        !decomposition_save_firstGC && !decomposition_save_firstGA &&
+        !matrix_gomology_save && !image_save && !analysis_save) {
         error_mode = true;
     }
 }
 
+void Options::onlyGCorGA()
+{
+    if (!gc_mode && (profile_load_firstGC || decomposition_load_firstGC ||
+                     profile_save_firstGC || decomposition_save_firstGC)) {
+        error_mode = true;
+    }
+    if (!ga_mode && (profile_load_firstGA || decomposition_load_firstGA ||
+                     profile_save_firstGA || decomposition_save_firstGA)) {
+        error_mode = true;
+    }
+}
+
+
+void Options::setMode()
+{
+    defineDownload();
+    defineSave();
+    defineMode();
+}
 
 void Options::defineDownload()
 {
@@ -368,70 +373,77 @@ void Options::defineDownload()
         if (sequence_load_second)
             self_mode = false;
     }
-    if (profile_load_firstGC && input_data) {
+    if ((profile_load_firstGC || profile_load_firstGA) && input_data) {
         error_mode = true;
-    } else if (profile_load_firstGC) {
+    } else if (profile_load_firstGC || profile_load_firstGA) {
         input_data = true;
         download_profile = true;
-        if (profile_load_secondGC)
+        if (profile_load_secondGC || profile_load_secondGA)
             self_mode = false;
     }
-    if (decomposition_load_firstGC && input_data) {
+    if ((decomposition_load_firstGC || decomposition_load_firstGA) && input_data) {
         error_mode = true;
-    } else if (decomposition_load_firstGC) {
+    } else if (decomposition_load_firstGC || decomposition_load_firstGA) {
         input_data = true;
         download_decompose = true;
-        if (decomposition_load_secondGC)
+        if (decomposition_load_secondGC || decomposition_load_secondGA)
             self_mode = false;
     }
-    if (matrix_gomology_load && input_data) {
+    if ((matrix_gomology_load || image_load) && input_data) {
         error_mode = true;
-    } else if (matrix_gomology_load) {
+    } else if (matrix_gomology_load || image_load) {
         input_data = true;
         download_gomology = true;
     }
-    if (matrix_analysis_load && input_data) {
+    if (analysis_load && input_data) {
         error_mode = true;
-    } else if (matrix_analysis_load) {
+    } else if (analysis_load) {
         input_data = true;
         download_analysis = true;
-    }
-    if (!input_data) {
-        error_mode = true;
     }
 }
 
 void Options::defineSave()
 {
     bool output_data = false;
-    if (profile_save_firstGC) {
+    if (sequence_save_first) {
+        save_sequence = true;
+        output_data = true;
+        if (!download_sequence) {
+            error_mode = true;
+        }
+        if (!self_mode && !sequence_load_first) {
+            error_mode = true;
+        }
+    }
+    if (profile_save_firstGC || profile_save_firstGA) {
         save_profile = true;
         output_data = true;
         if (!download_sequence) {
             error_mode = true;
         }
-        if (!self_mode && !profile_save_secondGC) {
+        if (!self_mode && (!profile_save_secondGC || !profile_save_secondGA)) {
             error_mode = true;
         }
     }
-    if (decomposition_save_firstGC) {
+    if (decomposition_save_firstGC || decomposition_save_firstGA) {
         save_decompose = true;
         output_data = true;
         if (!download_sequence && !download_profile) {
             error_mode = true;
         }
-        if (!self_mode && !decomposition_save_secondGC) {
+        if (!self_mode && (!decomposition_save_secondGC || !decomposition_save_secondGA)) {
             error_mode = true;
         }
     }
-    if (matrix_gomology_save) {
+    if (matrix_gomology_save || image_save) {
         save_gomology = true;
         output_data = true;
         if (!download_sequence && !download_profile && !download_decompose) {
             error_mode = true;
         }
     }
-    if (matrix_analysis_save) {
+    if (analysis_save) {
         save_analysis = true;
         output_data = true;
         if (!download_sequence && !download_profile && !download_decompose &&
@@ -440,16 +452,7 @@ void Options::defineSave()
             error_mode = true;
         }
     }
-    if (output_file) {
-        draw_mode = true;
-        output_data = true;
-        if (!download_sequence && !download_profile && !download_decompose &&
-            !download_gomology && !download_analysis
-        ) {
-            error_mode = true;
-        }
-    }
-    if (!output_data) {
+    if (!output_data) { // it's unreal
         error_mode = true;
     }
 }
@@ -457,22 +460,22 @@ void Options::defineSave()
 void Options::defineMode()
 {
     if (download_sequence && (save_profile || save_decompose || save_gomology ||
-                                save_analysis || draw_mode))
+                                save_analysis))
         profile_mode = true;
     if ((download_sequence || download_profile) && (save_decompose || save_gomology ||
-                                                    save_analysis || draw_mode))
+                                                    save_analysis))
         decompose_mode = true;
     if ((download_sequence || download_profile || download_decompose) &&
-        (save_gomology || save_analysis || draw_mode))
+        (save_gomology || use_matrix))
         gomology_mode = true;
     if ((download_sequence || download_profile || download_decompose || download_gomology) &&
-        (save_analysis || draw_mode))
+        (save_analysis))
         analysis_mode = true;
 }
 
 
 
-void Options::info()
+void Options::debugInfo()
 {
     /*
     printf("\n");
@@ -482,12 +485,39 @@ void Options::info()
     printf("step_decompose = %d\n", step_decompose);
     printf("number_coef_decompose = %d\n", number_coef_decompose);
     printf("eps = %f\n", eps);
-    printf("name f = %s\n", sequence_load_first);
-    printf("name F = %s\n", sequence_load_second);
     */
     printf("name f = %s\n", sequence_load_first);
+    printf("name F = %s\n", sequence_load_second);
     printf("use gpu = %s\n", gpu_mode ? "true" : "false");
     printf("\n");
+    if (download_sequence)
+        printf("\t download_sequence\n");
+    if (save_sequence)
+        printf("\t save_sequence\n");
+    if (profile_mode)
+        printf("profile_mode\n");
+    if (save_profile)
+        printf("\t save_profile\n");
+    if (download_profile)
+        printf("\t download_profile\n");
+    if (decompose_mode)
+        printf("decompose_mode\n");
+    if (save_decompose)
+        printf("\t save_decompose\n");
+    if (download_decompose)
+        printf("\t download_decompose\n");
+    if (gomology_mode)
+        printf("gomology_mode\n");
+    if (save_gomology)
+        printf("\t save_gomology\n");
+    if (download_gomology)
+        printf("\t download_gomology\n");
+    if (analysis_mode)
+        printf("analysis_mode\n");
+    if (save_analysis)
+        printf("\t save_analysis\n");
+    if (download_analysis)
+        printf("\t download_analysis\n");
 }
 
 
@@ -612,6 +642,21 @@ unsigned int Options::getNumberCoefDecompose()
     return number_coef_decompose;
 }
 
+double Options::getFidelityRepeat()
+{
+    return fidelity_repeat;
+}
+
+unsigned long Options::getMinLengthRepeat()
+{
+    return min_length_repeat;
+}
+
+size_t Options::getLimitMemoryMatrix()
+{
+    return number_coef_decompose;
+}
+
 
 
 bool Options::profileMode()
@@ -634,10 +679,6 @@ bool Options::analysisMode()
     return analysis_mode;
 }
 
-bool Options::drawMode()
-{
-    return draw_mode;
-}
 
 
 
@@ -649,6 +690,16 @@ bool Options::gpuMode()
 bool Options::selfMode()
 {
     return self_mode;
+}
+
+bool Options::modeGC()
+{
+    return gc_mode;
+}
+
+bool Options::modeGA()
+{
+    return ga_mode;
 }
 
 
@@ -796,16 +847,20 @@ char* Options::getFileMatrixGomologySave()
 {
     return matrix_gomology_save;
 }
-char* Options::getFileMatrixAnalysisLoad()
+char* Options::getFileAnalysisLoad()
 {
-    return matrix_analysis_load;
+    return analysis_load;
 }
-char* Options::getFileMatrixAnalysisSave()
+char* Options::getFileAnalysisSave()
 {
-    return matrix_analysis_save;
+    return analysis_save;
 }
-char* Options::getFileOutput()
+char* Options::getFileImageLoad()
 {
-    return output_file;
+    return image_save;
+}
+char* Options::getFileImageSave()
+{
+    return image_save;
 }
 // ==================  END MODE  ===============================================

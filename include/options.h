@@ -6,19 +6,20 @@
 #include <getopt.h>
 
 class Options {
-    bool profile_mode, decompose_mode, gomology_mode, analysis_mode, draw_mode;
     bool help_mode, version_mode, debug_mode, error_mode;
-    bool gpu_mode, self_mode;
-    bool save_sequence, download_sequence;
-    bool save_profile, download_profile;
-    bool save_decompose, download_decompose;
-    bool save_gomology, download_gomology;
-    bool save_analysis, download_analysis;
 
     const char *program_name;
     const char *version_name, *version_number;
 
     unsigned int debug_level;
+
+    bool profile_mode, decompose_mode, gomology_mode, analysis_mode;
+    bool gpu_mode, self_mode, gc_mode, ga_mode, use_matrix;
+    bool save_sequence, download_sequence;
+    bool save_profile, download_profile;
+    bool save_decompose, download_decompose;
+    bool save_gomology, download_gomology;
+    bool save_analysis, download_analysis;
 
     char *sequence_load_first, *sequence_load_second;
     char *sequence_save_first, *sequence_save_second;
@@ -31,14 +32,19 @@ class Options {
     char *decomposition_save_firstGC, *decomposition_save_secondGC;
     char *decomposition_save_firstGA, *decomposition_save_secondGA;
     char *matrix_gomology_load, *matrix_gomology_save;
-    char *matrix_analysis_load, *matrix_analysis_save;
-    char *output_file;
+    char *image_load, *image_save;
+    char *analysis_load, *analysis_save;
 
     double eps; // fidelity of compute
     unsigned int length_window_profile;    // length window of profiling
     unsigned int length_window_decompose;  // length window of decomposition
     unsigned int step_decompose; // step window of approximation
     unsigned int number_coef_decompose; // number coefficient of decomposition
+
+    double fidelity_repeat;
+    unsigned long min_length_repeat;
+
+    size_t limit_memory;
 
 
     void parseOptions(int argc, char *argv[]);
@@ -47,7 +53,8 @@ class Options {
     void checkOptions();
     void checkParameters();
     void haveFirst();
-    void haveGCandGA();
+    void haveDownloadAndSave();
+    void onlyGCorGA();
 
     void setMode();
     void defineDownload();
@@ -57,7 +64,7 @@ public:
     Options(int argc, char *argv[]);
     ~Options();
 
-    void info();
+    void debugInfo();
 
     void helpPrint();
     void versionPrint();
@@ -80,14 +87,19 @@ public:
     unsigned int getStepDecompose();
     unsigned int getNumberCoefDecompose();
 
+    double getFidelityRepeat();
+    unsigned long getMinLengthRepeat();
+    size_t getLimitMemoryMatrix();
+
     bool profileMode();
     bool decomposeMode();
     bool gomologyMode();
     bool analysisMode();
-    bool drawMode();
 
     bool gpuMode();
     bool selfMode();
+    bool modeGC();
+    bool modeGA();
 
     bool downloadSequence();
     bool saveSequence();
@@ -122,9 +134,10 @@ public:
     char *getFileDecompositionSave2GA();
     char *getFileMatrixGomologyLoad();
     char *getFileMatrixGomologySave();
-    char *getFileMatrixAnalysisLoad();
-    char *getFileMatrixAnalysisSave();
-    char *getFileOutput();
+    char *getFileAnalysisLoad();
+    char *getFileAnalysisSave();
+    char *getFileImageLoad();
+    char *getFileImageSave();
 };
 
 #endif /* __OPTIONS_HEADER__*/

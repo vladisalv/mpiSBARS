@@ -10,9 +10,13 @@ Image::~Image()
 }
 
 
-void Image::drawImage(MatrixGomology& matrixGomology, char *file_name)
+void Image::saveImage(MatrixGomology& matrixGomology, char *file_name)
 {
     drawBmpMPI(matrixGomology, file_name);
+}
+
+void Image::loadImage(MatrixGomology& matrixGomology, char *file_name)
+{
 }
 
 void Image::drawBmpMPI(MatrixGomology& matrixGomology, char *file_name)

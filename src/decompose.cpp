@@ -1,7 +1,7 @@
 #include "decompose.h"
 
-Decompose::Decompose(MyMPI new_me)
-    : me(new_me)
+Decompose::Decompose(MyMPI new_me, GpuComputing new_gpu, uint window_new, uint step_new, uint number_coef_new)
+    : me(new_me), gpu(new_gpu), window(window_new), step(step_new), number_coef(number_coef_new)
 {
 }
 
@@ -10,7 +10,7 @@ Decompose::~Decompose()
 }
 
 
-Decomposition Decompose::doDecompose(Profile &profile, uint window, uint step, uint number_coef, GpuComputing gpu)
+Decomposition Decompose::doDecompose(Profile &profile)
 {
     ulong length_other; // for last process. He must know length another process
     if (me.isRoot()) {
@@ -106,6 +106,7 @@ Decomposition Decompose::doDecompose(Profile &profile, uint window, uint step, u
         me.wait(&req_recv, &status_recv);
 
         // do decompose with buf
+        // TODO: use here only HOST. gpu work async
         if (gpu.isUse()) {
             gpu.doDecomposeGPU(&decomposition.data[number_coef * number_my_window],
                         number_another_window, number_coef, buf_recv, window, step);
@@ -163,4 +164,34 @@ void Decompose::decomposeFourier(TypeDecomposition *u, uint m, TypeProfile *y, u
     for (uint j = 0; j < m; j++)
         u[j] /= k / 2;
 
+}
+
+uint Decompose::getLengthWindowDecompose()
+{
+    return window;
+}
+
+uint Decompose::getStepDecompose()
+{
+    return step;
+}
+
+uint Decompose::getNumberCoefDecompose()
+{
+    return number_coef;
+}
+
+void Decompose::setLengthWindowDecompose(uint window_new)
+{
+    window = window_new;
+}
+
+void Decompose::setStepDecompose(uint step_new)
+{
+    step = step_new;
+}
+
+void Decompose::setNumberCoefDecompose(uint number_coef_new)
+{
+    number_coef = number_coef_new;
 }

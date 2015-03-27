@@ -1,7 +1,7 @@
 #include "profiling.h"
 
-Profiling::Profiling(MyMPI new_me)
-    : me(new_me)
+Profiling::Profiling(MyMPI new_me, uint new_window)
+    : me(new_me), window(new_window)
 {
 }
 
@@ -9,7 +9,7 @@ Profiling::~Profiling()
 {
 }
 
-Profile Profiling::doProfile(Sequence &seq, char ch1, char ch2, uint window)
+Profile Profiling::doProfile(Sequence &seq, char ch1, char ch2)
 {
     // @TODO: error, when you don't have data in seq_letter
     Profile profile(me);
@@ -65,4 +65,14 @@ Profile Profiling::doProfile(Sequence &seq, char ch1, char ch2, uint window)
         me.wait(&req_send, &status);
     }
     return profile;
+}
+
+void Profiling::setLengthWindowProfile(uint new_window)
+{
+    window = new_window;
+}
+
+uint Profiling::getLengthWindowProfile()
+{
+    return window;
 }

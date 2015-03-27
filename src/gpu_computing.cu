@@ -16,6 +16,15 @@ GpuComputing::GpuComputing()
 GpuComputing::GpuComputing(MyMPI new_me, bool use)
     : me(new_me), use_gpu(use)
 {
+    int deviceCount;
+    HANDLE_ERROR(cudaGetDeviceCount(&deviceCount));
+    int myDevice;
+    if (me.getSize() < 4)
+        myDevice = me.getRank() % deviceCount + 1;
+    else
+        myDevice = me.getRank() % deviceCount;
+	myDevice = 3;
+    HANDLE_ERROR(cudaSetDevice(myDevice));
 }
 
 GpuComputing::~GpuComputing()
@@ -28,13 +37,15 @@ bool GpuComputing::isUse()
 }
 
 __global__ void kernelDecompose(TypeDecomposition *decompose, uint number_coef, TypeProfile *profile,
-                       uint step, uint length_profile, uint window_size)
+                       uint step, uint number_window, uint window_size)
 {
     TypeDecomposition p1, p2, p3;
     TypeDecomposition q1, q2, q3;
     TypeDecomposition yi, ti, costi;
 
     // init offset
+    ulong length_profile = step * (number_window - 1) + window_size;
+    //ulong length_decompose = number_window * number_coef;
     uint offset_window;
     ulong offset_profile;
     ulong offset_block = blockIdx.x * step;
@@ -74,6 +85,15 @@ __global__ void kernelDecompose(TypeDecomposition *decompose, uint number_coef, 
         offset_block += gridDim.x * step;
         offset_decompose += gridDim.x * number_coef;
     }
+
+    /*
+    double k = window_size / 2;
+    ulong i = blockIdx.x * blockDim.x + threadIdx.x;
+    while (i < length_decompose) {
+        decompose[i] /= k;
+        i += gridDim.x * blockDim.x;
+    }
+    */
 }
 
 
@@ -104,7 +124,7 @@ void GpuComputing::doDecomposeGPU(TypeDecomposition *decomposeHost, uint number_
     HANDLE_ERROR(cudaMemset(decomposeDevice, 0, size_decompose));
     HANDLE_ERROR(cudaMemcpy(profileDevice, profileHost, size_profile, cudaMemcpyHostToDevice));
 
-    kernelDecompose<<< 128, 128 >>>(decomposeDevice, number_coef, profileDevice, step, length_profile, window_size);
+    kernelDecompose<<< 128, 128 >>>(decomposeDevice, number_coef, profileDevice, step, number_window, window_size);
     kernelDivide<<< 128, 128 >>>(decomposeDevice, window_size, length_decompose);
 
     HANDLE_ERROR(cudaMemcpy(decomposeHost, decomposeDevice, size_decompose, cudaMemcpyDeviceToHost));

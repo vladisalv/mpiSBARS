@@ -7,11 +7,15 @@
 
 class Profiling {
     MyMPI me;
+    uint window;
 public:
-    Profiling(MyMPI me);
+    Profiling(MyMPI me, uint window);
     ~Profiling();
 
-    Profile doProfile(Sequence &sequence, char ch1, char ch2, uint window);
+    Profile doProfile(Sequence &sequence, char ch1, char ch2);
+
+    void setLengthWindowProfile(uint new_window);
+    uint getLengthWindowProfile();
 };
 
 #endif /* __PROFILING_HEADER__ */

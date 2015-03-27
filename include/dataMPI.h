@@ -23,8 +23,10 @@ public:
     DataMPI(MyMPI new_me);
     virtual ~DataMPI();
 
-    void readFile(char *file_name);
-    void writeFile(char *file_name);
+    bool isEmpty();
+
+    virtual void readFile(char *file_name);
+    virtual void writeFile(char *file_name);
     void free();
 };
 

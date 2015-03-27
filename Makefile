@@ -83,6 +83,7 @@ build: mkdir $(OBJ_MODULES)
 # запуск
 run:
 	$(PRINT)$(RUN) ./$(BIN_NOW)/$(BINARY_NAME) $(ARGUMENTS)
+	#$(PRINT)$(RUN) ./$(BIN_NOW)/$(BINARY_NAME) $(ARGUMENTS) > $(FILE_OUTPUT)
 
 rebuild: clean_exec build
 

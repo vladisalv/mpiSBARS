@@ -10,12 +10,23 @@
 
 class Decompose {
     MyMPI me;
+    GpuComputing gpu;
+
+    uint window, step, number_coef;
 
     void decomposeFourier(TypeDecomposition *u, uint m, TypeProfile *y, uint k);
 public:
-    Decompose(MyMPI me);
+    Decompose(MyMPI me, GpuComputing gpu, uint window, uint step, uint number_coef);
     ~Decompose();
 
-    Decomposition doDecompose(Profile &profile, uint window, uint step, uint number_coef, GpuComputing gpu);
+    Decomposition doDecompose(Profile &profile);
+
+    uint getLengthWindowDecompose();
+    uint getStepDecompose();
+    uint getNumberCoefDecompose();
+
+    void setLengthWindowDecompose(uint window_new);
+    void setStepDecompose(uint step_new);
+    void setNumberCoefDecompose(uint number_coef_new);
 };
 #endif /* __DECOMPOSE_HEADER__ */

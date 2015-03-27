@@ -3,65 +3,69 @@
 
 #include "myMPI.h"
 #include "gpu_computing.h"
+
+#include "decomposition.h"
 #include "matrix_gomology.h"
-#include "matrix_analysis.h"
+#include "set_repeats.h"
 
 #include <list>
 
 using namespace std;
 
-struct Repeat {
-    long x_begin, y_begin;
-    long x_end, y_end;
-    long length;
-    Repeat();
-    Repeat(long x1, long y1, long x2, long y2, long len);
-    void Print();
-};
-
-typedef Repeat Repeat_type;
-
 class Analyze {
     MyMPI me;
+    GpuComputing gpu;
+
+    double eps;
+    ulong min_length;
+    double fidelity_repeat;
+    size_t limit_memory;
 
     MatrixGomology matrix;
-    ulong length;
     ulong my_global_height;
-    GpuComputing gpu;
-    MatrixAnalysis result_matrix;
 
     list<struct Repeat> repeat_answer;
     list<struct Repeat> repeat_unknow;
     list<struct Repeat> repeat_begin;
 
+    bool *flag_end, *flag_end_prev;
+
     struct Repeat *repeat_alien;
     ulong repeat_alien_size;
 
-    bool *flag_end, *flag_end_prev;
-    long *flag_begin;
-
     MPI_Aint lb, extent;
-    MPI_Win win_flag_end, win_flag_begin, win_repeat_alien;
+    MPI_Win win_flag_end, win_repeat_alien;
     MPI_Group group_comm_world, group_prev, group_next, group_prev_all, group_next_all;
 
 
+    Repeat findRepeat(Coordinates cor);
     void localSearch0();
     void localSearch1_n();
-    Repeat findRepeat(ulong y, ulong x);
+    Coordinates searchRepeat(Coordinates cor);
 
     void analysisRepeatBegin();
-    void analysisRepeatAlien();
+    void formRepeatAlien();
     void analysisRepeatUnknow();
     Repeat requestRepeat(int rank, ulong x);
-    void formResultMatrix();
-    bool searchRepeat(ulong y, ulong x);
-    void initFlagEnd();
-    void initFlagEndPrev();
+    void sortRepeatAnswer();
 public:
-    Analyze(MyMPI me);
+    Analyze(MyMPI me, GpuComputing gpu, double eps, ulong min_length, double fidelity_repeat, size_t limit_memory);
     ~Analyze();
 
-    MatrixAnalysis doAnalyze(MatrixGomology matrixGomology, ulong length, GpuComputing gpu);
+    SetRepeats doAnalyze(MatrixGomology matrixGomology);
+    SetRepeats doAnalyze(Decomposition decomposition);
+    SetRepeats doAnalyze(Decomposition decomposition1, Decomposition decomposition2);
+    SetRepeats comparisonRepeats(SetRepeats setRepeats1, SetRepeats setRepeats2);
+
+    double getEps();
+    ulong getMinLengthRepeat();
+    double getFidelityRepeat();
+    size_t getLimitMemoryMatrix();
+
+    void setEps(double eps_new);
+    void setMinLengthRepeat(ulong min_length_new);
+    void setFidelityRepeat(double fidelity_repeat_new);
+    void setLimitMemoryMatrix(size_t limit_memory_new);
 };
 
 #endif /* __ANALYZE_HEADER__ */

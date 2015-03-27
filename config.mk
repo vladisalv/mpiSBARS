@@ -10,24 +10,33 @@ EPS                = 0.01
 INPUT_DIR := ./test/samples
 #INPUT_FILE := rat165M
 #INPUT_FILE := file5M
-#INPUT_FILE := file10M
-INPUT_FILE := file50K
+INPUT_FILE1 := file5M
+INPUT_FILE2 := file5M
+#INPUT_FILE1 := file200K
+#INPUT_FILE2 := file200K
 
 OUTPUT_DIR := ./picture
 OUTPUT_FILE = pic_$(DATE)
 
-GPU = --gpu
-PIC = --output $(OUTPUT_DIR)/$(OUTPUT_FILE)
-DEC = --decompose-save-firstGC dec_firstGC --decompose-save-firstGA dec_firstGA
-ANALYS = --matrix-analysis-save $(OUTPUT_DIR)/$(OUTPUT_FILE)
+#FILE_OUTPUT = ./result/$(N)_$(INPUT_FILE)_$(GPU)
+FILE_OUTPUT = stdout
 
-ARGUMENTS = -f $(INPUT_DIR)/$(INPUT_FILE)                              \
+GPU = --gpu
+#PIC = --output $(OUTPUT_DIR)/$(OUTPUT_FILE)
+#DEC = --decompose-save-firstGC dec_firstGC --decompose-save-firstGA dec_firstGA
+#ANALYS = --repeats-analysis-save $(OUTPUT_DIR)/$(OUTPUT_FILE)
+ANALYS = --matrix-gomology-save $(OUTPUT_DIR)/$(OUTPUT_FILE)
+            #-F $(INPUT_DIR)/$(INPUT_FILE2)                              \
+
+#USE_MATRIX = --use-matrix
+
+ARGUMENTS = -f $(INPUT_DIR)/$(INPUT_FILE1)                              \
             --profiling-window     $(PROFILING_WINDOW)                  \
             --decompose-window     $(DECOMPOSE_WINDOW)                  \
             --step-decompose       $(STEP_DECOMPOSE)                    \
             --number-coefficient   $(NUMBER_COEFFICIENT)                \
             --eps                  $(EPS)                               \
-            $(GPU) $(PIC) $(DEC) $(ANALYS)
+            $(GPU) $(PIC) $(DEC) $(ANALYS) $(USE_MATRIX)
 
 
 # HOST, MPI, LOMONOSOV or BLUEGENE

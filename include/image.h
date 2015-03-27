@@ -2,7 +2,6 @@
 #define __IMAGE_HEADER__
 
 #include "myMPI.h"
-#include "matrix_analysis.h"
 #include "matrix_gomology.h"
 #include "types.h"
 
@@ -22,7 +21,8 @@ public:
     Image(MyMPI me);
     ~Image();
 
-    void drawImage(MatrixGomology& matrixGomology, char *file_name);
+    void saveImage(MatrixGomology& matrixGomology, char *file_name);
+    void loadImage(MatrixGomology& matrixGomology, char *file_name);
 };
 
 #endif /* __IMAGE_HEADER__ */

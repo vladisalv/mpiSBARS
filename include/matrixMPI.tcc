@@ -36,7 +36,7 @@ void MatrixMPI<DataType, LengthData>::writeMPI(char *file_name)
     LengthData *offset, *sum_offset;
     ulong common_height, common_width, common_length;
     common_width = width;
-    common_height = offsetLength(offset, sum_offset, &this->height);
+    common_height = this->offsetLength(offset, sum_offset, &this->height);
     common_length = common_width * common_height;
 
     MPI_File hFile;
@@ -59,6 +59,17 @@ void MatrixMPI<DataType, LengthData>::writeMPI(char *file_name)
 template <class DataType, class LengthData>
 void MatrixMPI<DataType, LengthData>::writeUsually(char *file_name)
 {
+    for (int i = 0; i < this->me.getSize(); i++) {
+        this->me.Synchronize();
+        if (this->me.getRank() == i) {
+            FILE *file = fopen(file_name, "a");
+            for (ulong j = 0; j < this->length; j++)
+                ;//fprintf(file, "%.0f\n", this->data[j]);
+            fflush(file);
+            fclose(file);
+        }
+        this->me.Synchronize();
+    }
 }
 
 template <class DataType, class LengthData>

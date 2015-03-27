@@ -8,7 +8,6 @@ typedef char   TypeSequence;
 typedef uint   TypeProfile;
 typedef float  TypeDecomposition;
 typedef bool   TypeGomology;
-typedef bool   TypeAnalysis;
 
 #define MPI_TFLOAT MPI_FLOAT
 

@@ -4,7 +4,9 @@
 // @TODO: time_measure in myMPI and myMPI in time_measure
 //class TimeMeasure;
 
-#include <mpi.h>
+#ifdef USE_MPI
+    #include <mpi.h>
+#endif
 
 #include "support.h"
 #include "types.h"
@@ -24,9 +26,13 @@ protected:
     int root_is, first_is, last_is;
     bool root, first, last, single;
 public:
+#ifdef USE_MPI
     MPI_Comm comm;
-
     MyMPI(MPI_Comm comm = MPI_COMM_WORLD, int argc = 0, char *argv[] = 0);
+#else
+    MyMPI(int argc = 0, char *argv[] = 0);
+#endif
+
     MyMPI(const MyMPI &other);
     ~MyMPI();
 
@@ -50,6 +56,7 @@ public:
     void Allgather(void *send_buf, uint send_len, MPI_Datatype send_type,
                   void *recv_buf, uint recv_len, MPI_Datatype recv_type);
 
+#ifdef USE_MPI
     MPI_File openFile(char *filename, int amode, MPI_Info info);
     MPI_Offset getSizeFile(MPI_File fh);
     void closeFile(MPI_File *fh);
@@ -57,6 +64,17 @@ public:
                   MPI_Datatype type, MPI_Info info);
     void writeFile(MPI_File fh, MPI_Offset offset, void *mas, ulong length,
                   MPI_Datatype type, MPI_Info info);
+#else
+    /*
+    FILE *openFile(char *filename, int amode, MPI_Info info);
+    FILE *getSizeFile(MPI_File fh);
+    void closeFile(FILE *fh);
+    void readFile(FILE *fh, MPI_Offset offset, void *mas, ulong length,
+                  MPI_Datatype type, MPI_Info info);
+    void writeFile(MPI_File fh, MPI_Offset offset, void *mas, ulong length,
+                  MPI_Datatype type, MPI_Info info);
+    */
+#endif
 
     ulong sumLength(ulong *length, ulong *last_length);
 

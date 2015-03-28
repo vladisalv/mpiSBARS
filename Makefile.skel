@@ -18,6 +18,12 @@ OBJ_NOW    := $(filter %$(TARGET_NOW), $(OBJ_TARGET))
 # ====================  FLAGS  =================================================
 # ------------------  COMMON FLAGS  --------------------------------------------
 COMMON := -DPROGRAM_NAME=\"$(PROGRAM_NAME)\" -DVERSION=\"$(VERSION)\" -DVERSION_NUMBER=\"$(VERSION_NUMBER)\"
+ifdef USE_CUDA
+    COMMON += -DUSE_CUDA
+endif
+ifdef USE_MPI
+    COMMON += -DUSE_MPI
+endif
 ifeq ($(DEBUG_MODE), 1)
     COMMON += -DDEBUG_MODE
 endif
@@ -63,7 +69,10 @@ TEXFLAGS := $(TEXFLAGSCOMMON) $(TEXFLAGSGOAL) $(TEXFLAGSINCLUDES) $(TEXFLAGSLIB)
 
 # определение всех имен через директории
 
-SRC_EXTENSION := cpp cu c f90 py
+SRC_EXTENSION := cpp c f90 py
+ifdef USE_CUDA
+    SRC_EXTENSION += cu
+endif
 INC_EXTENSION := h hpp
 OBJ_EXTENSION := o
 

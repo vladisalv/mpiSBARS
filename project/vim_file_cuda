@@ -7,4 +7,7 @@
 :tabnew src/gpu_computing.cu
 :65 vs include/gpu_computing.h
 
+:tabnew src/gpu_computing_cap.cpp
+:65 vs include/gpu_computing.h
+
 gt

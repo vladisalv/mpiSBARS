@@ -36,13 +36,16 @@ int main2(int argc, char *argv[])
             opt.helpPrint();
         return 0;
     }
-    if (me.isRoot()) {
-        DEBUG(opt.debugInfo());
-		DEBUG(me.debugInfo());
-    }
 
     GpuComputing gpu(me, opt.gpuMode());
 
+    if (me.isRoot()) {
+        DEBUG(opt.debugInfo());
+		DEBUG(me.debugInfo());
+        DEBUG(gpu.debugInfo());
+    }
+
+    DEBUG(me.rootMessage("begin...\n"));
     Sequence sequence1(me), sequence2(me);
     if (opt.downloadSequence()) {
         sequence1.readFile(opt.getFileSequenceLoad1());

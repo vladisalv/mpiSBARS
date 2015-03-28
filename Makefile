@@ -71,7 +71,7 @@ include $(wildcard Makefile.skel)
 # =============================  GOALS  ========================================
 
 # абстрактные цели (выполняются в любом случае)
-.PHONY: all run clean clean_exec clean_result
+.PHONY: all run clean clean_exec clean_result test
 
 # главная цель (пустая команда make)
 all: build
@@ -115,7 +115,9 @@ mkdir:
 	$(PRINT)mkdir -p $(OBJ_NOW)
 	$(PRINT)mkdir -p $(OUTPUT_DIR)
 
-test:
+test: $(OBJ_NOW)/options.o
+	$(PRINT)$(CXX) $^ $(CFLAGS) test/opt.cpp  -o test/opt $(CFLAGSLIB)
+	./test/opt -h
 
 begin:
 

@@ -19,6 +19,8 @@ public:
                               ulong sum_all, double eps);
 
     bool isUse();
+
+    void debugInfo();
 };
 
 #endif /* __GPU_COMPUTING_HEADER__ */

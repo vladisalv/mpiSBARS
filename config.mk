@@ -10,10 +10,10 @@ EPS                = 0.01
 INPUT_DIR := ./test/samples
 #INPUT_FILE := rat165M
 #INPUT_FILE := file5M
-INPUT_FILE1 := file5M
-INPUT_FILE2 := file5M
-#INPUT_FILE1 := file200K
-#INPUT_FILE2 := file200K
+#INPUT_FILE1 := file5M
+#INPUT_FILE2 := file5M
+INPUT_FILE1 := file74K
+INPUT_FILE2 := file74K
 
 OUTPUT_DIR := ./picture
 OUTPUT_FILE = pic_$(DATE)
@@ -21,7 +21,7 @@ OUTPUT_FILE = pic_$(DATE)
 #FILE_OUTPUT = ./result/$(N)_$(INPUT_FILE)_$(GPU)
 FILE_OUTPUT = stdout
 
-GPU = --gpu
+#GPU = --gpu
 #PIC = --output $(OUTPUT_DIR)/$(OUTPUT_FILE)
 #DEC = --decompose-save-firstGC dec_firstGC --decompose-save-firstGA dec_firstGA
 #ANALYS = --repeats-analysis-save $(OUTPUT_DIR)/$(OUTPUT_FILE)
@@ -31,6 +31,7 @@ ANALYS = --matrix-gomology-save $(OUTPUT_DIR)/$(OUTPUT_FILE)
 #USE_MATRIX = --use-matrix
 
 ARGUMENTS = -f $(INPUT_DIR)/$(INPUT_FILE1)                              \
+            -F $(INPUT_DIR)/$(INPUT_FILE2)                              \
             --profiling-window     $(PROFILING_WINDOW)                  \
             --decompose-window     $(DECOMPOSE_WINDOW)                  \
             --step-decompose       $(STEP_DECOMPOSE)                    \
@@ -50,5 +51,12 @@ NODE        = 1
 QUEUE       = test
 TIME        = 10:00
 
+#define mode compile
+#USE_CUDA = 1
+USE_MPI  = 1
+
 #redefine compiler
-CXX = mpicxx
+ifdef USE_MPI
+    CXX = mpicxx
+endif
+

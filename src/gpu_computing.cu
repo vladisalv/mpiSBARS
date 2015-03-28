@@ -1,3 +1,5 @@
+#ifdef USE_CUDA
+
 #include "gpu_computing.h"
 
 #define HANDLE_ERROR( err ) (HandleError( err, __FILE__, __LINE__ ))
@@ -195,3 +197,10 @@ void GpuComputing::compareDecompositionGpu(TypeDecomposition *decomposeHost1, ul
     HANDLE_ERROR(cudaFree(resultDevice));
     free(decomposeHost2Transpose);
 }
+
+void GpuComputing::debugInfo()
+{
+    printf("debug gpu info\n");
+}
+
+#endif /* USE_CUDA */

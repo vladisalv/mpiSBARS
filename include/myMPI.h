@@ -90,7 +90,7 @@ public:
     int whoLast();
     char *getStrRank();
 
-    void debugInfo(const char *str = 0);
+    void debugInfo(const char *file, int line, const char *info = 0);
 
     void rootMessage(const char *format, ...);
     void allMessage(const char *format, ...);

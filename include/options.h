@@ -64,7 +64,7 @@ public:
     Options(int argc, char *argv[]);
     ~Options();
 
-    void debugInfo();
+    void debugInfo(const char *file, int line, const char *info = 0);
 
     void helpPrint();
     void versionPrint();

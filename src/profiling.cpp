@@ -13,6 +13,7 @@ Profile Profiling::doProfile(Sequence &seq, char ch1, char ch2)
 {
     // @TODO: error, when you don't have data in seq_letter
     Profile profile(me);
+    profile.offset = seq.offset;
     ulong length_without_exchange;
     char *buffer = 0;
 
@@ -49,7 +50,7 @@ Profile Profiling::doProfile(Sequence &seq, char ch1, char ch2)
     if (!me.isLast() && !me.isSingle()) {
         MPI_Status status;
         me.wait(&req_recv, &status);
- 
+
         for (uint i = 0; i < window - 1; i++) {
             if ((seq.data[length_without_exchange + i - 1] == ch1 ||
                 seq.data[length_without_exchange + i - 1] == ch2) && count > 0)

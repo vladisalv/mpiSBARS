@@ -115,9 +115,10 @@ mkdir:
 	$(PRINT)mkdir -p $(OBJ_NOW)
 	$(PRINT)mkdir -p $(OUTPUT_DIR)
 
-test: $(OBJ_NOW)/options.o
-	$(PRINT)$(CXX) $^ $(CFLAGS) test/opt.cpp  -o test/opt $(CFLAGSLIB)
-	./test/opt -h
+#test: $(OBJ_NOW)/options.o
+test:
+	#$(PRINT)$(CXX) $^ $(CFLAGS) test/opt.cpp  -o test/opt $(CFLAGSLIB)
+	#./test/opt -h
 
 begin:
 

@@ -5,13 +5,6 @@
 #include "decomposition.h"
 #include "matrix_gomology.h"
 
-#include "analyze.h"
-
-#include <vector>
-#include <math.h>
-
-typedef vector<Repeat> TypeNew;
-
 class Compare {
     MyMPI me;
     double eps;

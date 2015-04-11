@@ -21,7 +21,17 @@ MatrixGomology Compare::doCompare(Decomposition &decompose1, Decomposition &deco
 
 MatrixGomology Compare::comparisonMatrix(MatrixGomology matrix1, MatrixGomology matrix2)
 {
+    for (int i = 0; i < matrix1.height; i++)
+        for (int j = 0; j < matrix1.width; j++)
+            if (!matrix2.data[i * matrix1.width + j])
+                matrix1.data[i * matrix1.width + j] = false;
     MatrixGomology mat(me);
+    mat.height = matrix1.height;
+    mat.offset_row = matrix1.offset_row;
+    mat.width = matrix1.width;
+    mat.offset_column = matrix1.offset_column;
+    mat.length = matrix1.length;
+    mat.data = matrix1.data;
     return mat;
 }
 
@@ -47,7 +57,9 @@ MatrixGomology Compare::compareSelf(Decomposition &decomposition)
     MatrixGomology matrixGomology(me);
     matrixGomology.length = decomposition.height * sum_all;
     matrixGomology.height = decomposition.height;
+    matrixGomology.offset_row = decomposition.offset_row;
     matrixGomology.width = sum_all;
+    matrixGomology.offset_column = 0;
     matrixGomology.data = new bool [matrixGomology.length];
     for (uint i = 0; i < matrixGomology.length; i++)
         matrixGomology.data[i] = false;
@@ -109,7 +121,9 @@ MatrixGomology Compare::compareTwo(Decomposition &decomposition1, Decomposition 
     MatrixGomology matrixGomology(me);
     matrixGomology.length = decomposition1.height * sum_all;
     matrixGomology.height = decomposition1.height;
+    matrixGomology.offset_row = decomposition1.offset_row;
     matrixGomology.width = sum_all;
+    matrixGomology.offset_column = 0;
     matrixGomology.data = new bool [matrixGomology.length];
     for (uint i = 0; i < matrixGomology.length; i++)
         matrixGomology.data[i] = false;

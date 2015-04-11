@@ -1,8 +1,8 @@
 #include "arrayMPI.h"
 
 template <class DataType, class LengthData>
-ArrayMPI<DataType, LengthData>::ArrayMPI(MyMPI me)
-    : DataMPI<DataType, LengthData>(me)
+ArrayMPI<DataType, LengthData>::ArrayMPI(MyMPI me, const char *class_name)
+    : DataMPI<DataType, LengthData>(me, class_name), offset(0)
 {
 }
 
@@ -21,6 +21,7 @@ void ArrayMPI<DataType, LengthData>::readMPI(char *file_name)
     length_file = this->me.getSizeFile(fh);
     this->length = length_file / this->me.getSize();
     MPI_Offset offset = this->length * this->me.getRank();
+    this->offset = offset; // ??? it size_t in byte. for other class (not sequence) it can be not
     if (this->me.isLast())
         this->length += length_file % this->me.getSize();
 
@@ -53,4 +54,14 @@ void ArrayMPI<DataType, LengthData>::writeUsually(char *file_name)
 template <class DataType, class LengthData>
 void ArrayMPI<DataType, LengthData>::writeMy(char *file_name)
 {
+}
+
+
+template <class DataType, class LengthData>
+void ArrayMPI<DataType, LengthData>::debugInfo(const char *file, int line, const char *info)
+{
+    this->me.rootMessage("\n");
+    this->me.rootMessage("This is debugInfo(%s) of %s in %s at line %d\n", info, this->class_name, file, line);
+    this->me.allMessage("offset = %9ld length = %9ld\n", this->offset, this->length);
+    this->me.rootMessage("\n");
 }

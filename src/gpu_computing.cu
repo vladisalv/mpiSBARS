@@ -198,9 +198,9 @@ void GpuComputing::compareDecompositionGpu(TypeDecomposition *decomposeHost1, ul
     free(decomposeHost2Transpose);
 }
 
-void GpuComputing::debugInfo()
+void GpuComputing::debugInfo(const char *file, int line, const char *info)
 {
-    printf("debug gpu info\n");
+    printf("This is debugInfo(%s) of %s in %s at line %d\n", info, "GpuComputing", file, line);
 }
 
 #endif /* USE_CUDA */

@@ -20,7 +20,7 @@ public:
 
     bool isUse();
 
-    void debugInfo();
+    void debugInfo(const char *file, int line, const char *info = 0);
 };
 
 #endif /* __GPU_COMPUTING_HEADER__ */

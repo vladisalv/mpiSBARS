@@ -1,7 +1,7 @@
 #include "decomposition.h"
 
 Decomposition::Decomposition(MyMPI me)
-    : MatrixMPI<TypeDecomposition, ulong>(me)
+    : MatrixMPI<TypeDecomposition, ulong>(me, "Decomposition")
 {
 }
 

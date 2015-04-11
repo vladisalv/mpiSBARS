@@ -1,16 +1,7 @@
 :e src/main2.cpp
 
-:tabnew src/options.cpp
-:65 vs include/options.h
-
-:tabnew src/decomposition.cpp
-:65 vs include/decomposition.h
-
 :tabnew src/compare.cpp
 :65 vs include/compare.h
-
-:tabnew src/matrix_gomology.cpp
-:65 vs include/matrix_gomology.h
 
 :tabnew src/analyze.cpp
 :65 vs include/analyze.h

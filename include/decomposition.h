@@ -10,6 +10,7 @@ public:
     ~Decomposition();
     friend class Decompose;
     friend class Compare;
+    friend class Analyze;
 };
 
 #endif /* __DECOMPOSITION_HEADER__ */

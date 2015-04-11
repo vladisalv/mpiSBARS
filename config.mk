@@ -9,11 +9,11 @@ NUMBER_COEFFICIENT = 75
 EPS                = 0.01
 INPUT_DIR := ./test/samples
 #INPUT_FILE := rat165M
-#INPUT_FILE := file5M
+#INPUT_FILE1 := file7.5M
 #INPUT_FILE1 := file5M
 #INPUT_FILE2 := file5M
-INPUT_FILE1 := file74K
-INPUT_FILE2 := file74K
+INPUT_FILE1 := file50K
+#INPUT_FILE2 := file50K
 
 OUTPUT_DIR := ./picture
 OUTPUT_FILE = pic_$(DATE)
@@ -21,17 +21,17 @@ OUTPUT_FILE = pic_$(DATE)
 #FILE_OUTPUT = ./result/$(N)_$(INPUT_FILE)_$(GPU)
 FILE_OUTPUT = stdout
 
-#GPU = --gpu
-#PIC = --output $(OUTPUT_DIR)/$(OUTPUT_FILE)
+GPU = --gpu
+#PIC = --image-save $(OUTPUT_DIR)/$(OUTPUT_FILE)
 #DEC = --decompose-save-firstGC dec_firstGC --decompose-save-firstGA dec_firstGA
-#ANALYS = --repeats-analysis-save $(OUTPUT_DIR)/$(OUTPUT_FILE)
-ANALYS = --matrix-gomology-save $(OUTPUT_DIR)/$(OUTPUT_FILE)
+ANALYS = --repeats-analysis-save $(OUTPUT_DIR)/$(OUTPUT_FILE)
+#ANALYS = --matrix-gomology-save $(OUTPUT_DIR)/$(OUTPUT_FILE)
             #-F $(INPUT_DIR)/$(INPUT_FILE2)                              \
 
 #USE_MATRIX = --use-matrix
+            #-F $(INPUT_DIR)/$(INPUT_FILE2)                              \
 
 ARGUMENTS = -f $(INPUT_DIR)/$(INPUT_FILE1)                              \
-            -F $(INPUT_DIR)/$(INPUT_FILE2)                              \
             --profiling-window     $(PROFILING_WINDOW)                  \
             --decompose-window     $(DECOMPOSE_WINDOW)                  \
             --step-decompose       $(STEP_DECOMPOSE)                    \

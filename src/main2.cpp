@@ -13,6 +13,8 @@
 #include "set_repeats.h"
 #include "image.h"
 
+#define debugInfo() debugInfo( __FILE__, __LINE__ )
+
 using namespace std;
 
 int main2(int argc, char *argv[])
@@ -40,26 +42,30 @@ int main2(int argc, char *argv[])
     GpuComputing gpu(me, opt.gpuMode());
 
     if (me.isRoot()) {
-        DEBUG(opt.debugInfo());
-		DEBUG(me.debugInfo());
-        DEBUG(gpu.debugInfo());
+        opt.debugInfo();
+        //me.debugInfo();
+        //gpu.debugInfo();
     }
+    me.rootMessage("init...\n");
+    double init_time = me.getTime() - begin_time;
 
-    DEBUG(me.rootMessage("begin...\n"));
     Sequence sequence1(me), sequence2(me);
     if (opt.downloadSequence()) {
         sequence1.readFile(opt.getFileSequenceLoad1());
         if (!opt.selfMode())
             sequence2.readFile(opt.getFileSequenceLoad2());
-        DEBUG(me.rootMessage("load sequence...\n"));
+        me.rootMessage("load sequence...\n");
     }
     if (opt.saveSequence()) {
         if (opt.getFileSequenceSave1())
             sequence1.writeFile(opt.getFileSequenceSave1());
         if (opt.getFileSequenceSave2())
             sequence2.writeFile(opt.getFileSequenceSave2());
-        DEBUG(me.rootMessage("save sequence...\n"));
+        me.rootMessage("save sequence...\n");
     }
+    //DEBUG(sequence1.debugInfo());
+    //DEBUG(sequence2.debugInfo());
+    double sequence_time = me.getTime() - begin_time;
 
     Profile profile1GC(me), profile1GA(me), profile2GC(me), profile2GA(me);
     if (opt.profileMode()) {
@@ -76,7 +82,7 @@ int main2(int argc, char *argv[])
                 profile2GA = profiling.doProfile(sequence2, 'G', 'A');
             sequence2.free();
         }
-        DEBUG(me.rootMessage("profiling done...\n"));
+        me.rootMessage("profiling done...\n");
         if (opt.saveProfile()) {
 			if (opt.getFileProfileSave1GC())
                 profile1GC.writeFile(opt.getFileProfileSave1GC());
@@ -86,7 +92,7 @@ int main2(int argc, char *argv[])
                 profile2GC.writeFile(opt.getFileProfileSave2GC());
 			if (opt.getFileProfileSave2GA())
                 profile2GA.writeFile(opt.getFileProfileSave2GA());
-            DEBUG(me.rootMessage("save profile..\n."));
+            me.rootMessage("save profile...\n");
         }
     }
     if (opt.downloadProfile()) {
@@ -98,8 +104,12 @@ int main2(int argc, char *argv[])
             profile2GC.readFile(opt.getFileProfileLoad2GC());
         if (opt.getFileProfileLoad2GA())
             profile2GA.readFile(opt.getFileProfileLoad2GA());
-        DEBUG(me.rootMessage("load profile...\n"));
+        me.rootMessage("load profile...\n");
     }
+    //DEBUG(profile1GC.debugInfo());
+    //DEBUG(profile1GA.debugInfo());
+    //DEBUG(profile2GC.debugInfo());
+    //DEBUG(profile2GA.debugInfo());
     double profile_time = me.getTime() - begin_time;
 
     Decomposition decomposition1GC(me), decomposition1GA(me);
@@ -122,7 +132,7 @@ int main2(int argc, char *argv[])
             profile2GC.free();
             profile2GA.free();
         }
-        DEBUG(me.rootMessage("decompose done...\n"));
+        me.rootMessage("decompose done...\n");
         if (opt.saveDecompose()) {
             if (opt.getFileDecompositionSave1GC())
                 decomposition1GC.writeFile(opt.getFileDecompositionSave1GC());
@@ -132,7 +142,7 @@ int main2(int argc, char *argv[])
                 decomposition2GC.writeFile(opt.getFileDecompositionSave2GC());
             if (opt.getFileDecompositionSave2GA())
                 decomposition2GA.writeFile(opt.getFileDecompositionSave2GA());
-            DEBUG(me.rootMessage("save decomposition...\n"));
+            me.rootMessage("save decomposition...\n");
         }
     }
     if (opt.downloadDecompose()) {
@@ -144,8 +154,12 @@ int main2(int argc, char *argv[])
             decomposition2GC.readFile(opt.getFileDecompositionLoad2GC());
         if (opt.getFileDecompositionLoad2GA())
             decomposition2GA.readFile(opt.getFileDecompositionLoad2GA());
-        DEBUG(me.rootMessage("load decomposition...\n"));
+        me.rootMessage("load decomposition...\n");
     }
+    //DEBUG(decomposition1GC.debugInfo());
+    //DEBUG(decomposition1GA.debugInfo());
+    //DEBUG(decomposition2GC.debugInfo());
+    //DEBUG(decomposition2GA.debugInfo());
     double decompose_time = me.getTime() - begin_time;
 
     MatrixGomology matrixGomologyGC(me), matrixGomologyGA(me), matrixGomology(me);
@@ -175,22 +189,29 @@ int main2(int argc, char *argv[])
             matrixGomology = matrixGomologyGC;
         else if (opt.modeGA())
             matrixGomology = matrixGomologyGA;
-        DEBUG(me.rootMessage("compare done...\n"));
+        me.rootMessage("compare done...\n");
         if (opt.saveGomology()) {
-            if (opt.getFileMatrixGomologySave())
+            if (opt.getFileMatrixGomologySave()) {
                 matrixGomology.writeFile(opt.getFileMatrixGomologySave());
-            if (opt.getFileImageSave())
+                me.rootMessage("save matrix gomology...\n");
+            }
+            if (opt.getFileImageSave()) {
                 image.saveImage(matrixGomology, opt.getFileImageSave());
-            DEBUG(me.rootMessage("save matrix gomology...\n"));
+                me.rootMessage("save image gomology...\n");
+            }
         }
     }
     if (opt.downloadGomology()) {
-        if (opt.getFileMatrixGomologyLoad())
+        if (opt.getFileMatrixGomologyLoad()) {
             matrixGomology.readFile(opt.getFileMatrixGomologyLoad());
-        if (opt.getFileImageLoad())
+            me.rootMessage("load matrix gomology...\n");
+        }
+        if (opt.getFileImageLoad()) {
             image.loadImage(matrixGomology, opt.getFileImageLoad());
-        DEBUG(me.rootMessage("load matrix gomology...\n"));
+            me.rootMessage("load image gomology...\n");
+        }
     }
+    //DEBUG(matrixGomology.debugInfo());
     double gomology_time = me.getTime() - begin_time;
 
 
@@ -203,45 +224,52 @@ int main2(int argc, char *argv[])
             matrixGomology.free();
         } else {
             SetRepeats repGC(me), repGA(me);
+            me.rootMessage("HERE1\n");
             if (opt.modeGC()) {
                 if (opt.selfMode())
                     repGC = analyze.doAnalyze(decomposition1GC);
                 else
                     repGC = analyze.doAnalyze(decomposition1GC, decomposition2GC);
             }
+            me.rootMessage("HERE2\n");
             if (opt.modeGA()) {
                 if (opt.selfMode())
                     repGA = analyze.doAnalyze(decomposition1GA);
                 else
                     repGA = analyze.doAnalyze(decomposition1GA, decomposition2GA);
             }
+            me.rootMessage("HERE3\n");
             if (opt.modeGC() && opt.modeGA())
                 setRepeats = analyze.comparisonRepeats(repGC, repGA);
+            me.rootMessage("HERE4\n");
             decomposition1GC.free();
             decomposition1GA.free();
             decomposition2GC.free();
             decomposition2GA.free();
         }
-        setRepeats.analyzeOtherProcess();
-        DEBUG(me.rootMessage("analyze repeats done...\n"));
+        //setRepeats.analyzeOtherProcess();
+        me.rootMessage("analyze repeats done...\n");
         if (opt.saveAnalysis()) {
             setRepeats.writeFile(opt.getFileAnalysisSave());
-            DEBUG(me.rootMessage("save repeats...\n"));
+            me.rootMessage("save repeats...\n");
         }
     }
     if (opt.downloadAnalysis()) {
         setRepeats.readFile(opt.getFileAnalysisLoad());
-        DEBUG(me.rootMessage("load repeats...\n"));
+        me.rootMessage("load repeats...\n");
     }
+    //DEBUG(setRepeats.debugInfo());
     double analyze_time = me.getTime() - begin_time;
 
     double total_time = me.getTime() - begin_time;
     me.rootMessage("Total time = %lf\n", total_time);
 
-    me.rootMessage("profile.   Time = %5.2lf. Clear time = %5.2lf. This is %3.1lf%% of time\n", profile_time, profile_time, (profile_time) / total_time * 100);
-    me.rootMessage("decompose. Time = %5.2lf. Clear time = %5.2lf. This is %3.1lf%% of time\n", decompose_time, decompose_time - profile_time, (decompose_time - profile_time) / total_time * 100);
-    me.rootMessage("gomology.  Time = %5.2lf. Clear time = %5.2lf. This is %3.1lf%% of time\n", gomology_time, gomology_time - decompose_time, (gomology_time - decompose_time) / total_time * 100);
-    me.rootMessage("analyze.   Time = %5.2lf. Clear time = %5.2lf. This is %3.1lf%% of time\n", analyze_time, analyze_time - gomology_time, (analyze_time - gomology_time) / total_time * 100);
+    me.rootMessage("init.      Time = %5.2lf. Clear time = %5.2lf. This is %3.1lf%% of time\n", init_time,      init_time - 0,                   (init_time - 0)                  / total_time * 100);
+    me.rootMessage("sequence.  Time = %5.2lf. Clear time = %5.2lf. This is %3.1lf%% of time\n", sequence_time,  sequence_time - init_time,       (sequence_time - init_time)      / total_time * 100);
+    me.rootMessage("profile.   Time = %5.2lf. Clear time = %5.2lf. This is %3.1lf%% of time\n", profile_time,   profile_time - sequence_time,    (profile_time - sequence_time)   / total_time * 100);
+    me.rootMessage("decompose. Time = %5.2lf. Clear time = %5.2lf. This is %3.1lf%% of time\n", decompose_time, decompose_time - profile_time,   (decompose_time - profile_time)  / total_time * 100);
+    me.rootMessage("gomology.  Time = %5.2lf. Clear time = %5.2lf. This is %3.1lf%% of time\n", gomology_time,  gomology_time  - decompose_time, (gomology_time - decompose_time) / total_time * 100);
+    me.rootMessage("analyze.   Time = %5.2lf. Clear time = %5.2lf. This is %3.1lf%% of time\n", analyze_time,   analyze_time   - gomology_time,  (analyze_time - gomology_time)   / total_time * 100);
 
     return 0;
 }

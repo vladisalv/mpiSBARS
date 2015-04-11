@@ -9,6 +9,8 @@
 template <class DataType, class LengthData>
 class ArrayMPI : public DataMPI<DataType, LengthData> {
 protected:
+    LengthData offset;
+
     virtual void readMPI(char *file_name);
     virtual void readUsually(char *file_name);
     virtual void readMy(char *file_name);
@@ -17,8 +19,9 @@ protected:
     virtual void writeUsually(char *file_name);
     virtual void writeMy(char *file_name);
 public:
-    ArrayMPI(MyMPI me);
+    ArrayMPI(MyMPI me, const char *class_name);
     virtual ~ArrayMPI();
+    virtual void debugInfo(const char *file, int line, const char *info = 0);
 };
 
 #include "arrayMPI.tcc"

@@ -9,6 +9,7 @@ protected:
     MyMPI me;
     DataType *data;
     LengthData length;
+    const char *class_name;
 
     virtual void readMPI(char *file_name) = 0;
     virtual void readUsually(char *file_name) = 0;
@@ -20,13 +21,14 @@ protected:
 
     LengthData offsetLength(LengthData* &offset, LengthData* &sum_offset, LengthData *var);
 public:
-    DataMPI(MyMPI new_me);
+    DataMPI(MyMPI new_me, const char *class_name_);
     virtual ~DataMPI();
 
     bool isEmpty();
 
     virtual void readFile(char *file_name);
     virtual void writeFile(char *file_name);
+    virtual void debugInfo(const char *file, int line, const char *info = 0) = 0;
     void free();
 };
 

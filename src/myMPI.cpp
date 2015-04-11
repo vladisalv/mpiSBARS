@@ -250,11 +250,12 @@ char *MyMPI::getStrRank()
     return rank_str;
 }
 
-void MyMPI::debugInfo(const char *str)
+void MyMPI::debugInfo(const char *file, int line, const char *info)
 {
+    fflush(stdout);
     if (root) {
         printf("\n");
-        printf("Hi! I'm root. This is debugInfo(%s) of MyMPI\n", str);
+        printf("This is debugInfo(%s) of %s in %s at line %d\n", info, "MyMPI", file, line);
         printf("We have %d process. I'm rank = %d\n", size, rank);
         printf("Now we have in system %d MPI object.\n", numberObject);
         if (comm == MPI_COMM_WORLD)
@@ -262,54 +263,62 @@ void MyMPI::debugInfo(const char *str)
         else
             printf("Your comm NOT MPI_COMM_WORLD\n");
         printf("\n");
-        fflush(stdout);
     }
+    fflush(stdout);
 }
 
 void MyMPI::rootMessage(const char *format, ...)
 {
+    fflush(stdout);
+    Synchronize();
+    fflush(stdout);
     if (root) {
         va_list arg;
         va_start(arg, format);
         vprintf(format, arg);
         va_end(arg);
-        fflush(stdout);
     }
+    fflush(stdout);
+    Synchronize();
+    fflush(stdout);
 }
 
 void MyMPI::allMessage(const char *format, ...)
 {
     fflush(stdout);
     Synchronize();
-    if (rank == root)
-        printf("\n");
+    fflush(stdout);
     for (int i = 0; i < size; i++) {
         if (i == rank) {
-            printf("[%s]:\n", rank_str);
+            printf("[%s]:", rank_str);
             va_list arg;
             va_start(arg, format);
             vprintf(format, arg);
             va_end(arg);
             fflush(stdout);
         }
+        fflush(stdout);
         Synchronize();
+        fflush(stdout);
     }
     if (rank == root)
         printf("\n\n");
+    fflush(stdout);
     Synchronize();
     fflush(stdout);
 }
 
 void MyMPI::myMessage(int myrank, const char *format, ...)
 {
+    fflush(stdout);
     if (rank == myrank) {
         printf("Process %s: ", rank_str);
         va_list arg;
         va_start(arg, format);
         vprintf(format, arg);
         va_end(arg);
-        fflush(stdout);
     }
+    fflush(stdout);
 }
 
 #endif /* USE_MPI */

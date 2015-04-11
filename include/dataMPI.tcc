@@ -1,8 +1,8 @@
 #include "dataMPI.h"
 
 template <class DataType, class LengthData>
-DataMPI<DataType, LengthData>::DataMPI(MyMPI new_me)
-    : data(0), length(0), me(new_me)
+DataMPI<DataType, LengthData>::DataMPI(MyMPI new_me, const char *class_name_)
+    : data(0), length(0), me(new_me), class_name(class_name_)
 {
 }
 

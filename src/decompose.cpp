@@ -24,10 +24,14 @@ Decomposition Decompose::doDecompose(Profile &profile)
     }
 
     uint modulo1; // modulo before you
-    if (me.isLast())
+    uint offset_decomposition;
+    if (me.isLast()) {
         modulo1 = (length_other * me.getRank()) % step;
-    else
+        offset_decomposition = (length_other * me.getRank()) / step;
+    } else {
         modulo1 = (profile.length * me.getRank()) % step;
+        offset_decomposition = (profile.length * me.getRank()) / step;
+    }
 
     ulong length_send_message;
     if (modulo1)
@@ -62,7 +66,7 @@ Decomposition Decompose::doDecompose(Profile &profile)
         number_another_window = 0;
     } else {
         number_all_window = ceil((double)work_length_profile / (double)step);
-        number_my_window = ceil((double)(work_length_profile - window) / (double)step);
+        number_my_window  = ceil((double)(work_length_profile - window) / (double)step);
         number_another_window = number_all_window - number_my_window;
     }
 
@@ -83,7 +87,9 @@ Decomposition Decompose::doDecompose(Profile &profile)
 
     Decomposition decomposition(me);
     decomposition.height = number_all_window;
+    decomposition.offset_row = offset_decomposition;
     decomposition.width = number_coef;
+    decomposition.offset_column = 0;
     decomposition.length = number_all_window * number_coef;
     decomposition.data = new TypeDecomposition [decomposition.length];
 

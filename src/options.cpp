@@ -10,7 +10,7 @@ Options::Options(int argc, char *argv[])
     step_decompose = number_coef_decompose = 0;
     min_length_repeat = 1;
     fidelity_repeat = 1.;
-    limit_memory = 100 * 1048576; // 100 Mb
+    limit_memory = 100; // 100 Mb
 
     profile_mode = decompose_mode = gomology_mode = analysis_mode = false;
     gpu_mode = false;
@@ -475,7 +475,7 @@ void Options::defineMode()
 
 
 
-void Options::debugInfo()
+void Options::debugInfo(const char *file, int line, const char *info)
 {
     /*
     printf("\n");
@@ -486,38 +486,39 @@ void Options::debugInfo()
     printf("number_coef_decompose = %d\n", number_coef_decompose);
     printf("eps = %f\n", eps);
     */
+    printf("This is debugInfo(%s) of %s in %s at line %d\n", info, "Options", file, line);
     printf("name f = %s\n", sequence_load_first);
     printf("name F = %s\n", sequence_load_second);
     printf("use gpu = %s\n", gpu_mode ? "true" : "false");
     printf("\n");
     if (download_sequence)
-        printf("\t download_sequence\n");
+        printf("download_sequence\n");
     if (save_sequence)
-        printf("\t save_sequence\n");
+        printf("\t\t save_sequence\n");
     if (profile_mode)
-        printf("profile_mode\n");
+        printf("\t profile_mode\n");
     if (save_profile)
-        printf("\t save_profile\n");
+        printf("\t\t save_profile\n");
     if (download_profile)
-        printf("\t download_profile\n");
+        printf("download_profile\n");
     if (decompose_mode)
-        printf("decompose_mode\n");
+        printf("\t decompose_mode\n");
     if (save_decompose)
-        printf("\t save_decompose\n");
+        printf("\t\t save_decompose\n");
     if (download_decompose)
-        printf("\t download_decompose\n");
+        printf("download_decompose\n");
     if (gomology_mode)
-        printf("gomology_mode\n");
+        printf("\t gomology_mode\n");
     if (save_gomology)
-        printf("\t save_gomology\n");
+        printf("\t\t save_gomology\n");
     if (download_gomology)
-        printf("\t download_gomology\n");
+        printf("download_gomology\n");
     if (analysis_mode)
-        printf("analysis_mode\n");
+        printf("\t analysis_mode\n");
     if (save_analysis)
-        printf("\t save_analysis\n");
+        printf("\t\t save_analysis\n");
     if (download_analysis)
-        printf("\t download_analysis\n");
+        printf("download_analysis\n");
 }
 
 
@@ -654,7 +655,7 @@ unsigned long Options::getMinLengthRepeat()
 
 size_t Options::getLimitMemoryMatrix()
 {
-    return number_coef_decompose;
+    return 1048576 * limit_memory; // limit_memory MB
 }
 
 

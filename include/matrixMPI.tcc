@@ -1,8 +1,8 @@
 #include "matrixMPI.h"
 
 template <class DataType, class LengthData>
-MatrixMPI<DataType, LengthData>::MatrixMPI(MyMPI me)
-    : DataMPI<DataType, LengthData>(me), width(0), height(0)
+MatrixMPI<DataType, LengthData>::MatrixMPI(MyMPI me, const char *class_name)
+    : DataMPI<DataType, LengthData>(me, class_name), width(0), height(0), offset_row(0), offset_column(0)
 {
 }
 
@@ -76,4 +76,15 @@ template <class DataType, class LengthData>
 void MatrixMPI<DataType, LengthData>::writeMy(char *file_name)
 {
     ;
+}
+
+
+template <class DataType, class LengthData>
+void MatrixMPI<DataType, LengthData>::debugInfo(const char *file, int line, const char *info)
+{
+    this->me.rootMessage("\n");
+    this->me.rootMessage("This is debugInfo(%s) of %s in %s at line %d\n", info, this->class_name, file, line);
+    this->me.allMessage("offset_row = %9ld height = %9ld offset_column = %9ld width = %9ld\n",
+            this->offset_row, this->height, this->offset_column, this->width);
+    this->me.rootMessage("\n");
 }

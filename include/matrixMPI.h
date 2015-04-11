@@ -10,6 +10,7 @@ template<class DataType, class LengthData>
 class MatrixMPI : public DataMPI<DataType, LengthData> {
 protected:
     LengthData width, height;
+    LengthData offset_row, offset_column;
 
     virtual void readMPI(char *file_name);
     virtual void readUsually(char *file_name);
@@ -19,8 +20,9 @@ protected:
     virtual void writeUsually(char *file_name);
     virtual void writeMy(char *file_name);
 public:
-    MatrixMPI(MyMPI me);
+    MatrixMPI(MyMPI me, const char *class_name);
     ~MatrixMPI();
+    virtual void debugInfo(const char *file, int line, const char *info = 0);
 };
 
 #include "matrixMPI.tcc"

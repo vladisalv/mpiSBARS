@@ -8,9 +8,7 @@
 #include "matrix_gomology.h"
 #include "set_repeats.h"
 
-#include <list>
-
-using namespace std;
+#include <math.h>
 
 class Analyze {
     MyMPI me;
@@ -21,33 +19,12 @@ class Analyze {
     double fidelity_repeat;
     size_t limit_memory;
 
-    MatrixGomology matrix;
-    ulong my_global_height;
+    TypeDecomposition *dec_other, *buf_tmp;
+    MPI_Request req;
+    void recvDecompositon();
+    bool recvDecompositonAsync();
+    void waitDecomposition();
 
-    list<struct Repeat> repeat_answer;
-    list<struct Repeat> repeat_unknow;
-    list<struct Repeat> repeat_begin;
-
-    bool *flag_end, *flag_end_prev;
-
-    struct Repeat *repeat_alien;
-    ulong repeat_alien_size;
-
-    MPI_Aint lb, extent;
-    MPI_Win win_flag_end, win_repeat_alien;
-    MPI_Group group_comm_world, group_prev, group_next, group_prev_all, group_next_all;
-
-
-    Repeat findRepeat(Coordinates cor);
-    void localSearch0();
-    void localSearch1_n();
-    Coordinates searchRepeat(Coordinates cor);
-
-    void analysisRepeatBegin();
-    void formRepeatAlien();
-    void analysisRepeatUnknow();
-    Repeat requestRepeat(int rank, ulong x);
-    void sortRepeatAnswer();
 public:
     Analyze(MyMPI me, GpuComputing gpu, double eps, ulong min_length, double fidelity_repeat, size_t limit_memory);
     ~Analyze();
@@ -58,7 +35,7 @@ public:
     SetRepeats comparisonRepeats(SetRepeats setRepeats1, SetRepeats setRepeats2);
 
     double getEps();
-    ulong getMinLengthRepeat();
+    ulong  getMinLengthRepeat();
     double getFidelityRepeat();
     size_t getLimitMemoryMatrix();
 

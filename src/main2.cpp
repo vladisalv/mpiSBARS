@@ -42,7 +42,7 @@ int main2(int argc, char *argv[])
     GpuComputing gpu(me, opt.gpuMode());
 
     if (me.isRoot()) {
-        opt.debugInfo();
+        //opt.debugInfo();
         //me.debugInfo();
         //gpu.debugInfo();
     }
@@ -247,7 +247,7 @@ int main2(int argc, char *argv[])
             decomposition2GC.free();
             decomposition2GA.free();
         }
-        //setRepeats.analyzeOtherProcess();
+        setRepeats.analyzeOtherProcess();
         me.rootMessage("analyze repeats done...\n");
         if (opt.saveAnalysis()) {
             setRepeats.writeFile(opt.getFileAnalysisSave());

@@ -3,7 +3,16 @@
 :tabnew src/compare.cpp
 :65 vs include/compare.h
 
-:tabnew src/analyze.cpp
+:tabnew src/gpu_computing.cpp
+:65 vs include/gpu_computing.h
+
+:tabnew src/gpu_computing_decompose.cu
+:65 vs include/gpu_computing.h
+
+:tabnew src/gpu_computing_compare.cu
+:65 vs include/gpu_computing.h
+
+:tabnew src/analyze.cu
 :65 vs include/analyze.h
 
 :tabnew src/set_repeats.cpp

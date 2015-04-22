@@ -22,13 +22,13 @@ OUTPUT_FILE = pic_$(DATE)
 FILE_OUTPUT = stdout
 
 GPU = --gpu
+#USE_MATRIX = --use-matrix
 #PIC = --image-save $(OUTPUT_DIR)/$(OUTPUT_FILE)
 #DEC = --decompose-save-firstGC dec_firstGC --decompose-save-firstGA dec_firstGA
 ANALYS = --repeats-analysis-save $(OUTPUT_DIR)/$(OUTPUT_FILE)
 #ANALYS = --matrix-gomology-save $(OUTPUT_DIR)/$(OUTPUT_FILE)
             #-F $(INPUT_DIR)/$(INPUT_FILE2)                              \
 
-#USE_MATRIX = --use-matrix
             #-F $(INPUT_DIR)/$(INPUT_FILE2)                              \
 
 ARGUMENTS = -f $(INPUT_DIR)/$(INPUT_FILE1)                              \
@@ -52,7 +52,7 @@ QUEUE       = test
 TIME        = 10:00
 
 #define mode compile
-#USE_CUDA = 1
+USE_CUDA = 1
 USE_MPI  = 1
 
 #redefine compiler

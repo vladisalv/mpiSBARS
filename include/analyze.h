@@ -19,7 +19,9 @@ class Analyze {
     double fidelity_repeat;
     size_t limit_memory;
 
-    TypeDecomposition *dec_other, *buf_tmp;
+    TypeDecomposition *buf_tmp;
+    Decomposition decomposition, dec_other;
+    ulong dec_other_height;
     MPI_Request req;
     void recvDecompositon();
     bool recvDecompositonAsync();

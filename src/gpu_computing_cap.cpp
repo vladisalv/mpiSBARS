@@ -35,6 +35,23 @@ void GpuComputing::compareDecompositionGpu(TypeDecomposition *decomposeHost1, ul
 {
 }
 
+void GpuComputing::printInfoDevice(int id)
+{
+    printf("You do not use GPU device\n");
+}
+
+void GpuComputing::infoDevices()
+{
+}
+
+void GpuComputing::infoMyDevice()
+{
+}
+
+void GpuComputing::setDevice(int major, int minor)
+{
+}
+
 void GpuComputing::debugInfo(const char *file, int line, const char *info)
 {
     printf("This is debugInfo(%s) of %s in %s at line %d\n", info, "GpuComputing", file, line);

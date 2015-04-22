@@ -34,6 +34,7 @@ template <class DataType, class LengthData>
 void DataMPI<DataType, LengthData>::free()
 {
     delete [] data;
+    data = 0;
 }
 
 

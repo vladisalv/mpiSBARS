@@ -120,9 +120,9 @@ SetRepeats Analyze::doAnalyze(Decomposition myDecomposition)
                 // kenrnel run
                 // cudaMemcpyAsync DtoH st2
                 if (i == 1)
-                    // merge last and resultColumn-resultBlock. it may be above
+                    ;// merge last and resultColumn-resultBlock. it may be above
                 else
-                    // merge - it can empty merge
+                    ;// merge - it can empty merge
                 // cudaStreamSynchronize(st2);
                 // analyze if (buf != 0)
             }

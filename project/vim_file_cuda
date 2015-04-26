@@ -1,10 +1,19 @@
-:e src/decompose.cpp
+:e src/gpu_computing.cpp
+:65 vs include/gpu_computing.h
+
+:tabnew src/decompose.cpp
 :65 vs include/decompose.h
+
+:tabnew src/gpu_computing_decompose.cu
+:65 vs include/gpu_computing.h
 
 :tabnew src/compare.cpp
 :65 vs include/compare.h
 
-:tabnew src/gpu_computing.cu
+:tabnew src/gpu_computing_compare.cu
+:65 vs include/gpu_computing.h
+
+:tabnew src/gpu_computing_compare2.cu
 :65 vs include/gpu_computing.h
 
 :tabnew src/gpu_computing_cap.cpp

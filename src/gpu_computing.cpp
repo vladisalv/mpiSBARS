@@ -16,11 +16,16 @@ GpuComputing::GpuComputing(MyMPI new_me, bool use)
     int deviceCount;
     HANDLE_ERROR(cudaGetDeviceCount(&deviceCount));
     int myDevice;
+    /*
     if (me.getSize() < 4)
         myDevice = me.getRank() % deviceCount + 1;
     else
         myDevice = me.getRank() % deviceCount;
-	myDevice = 3;
+        */
+    if (me.getRank() % 2)
+        myDevice = 1;
+    else
+        myDevice = 2;
     HANDLE_ERROR(cudaSetDevice(myDevice));
 }
 

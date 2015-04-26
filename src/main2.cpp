@@ -241,6 +241,10 @@ int main2(int argc, char *argv[])
             me.rootMessage("HERE3\n");
             if (opt.modeGC() && opt.modeGA())
                 setRepeats = analyze.comparisonRepeats(repGC, repGA);
+            else if (opt.modeGC())
+                setRepeats = repGC;
+            else if (opt.modeGA())
+                setRepeats = repGA;
             me.rootMessage("HERE4\n");
             decomposition1GC.free();
             decomposition1GA.free();

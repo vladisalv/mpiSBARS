@@ -50,6 +50,7 @@ void GpuComputing::compareDecompositionGpu(TypeDecomposition *decomposeHost1, ul
     HANDLE_ERROR(cudaMemcpy(decomposeDevice1, decomposeHost1,          size_decompose1, cudaMemcpyHostToDevice));
     HANDLE_ERROR(cudaMemcpy(decomposeDevice2, decomposeHost2Transpose, size_decompose2, cudaMemcpyHostToDevice));
 
+    me.rootMessage("GPU compare version 1\n");
     kernelCompare<<< 128, 128 >>>
         (decomposeDevice1, length_decompose1,
          decomposeDevice2, length_decompose2,

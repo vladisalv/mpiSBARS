@@ -41,7 +41,7 @@ OUTPUT_FILE ?= output_$(DATE)
 # ----------------------  LAUNCH OPTIONS  --------------------------------------
 ARGUMENTS ?= -h
 MACHINE ?= host
-NODE ?=
+NODE ?= 1
 NUMBER_PROC ?= 1
 QUEUE ?=
 TIME ?=
@@ -53,14 +53,15 @@ TARGET_NOW ?= debug
 # -----------------------  CODE DIRECTORY  -------------------------------------
 INCLUDE_DIR ?= include /opt/cuda/include
 SRC_DIR ?= src
-LIB_DIR ?= 
-LIBRARY ?= 
-#LIB_DIR ?= /usr/local/cuda/lib64/
-#LIBRARY ?= cudart cublas
+LIB_DIR ?= /usr/local/cuda/lib64/ /opt/cuda/cuda-6.5/lib64/
+LIBRARY ?= cudart cublas
 # ----------------------------  FLAGS  -----------------------------------------
 
 # FLAGS := $(FLAGSCOMMON) $(FLAGSGOAL) $(FLAGSINCLUDES) $(FLAGLIBS) 
-CUFLAGSGOAL = -arch=sm_20 -Xptxas -v -ccbin mpiCC
+CUFLAGSGOAL = -arch=sm_20 -Xptxas -v
+ifdef USE_MPI
+    CUFLAGSGOAL += -ccbin mpiCC
+endif
 
 PRINT = @
 
@@ -77,24 +78,23 @@ include $(wildcard Makefile.skel)
 all: build
 
 build: mkdir $(OBJ_MODULES)
-	echo Compiling program.....
-	$(PRINT)$(CXX) $(CFLAGS) -L/opt/cuda/lib64 $(filter-out mkdir, $^) -o $(BIN_NOW)/$(BINARY_NAME) $(CFLAGSLIB) -lcudart
+	$(PRINT)echo Compiling program.....
+	$(PRINT)$(CXX) $(CXXFLAGS) $(filter-out mkdir, $^) -o $(BIN_NOW)/$(BINARY_NAME) $(CXXFLAGSLIBRARY)
 
 # запуск
 run:
 	$(PRINT)$(RUN) ./$(BIN_NOW)/$(BINARY_NAME) $(ARGUMENTS)
-	#$(PRINT)$(RUN) ./$(BIN_NOW)/$(BINARY_NAME) $(ARGUMENTS) > $(FILE_OUTPUT)
 
 rebuild: clean_exec build
 
 clean: clean_exec clean_result
 
 clean_exec:
-	@echo clean exec
+	$(PRINT)echo clean exec
 	$(PRINT)rm -f $(OBJ_NOW)/* $(BIN_NOW)/*
 
 clean_result:
-	@echo clean data
+	$(PRINT)echo clean data
 	$(PRINT)rm -f $(OUTPUT_DIR)/*
 
 # вывести опции программы
@@ -103,11 +103,11 @@ option:
 
 # посмотреть свою очередь
 watch:
-	watch -n 1 squeue -u $(USER)
+	watch -n 1 $(WATCH) -u $(USER)
 
 # отменить все поставленные задачи
 cancel:
-	scancel -u $(USER)
+	$(CANCEL) -u $(USER)
 
 # создать все необходимые директории
 mkdir:
@@ -115,7 +115,6 @@ mkdir:
 	$(PRINT)mkdir -p $(OBJ_NOW)
 	$(PRINT)mkdir -p $(OUTPUT_DIR)
 
-#test: $(OBJ_NOW)/options.o
 test:
 	#$(PRINT)$(CXX) $^ $(CFLAGS) test/opt.cpp  -o test/opt $(CFLAGSLIB)
 	#./test/opt -h

@@ -49,27 +49,33 @@ CXXFLAGSINCLUDES += $(FLAGSINCLUDES) $(addprefix -I, $(INCLUDE_DIR))
 FFLAGSINCLUDES   += $(FLAGSINCLUDES)
 TEXFLAGSINCLUDES +=
 # ------------------  LIBRARY FLAGS  -------------------------------------------
-ASFLAGSLIB  +=
-CFLAGSLIB   += $(FLAGSLIB) $(addprefix -L, $(LIB_DIR)) $(addprefix -l, $(LIBRARY))
-CUFLAGSLIB  += $(FLAGSLIB) $(addprefix -L, $(LIB_DIR)) $(addprefix -l, $(LIBRARY))
-CXXFLAGSLIB += $(FLAGSLIB) $(addprefix -L, $(LIB_DIR)) $(addprefix -l, $(LIBRARY))
-FFLAGSLIB   += $(FLAGSLIB)
-TEXFLAGSLIB +=
+ASFLAGSLIBPATH  +=
+CFLAGSLIBPATH   += $(FLAGSLIB) $(addprefix -L, $(LIB_DIR))
+CUFLAGSLIBPATH  += $(FLAGSLIB) $(addprefix -L, $(LIB_DIR))
+CXXFLAGSLIBPATH += $(FLAGSLIB) $(addprefix -L, $(LIB_DIR))
+FFLAGSLIBPATH   += $(FLAGSLIB)
+TEXFLAGSLIBPATH +=
 
+ASFLAGSLIBRARY  +=
+CFLAGSLIBRARY   += $(addprefix -l, $(LIBRARY))
+CUFLAGSLIBRARY  += $(addprefix -l, $(LIBRARY))
+CXXFLAGSLIBRARY += $(addprefix -l, $(LIBRARY))
+FFLAGSLIBRARY   +=
+TEXFLAGSLIBRARY +=
 # ------------------  UNION FLAGS  ---------------------------------------------
-FLAGS := $(FLAGSCOMMON) $(FLAGSGOAL) $(FLAGSINCLUDES) $(FLAGSLIB) 
-ASFLAGS := $(AFLAGSCOMMON) $(AFLAGSGOAL) $(AFLAGSINCLUDES) $(AFLAGSLIB) 
-CFLAGS := $(CFLAGSCOMMON) $(CFLAGSGOAL) $(CFLAGSINCLUDES) $(CFLAGSLIB) 
-CUFLAGS := $(CUFLAGSCOMMON) $(CUFLAGSGOAL) $(CUFLAGSINCLUDES) $(CUFLAGSLIB) 
-CXXFLAGS := $(CXXFLAGSCOMMON) $(CXXFLAGSGOAL) $(CXXFLAGSINCLUDES) $(CXXFLAGSLIB) 
-FFLAGS := $(FFLAGSCOMMON) $(FFLAGSGOAL) $(FFLAGSINCLUDES) $(FFLAGSLIB) 
-TEXFLAGS := $(TEXFLAGSCOMMON) $(TEXFLAGSGOAL) $(TEXFLAGSINCLUDES) $(TEXFLAGSLIB) 
+FLAGS := $(FLAGSCOMMON) $(FLAGSGOAL) $(FLAGSINCLUDES) $(FLAGSLIBPATH)
+ASFLAGS := $(AFLAGSCOMMON) $(AFLAGSGOAL) $(AFLAGSINCLUDES) $(AFLAGSLIBPATH)
+CFLAGS := $(CFLAGSCOMMON) $(CFLAGSGOAL) $(CFLAGSINCLUDES) $(CFLAGSLIBPATH)
+CUFLAGS := $(CUFLAGSCOMMON) $(CUFLAGSGOAL) $(CUFLAGSINCLUDES) $(CUFLAGSLIBPATH) 
+CXXFLAGS := $(CXXFLAGSCOMMON) $(CXXFLAGSGOAL) $(CXXFLAGSINCLUDES) $(CXXFLAGSLIBPATH) 
+FFLAGS := $(FFLAGSCOMMON) $(FFLAGSGOAL) $(FFLAGSINCLUDES) $(FFLAGSLIBPATH)
+TEXFLAGS := $(TEXFLAGSCOMMON) $(TEXFLAGSGOAL) $(TEXFLAGSINCLUDES) $(TEXFLAGSLIBPATH) 
 # ==============================================================================
 
 
 # определение всех имен через директории
 
-SRC_EXTENSION := cpp c f90 py
+SRC_EXTENSION := cpp c f90 f77 py
 ifdef USE_CUDA
     SRC_EXTENSION += cu
 endif
@@ -121,57 +127,61 @@ TEX ?= latex
 
 # ------------------  C  -------------------------------------------------------
 %.o: %.c %.h
-	$(PRINT)$(CC) $(CFLAGS) -c $<  -o $(OBJ_NOW)/$@
+	$(PRINT)$(CC) $(CFLAGS) -c $<  -o $(OBJ_NOW)/$@ $(CFLAGSLIBRARY)
 %.o: %.c
-	$(PRINT)$(CC) $(CFLAGS) -c $<  -o $(OBJ_NOW)/$@
+	$(PRINT)$(CC) $(CFLAGS) -c $<  -o $(OBJ_NOW)/$@ $(CFLAGSLIBRARY)
 
 # ------------------  CUDA  ----------------------------------------------------
 %.o: %.cu %.h
-	$(PRINT)$(CUC) $(CUFLAGS) -c $<  -o $(OBJ_NOW)/$@
+	$(PRINT)$(CUC) $(CUFLAGS) -c $<  -o $(OBJ_NOW)/$@ $(CUFLAGSLIBRARY)
 %.o: %.cu
-	$(PRINT)$(CUC) $(CUFLAGS) -c $<  -o $(OBJ_NOW)/$@
+	$(PRINT)$(CUC) $(CUFLAGS) -c $<  -o $(OBJ_NOW)/$@ $(CUFLAGSLIBRARY)
 
 # ------------------  CPP  -----------------------------------------------------
 %.o: %.cpp %.h
-	$(PRINT)$(CXX) $(CXXFLAGS) -c $<  -o $(OBJ_NOW)/$@
+	$(PRINT)$(CXX) $(CXXFLAGS) -c $<  -o $(OBJ_NOW)/$@ $(CXXFLAGSLIBRARY)
 %.o: %.cpp %.hpp
-	$(PRINT)$(CXX) $(CXXFLAGS) -c $<  -o $(OBJ_NOW)/$@
+	$(PRINT)$(CXX) $(CXXFLAGS) -c $<  -o $(OBJ_NOW)/$@ $(CXXFLAGSLIBRARY)
 %.o: %.cpp
-	$(PRINT)$(CXX) $(CXXFLAGS) -c $<  -o $(OBJ_NOW)/$@
+	$(PRINT)$(CXX) $(CXXFLAGS) -c $<  -o $(OBJ_NOW)/$@ $(CXXFLAGSLIBRARY)
 
 # ------------------  FORTRAN  -------------------------------------------------
 %.o: %.f90 %.h
-	$(PRINT)$(FC) $(FFLAGS) -c $<  -o $(OBJ_NOW)/$@
+	$(PRINT)$(FC) $(FFLAGS) -c $<  -o $(OBJ_NOW)/$@ $(FFLAGSLIBRARY)
 %.o: %.f90
-	$(PRINT)$(FC) $(FFLAGS) -c $<  -o $(OBJ_NOW)/$@
+	$(PRINT)$(FC) $(FFLAGS) -c $<  -o $(OBJ_NOW)/$@ $(FFLAGSLIBRARY)
 %.o: %.f77 %.h
-	$(PRINT)$(FC) $(FFLAGS) -c $<  -o $(OBJ_NOW)/$@
+	$(PRINT)$(FC) $(FFLAGS) -c $<  -o $(OBJ_NOW)/$@ $(FFLAGSLIBRARY)
 %.o: %.f77
-	$(PRINT)$(FC) $(FFLAGS) -c $<  -o $(OBJ_NOW)/$@
+	$(PRINT)$(FC) $(FFLAGS) -c $<  -o $(OBJ_NOW)/$@ $(FFLAGSLIBRARY)
 %.mod: %.f90 %.h
-	$(PRINT)$(FC) $(FFLAGS) -c $<  -o $(OBJ_NOW)/$@
+	$(PRINT)$(FC) $(FFLAGS) -c $<  -o $(OBJ_NOW)/$@ $(FFLAGSLIBRARY)
 %.mod: %.f90
-	$(PRINT)$(FC) $(FFLAGS) -c $<  -o $(OBJ_NOW)/$@
+	$(PRINT)$(FC) $(FFLAGS) -c $<  -o $(OBJ_NOW)/$@ $(FFLAGSLIBRARY)
 %.mod: %.f77 %.h
-	$(PRINT)$(FC) $(FFLAGS) -c $<  -o $(OBJ_NOW)/$@
+	$(PRINT)$(FC) $(FFLAGS) -c $<  -o $(OBJ_NOW)/$@ $(FFLAGSLIBRARY)
 %.mod: %.f77
-	$(PRINT)$(FC) $(FFLAGS) -c $<  -o $(OBJ_NOW)/$@
+	$(PRINT)$(FC) $(FFLAGS) -c $<  -o $(OBJ_NOW)/$@ $(FFLAGSLIBRARY)
 
 # ------------------  LATEX  ---------------------------------------------------
 # TEX - compiler
 
 # ==============================================================================
 # =====================  DEFINE MACHINE OPTION  ================================
-ifeq ($(MACHINE), HOST)
-    RUN := 
-else ifeq ($(MACHINE), MPI)
+# if HOST or somethine else. empty
+RUN :=
+ifeq ($(MACHINE), MPI)
     RUN := mpirun -n $(NUMBER_PROC)
-else ifeq ($(MACHINE), LOMONOSOV)
+endif
+ifeq ($(MACHINE), LOMONOSOV)
     RUN := sbatch --nodes=$(NODE) --ntasks=$(NUMBER_PROC) --partition=$(QUEUE) --time=$(TIME) ompi 
-else ifeq ($(MACHINE), BLUEGENE)
-    RUN := mpirun
-else
-    RUN := 
+    WATCH  := squeue
+    CANCEL := scancel
+endif
+ifeq ($(MACHINE), BLUEGENE)
+    RUN := mpisubmit.bg --ntasks=$(NUMBER_PROC) --time=$(TIME)
+    WATCH  := llq
+    CANCEL := llcancel
 endif
 
 

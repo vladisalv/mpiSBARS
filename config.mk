@@ -1,6 +1,7 @@
-PROGRAM_NAME  := SSSDNA
-VERSION_NUMER := 3.0
-DEBUG_MODE    := 1
+PROGRAM_NAME := SSSDNA
+VERSION = $(TARGET_NOW)
+VERSION_NUMBER := 3.0
+TARGET_NOW := debug
 
 PROFILING_WINDOW   = 250
 DECOMPOSE_WINDOW   = 250
@@ -11,10 +12,11 @@ EPS                = 0.01
 INPUT_DIR := ./test/input
 #INPUT_FILE1 := rat165M
 #INPUT_FILE1 := file7.5M
-INPUT_FILE1 := file5M
+#INPUT_FILE1 := file5M
 #INPUT_FILE1 := file50K
+INPUT_FILE1 := $(FILE)
 
-OUTPUT_DIR := ./test/output
+OUTPUT_DIR     := ./test/output
 OUTPUT_FILE     = $(N)_$(DATE)_$(GPU)
 OUTPUT_FILE_DEC = dec_$(DATE)_$(GPU)
 OUTPUT_FILE_GOM = gom_$(DATE)_$(GPU)
@@ -28,7 +30,7 @@ SEQUENCE = -f $(INPUT_DIR)/$(INPUT_FILE1)                              \
 #DEC = --decompose-save-firstGC $(OUTPUT_DIR)/$(OUTPUT_FILE_DEC)_GC \
       --decompose-save-firstGA $(OUTPUT_DIR)/$(OUTPUT_FILE_DEC)_GA
 #GOMOLOGY = --matrix-gomology-save $(OUTPUT_DIR)/$(OUTPUT_FILE_GOM)
-PIC = --image-save $(OUTPUT_DIR)/$(OUTPUT_FILE_PIC)
+#PIC = --image-save $(OUTPUT_DIR)/$(OUTPUT_FILE_PIC)
 ANALYS = --repeats-analysis-save $(OUTPUT_DIR)/$(OUTPUT_FILE_ANA)
 
 ARGUMENTS = --profiling-window     $(PROFILING_WINDOW)                  \
@@ -39,7 +41,7 @@ ARGUMENTS = --profiling-window     $(PROFILING_WINDOW)                  \
             $(GPU) $(USE_MATRIX) $(SEQUENCE) $(DEC) $(GOMOLOGY) $(PIC) $(ANALYS)
 
 # HOST, MPI, LOMONOSOV or BLUEGENE
-MACHINE := MPI
+MACHINE := LOMONOSOV
 
 # short name NUMBER_PROC
 N           = 4
@@ -47,9 +49,11 @@ NUMBER_PROC = $(N)
 
 #short name NUMBER_NODE
 NN          = 1
+NT          = 8
 NUMBER_NODE = $(NN)
-QUEUE       = gputest
-TIME        = 10:00
+NODE_TASK   = $(NT)
+QUEUE       = regular4
+TIME        = 15:00
 
 #define mode compile
 USE_CUDA = 1

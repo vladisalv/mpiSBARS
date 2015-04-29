@@ -83,6 +83,7 @@ SetRepeats Analyze::doAnalyze(Decomposition myDecomposition)
     for (int i = 0; i < me.getSize(); i++)
         me.iSend(decomposition.data, decomposition.length, MPI_TFLOAT, i, 1, &req_send[i]);
 
+#ifdef USE_CUDA
     TypeDecomposition *dec1dev, *dec2dev;
     TypeDecomposition *dec1host, *dec2host;
     dec1host = dec2host = decomposition.data;
@@ -145,7 +146,9 @@ SetRepeats Analyze::doAnalyze(Decomposition myDecomposition)
     dec_other.free();
     cudaStreamDestroy(st1);
     cudaStreamDestroy(st2);
+#endif
 
+    SetRepeats result(me);
     return result;
 }
 

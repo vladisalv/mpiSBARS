@@ -41,7 +41,7 @@ ARGUMENTS = --profiling-window     $(PROFILING_WINDOW)                  \
             $(GPU) $(USE_MATRIX) $(SEQUENCE) $(DEC) $(GOMOLOGY) $(PIC) $(ANALYS)
 
 # HOST, MPI, LOMONOSOV or BLUEGENE
-MACHINE := LOMONOSOV
+MACHINE := BLUEGENE
 
 # short name NUMBER_PROC
 N           = 4
@@ -56,7 +56,7 @@ QUEUE       = regular4
 TIME        = 15:00
 
 #define mode compile
-USE_CUDA = 1
+#USE_CUDA = 1
 USE_MPI  = 1
 
 #redefine compiler

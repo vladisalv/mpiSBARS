@@ -2,11 +2,6 @@
 
 #include "gpu_computing.h"
 
-
-GpuComputing::GpuComputing()
-{
-}
-
 GpuComputing::GpuComputing(MyMPI new_me, bool use)
     : me(new_me), use_gpu(false)
 {
@@ -29,6 +24,13 @@ void GpuComputing::doDecomposeGPU(TypeDecomposition *decomposeHost, uint number_
 
 
 void GpuComputing::compareDecompositionGpu(TypeDecomposition *decomposeHost1, ulong length_decompose1,
+                             TypeDecomposition *decomposeHost2, ulong length_decompose2,
+                             ulong width, TypeGomology *resultHost, ulong begin,
+                             ulong sum_all, double eps)
+{
+}
+
+void GpuComputing::compareDecompositionGpu2(TypeDecomposition *decomposeHost1, ulong length_decompose1,
                              TypeDecomposition *decomposeHost2, ulong length_decompose2,
                              ulong width, TypeGomology *resultHost, ulong begin,
                              ulong sum_all, double eps)

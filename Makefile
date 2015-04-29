@@ -35,7 +35,9 @@ TIME ?= 15:00
 INC_DIR ?= include/ /opt/cuda/include /opt/cuda/cuda-6.5/include/
 SRC_DIR ?= src/
 LIB_DIR ?= /usr/local/cuda/lib64/ /opt/cuda/cuda-6.5/lib64/
-LIBRARY ?= cudart cublas
+ifdef USE_CUDA
+    LIBRARY ?= cudart cublas
+endif
 # ----------------------------  FLAGS  -----------------------------------------
 CUFLAGSGOAL = -arch=sm_20 -Xptxas -v
 ifdef USE_MPI

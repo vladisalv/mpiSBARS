@@ -31,9 +31,10 @@ ifeq ($(MACHINE), LOMONOSOV)
     CANCEL := scancel
 endif
 ifeq ($(MACHINE), BLUEGENE)
-    RUN := mpisubmit.bg --ntasks=$(NUMBER_PROC) --time=$(TIME)
+    RUN := mpisubmit.bg --nproc=$(NUMBER_PROC) --wtime=$(TIME)
     WATCH  := llq
     CANCEL := llcancel
+    BINARY_NAME := $(BINARY_NAME) --
 endif
 # ====================  TARGET, BIN, OBJ  ======================================
 TARGET ?= debug release
@@ -113,9 +114,9 @@ FFLAGSGOAL   ?= $(FLAGSGOAL)
 TEXFLAGSGOAL ?=
 # ------------------  INCLUDE FLAGS  -------------------------------------------
 ASFLAGSINCLUDES  ?=
-CFLAGSINCLUDES   ?= $(FLAGSINCLUDES) $(addprefix -I, $(INCLUDE_DIR))
-CUFLAGSINCLUDES  ?= $(FLAGSINCLUDES) $(addprefix -I, $(INCLUDE_DIR))
-CXXFLAGSINCLUDES ?= $(FLAGSINCLUDES) $(addprefix -I, $(INCLUDE_DIR))
+CFLAGSINCLUDES   ?= $(FLAGSINCLUDES) $(addprefix -I, $(INC_DIR))
+CUFLAGSINCLUDES  ?= $(FLAGSINCLUDES) $(addprefix -I, $(INC_DIR))
+CXXFLAGSINCLUDES ?= $(FLAGSINCLUDES) $(addprefix -I, $(INC_DIR))
 FFLAGSINCLUDES   ?= $(FLAGSINCLUDES)
 TEXFLAGSINCLUDES ?=
 # ------------------  LIBRARY FLAGS  -------------------------------------------

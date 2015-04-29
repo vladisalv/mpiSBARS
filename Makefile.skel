@@ -34,7 +34,8 @@ ifeq ($(MACHINE), BLUEGENE)
     RUN := mpisubmit.bg --nproc=$(NUMBER_PROC) --wtime=$(TIME)
     WATCH  := llq
     CANCEL := llcancel
-    BINARY_NAME := $(BINARY_NAME) --
+    #BINARY_NAME := $(BINARY_NAME) --
+    ARGUMENTS := -- $(ARGUMENTS)
 endif
 # ====================  TARGET, BIN, OBJ  ======================================
 TARGET ?= debug release

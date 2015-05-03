@@ -12,8 +12,8 @@
 :tabnew src/matrix_gomology.cpp
 :65 vs include/matrix_gomology.h
 
-:tabnew src/set_repeats.cpp
-:65 vs include/set_repeats.h
+:tabnew src/list_repeats.cpp
+:65 vs include/list_repeats.h
 
 :tabnew include/arrayMPI.tcc
 :65 vs include/arrayMPI.h

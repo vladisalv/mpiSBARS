@@ -13,8 +13,8 @@ INPUT_DIR := ./test/input
 #INPUT_FILE1 := rat165M
 #INPUT_FILE1 := file7.5M
 #INPUT_FILE1 := file5M
-#INPUT_FILE1 := file50K
-INPUT_FILE1 := $(FILE)
+INPUT_FILE1 := file50K
+#INPUT_FILE1 := $(FILE)
 
 OUTPUT_DIR     := ./test/output
 OUTPUT_FILE     = $(N)_$(DATE)_$(GPU)
@@ -24,7 +24,7 @@ OUTPUT_FILE_PIC = pic_$(DATE)_$(GPU)
 OUTPUT_FILE_ANA = ana_$(DATE)_$(GPU)
 
 GPU = --gpu
-USE_MATRIX = --use-matrix
+#USE_MATRIX = --use-matrix
 SEQUENCE = -f $(INPUT_DIR)/$(INPUT_FILE1)                              \
            #-F $(INPUT_DIR)/$(INPUT_FILE2)
 #DEC = --decompose-save-firstGC $(OUTPUT_DIR)/$(OUTPUT_FILE_DEC)_GC \
@@ -38,13 +38,13 @@ ARGUMENTS = --profiling-window     $(PROFILING_WINDOW)                  \
             --step-decompose       $(STEP_DECOMPOSE)                    \
             --number-coefficient   $(NUMBER_COEFFICIENT)                \
             --eps                  $(EPS)                               \
-            $(GPU) $(USE_MATRIX) $(SEQUENCE) $(DEC) $(GOMOLOGY) $(PIC) $(ANALYS)
+            $(GPU) $(USE_MATRIX) $(SEQUENCE) $(DEC) $(GOMOLOGY) $(PIC) $(ANALYS) --gc-only --limit-memory 10000
 
 # HOST, MPI, LOMONOSOV or BLUEGENE
 MACHINE := MPI
 
 # short name NUMBER_PROC
-N           = 4
+N           = 2
 NUMBER_PROC = $(N)
 
 #short name NUMBER_NODE

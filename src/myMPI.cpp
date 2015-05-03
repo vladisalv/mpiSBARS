@@ -289,8 +289,9 @@ void MyMPI::allMessage(const char *format, ...)
     Synchronize();
     fflush(stdout);
     for (int i = 0; i < size; i++) {
+        fflush(stdout);
         if (i == rank) {
-            printf("[%s]:", rank_str);
+            //printf("[%s]:", rank_str);
             va_list arg;
             va_start(arg, format);
             vprintf(format, arg);
@@ -301,8 +302,8 @@ void MyMPI::allMessage(const char *format, ...)
         Synchronize();
         fflush(stdout);
     }
-    if (rank == root)
-        printf("\n\n");
+    //if (rank == root)
+        //printf("\n\n");
     fflush(stdout);
     Synchronize();
     fflush(stdout);

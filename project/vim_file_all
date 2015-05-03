@@ -27,8 +27,8 @@
 :tabnew src/analyze.cpp
 :65 vs include/analyze.h
 
-:tabnew src/set_repeats.cpp
-:65 vs include/set_repeats.h
+:tabnew src/list_repeats.cpp
+:65 vs include/list_repeats.h
 
 :tabnew src/myMPI.cpp
 :65 vs include/myMPI.h

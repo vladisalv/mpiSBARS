@@ -655,7 +655,8 @@ unsigned long Options::getMinLengthRepeat()
 
 size_t Options::getLimitMemoryMatrix()
 {
-    return 1048576 * limit_memory; // limit_memory MB
+    return limit_memory; // limit_memory MB
+    //return 1048576 * limit_memory; // limit_memory MB
 }
 
 

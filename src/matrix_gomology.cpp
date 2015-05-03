@@ -1,7 +1,7 @@
 #include "matrix_gomology.h"
 
 MatrixGomology::MatrixGomology(MyMPI me)
-    : MatrixMPI<TypeGomology, ulong>(me, "MatrixGomology")
+    : MatrixMPI<TypeGomology, ulong>(me, "MatrixGomology", MPI_TYPE_GOMOLOGY)
 {
 }
 

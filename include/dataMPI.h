@@ -8,6 +8,7 @@ class DataMPI {
 protected:
     MyMPI me;
     DataType *data;
+    MPI_Datatype MpiDataType;
     LengthData length;
     const char *class_name;
 
@@ -21,7 +22,7 @@ protected:
 
     LengthData offsetLength(LengthData* &offset, LengthData* &sum_offset, LengthData *var);
 public:
-    DataMPI(MyMPI new_me, const char *class_name_);
+    DataMPI(MyMPI new_me, const char *class_name_, MPI_Datatype new_MpiDataType);
     virtual ~DataMPI();
 
     bool isEmpty();

@@ -1,0 +1,370 @@
+#include "list_repeats.h"
+
+Repeat::Repeat(ulong x_bn, ulong y_bn, ulong x_en, ulong y_en, ulong len)
+    : x_begin(x_bn), y_begin(y_bn), x_end(x_en), y_end(y_en), length(len)
+{
+}
+
+void Repeat::Print()
+{
+    printf("%ld %ld %ld %ld %ld\n", x_begin, y_begin, x_end, y_end, length);
+}
+
+
+ListRepeats::ListRepeats(MyMPI me)
+    : DataMPI<TypeAnalysis, ulong>(me, "ListRepeats", MPI_TYPE_LIST_REPEAT),
+    x_limit_left(0), x_limit_right(0), y_limit_above(0), y_limit_bottom(0)
+{
+    data = new TypeAnalysis;
+}
+
+ListRepeats::~ListRepeats()
+{
+}
+
+void ListRepeats::readMPI(char *file_name)
+{
+}
+
+void ListRepeats::readUsually(char *file_name)
+{
+}
+
+void ListRepeats::readMy(char *file_name)
+{
+}
+
+void ListRepeats::writeRepeat(TypeAnalysis list)
+{
+    string str;
+    stringstream stm;
+    stm << endl;
+    stm << "proc" << this->me.getRank() << endl;
+    for (TypeAnalysis::iterator list_iter = list.begin(); list_iter != list.end(); list_iter++)
+        stm << list_iter->x_begin << " " << list_iter->y_begin << " " << list_iter->x_end << " " << list_iter->y_end << " " << list_iter->length << endl;
+    stm << endl;
+    me.allMessage("%s", stm.str().c_str());
+}
+
+void ListRepeats::writeMPI(char *file_name)
+{
+    string str;
+    stringstream stm;
+    stm << endl;
+    for (TypeAnalysis::iterator list_iter = data->begin(); list_iter != data->end(); list_iter++)
+        stm << list_iter->x_begin << " " << list_iter->y_begin << " " << list_iter->x_end << " " << list_iter->y_end << " " << list_iter->length << endl;
+    me.allMessage("%s", stm.str().c_str());
+}
+
+void ListRepeats::writeUsually(char *file_name)
+{
+}
+
+void ListRepeats::writeMy(char *file_name)
+{
+}
+
+
+void ListRepeats::makeOffsetRow(ulong offset)
+{
+    for (TypeAnalysis::iterator list_iter = data->begin(); list_iter != data->end(); list_iter++) {
+        list_iter->x_begin += offset;
+        list_iter->x_end   += offset;
+    }
+    x_limit_left  += offset;
+    x_limit_right += offset;
+}
+
+
+bool compare_ybegin(Repeat r1, Repeat r2)
+{
+    return (r1.y_begin < r2.y_begin);
+}
+bool compare_yend(Repeat r1, Repeat r2)
+{
+    return (r1.y_end < r2.y_end);
+}
+bool compare_xbegin(Repeat r1, Repeat r2)
+{
+    return (r1.x_begin < r2.x_begin);
+}
+bool compare_xend(Repeat r1, Repeat r2)
+{
+    return (r1.x_end < r2.x_end);
+}
+
+void ListRepeats::mergeRepeatsRow(ListRepeats listNext)
+{
+    TypeAnalysis::iterator list_iter;
+    if (data->empty()) {
+        for (list_iter = listNext.data->begin(); list_iter != listNext.data->end(); list_iter++)
+            data->push_back(*list_iter);
+        listNext.data->clear();
+        x_limit_left   = listNext.x_limit_left;
+        x_limit_right  = listNext.x_limit_right;
+        y_limit_above  = listNext.y_limit_above;
+        y_limit_bottom = listNext.y_limit_bottom;
+        return;
+    }
+
+    TypeAnalysis list1, list2;
+    for (list_iter = data->begin(); list_iter != data->end();)
+        if (list_iter->y_end == y_limit_bottom) {
+            list1.push_back(*list_iter);
+            list_iter = data->erase(list_iter);
+        } else {
+            list_iter++;
+        }
+    for (list_iter = listNext.data->begin(); list_iter != listNext.data->end();)
+        if (list_iter->y_begin == listNext.y_limit_above) {
+            list2.push_back(*list_iter);
+            list_iter = listNext.data->erase(list_iter);
+        } else {
+            list_iter++;
+        }
+
+    for (list_iter = listNext.data->begin(); list_iter != listNext.data->end(); list_iter++)
+        data->push_back(*list_iter);
+    listNext.data->clear();
+
+    TypeAnalysis::iterator l1, l2;
+    for (l1 = list1.begin(); l1 != list1.end(); l1++)
+        for (l2 = list2.begin(); l2 != list2.end(); l2++) {
+            if (l1->x_end + 1 == l2->x_begin) {
+                l1->x_end = l2->x_end;
+                l1->y_end = l2->y_end;
+                l1->length += l2->length;
+                l2 = list2.erase(l2);
+                break;
+            }
+        }
+
+    for (l1 = list1.begin(); l1 != list1.end(); l1++)
+        data->push_back(*l1);
+    for (l2 = list2.begin(); l2 != list2.end(); l2++)
+        data->push_back(*l2);
+
+    list1.clear();
+    list2.clear();
+    y_limit_bottom = listNext.y_limit_bottom;
+}
+
+void ListRepeats::mergeRepeatsColumn(ListRepeats listNext)
+{
+    TypeAnalysis::iterator list_iter;
+    if (data->empty()) {
+        for (list_iter = listNext.data->begin(); list_iter != listNext.data->end(); list_iter++)
+            data->push_back(*list_iter);
+        listNext.data->clear();
+        x_limit_left   = listNext.x_limit_left;
+        x_limit_right  = listNext.x_limit_right;
+        y_limit_above  = listNext.y_limit_above;
+        y_limit_bottom = listNext.y_limit_bottom;
+        return;
+    }
+
+    TypeAnalysis list1, list2;
+    for (list_iter = data->begin(); list_iter != data->end();)
+        if (list_iter->x_end == x_limit_right) {
+            list1.push_back(*list_iter);
+            list_iter = data->erase(list_iter);
+        } else {
+            list_iter++;
+        }
+    for (list_iter = listNext.data->begin(); list_iter != listNext.data->end();)
+        if (list_iter->x_begin == listNext.x_limit_left) {
+            list2.push_back(*list_iter);
+            list_iter = listNext.data->erase(list_iter);
+        } else {
+            list_iter++;
+        }
+
+    for (list_iter = listNext.data->begin(); list_iter != listNext.data->end(); list_iter++)
+        data->push_back(*list_iter);
+    listNext.data->clear();
+
+    TypeAnalysis::iterator l1, l2;
+    for (l1 = list1.begin(); l1 != list1.end(); l1++)
+        for (l2 = list2.begin(); l2 != list2.end(); l2++) {
+            if (l1->y_end + 1 == l2->y_begin) {
+                l1->x_end = l2->x_end;
+                l1->y_end = l2->y_end;
+                l1->length += l2->length;
+                l2 = list2.erase(l2);
+                break;
+            }
+        }
+
+    for (l1 = list1.begin(); l1 != list1.end(); l1++)
+        data->push_back(*l1);
+    for (l2 = list2.begin(); l2 != list2.end(); l2++)
+        data->push_back(*l2);
+
+    list1.clear();
+    list2.clear();
+    x_limit_right = listNext.x_limit_right;
+}
+
+
+
+void ListRepeats::mergeRepeats()
+{
+    TypeAnalysis listRepeatsBastard, listRepeatsNotFinish, listRepeatsResult;
+    for (TypeAnalysis::iterator list_iter = data->begin(); list_iter != data->end(); list_iter++)
+        if (list_iter->y_begin == y_limit_above && list_iter->x_begin != x_limit_left && !me.isFirst())
+            listRepeatsBastard.push_back(*list_iter);
+        else if (list_iter->y_end == y_limit_bottom && list_iter->x_end != x_limit_right && !me.isLast())
+            listRepeatsNotFinish.push_back(*list_iter);
+        else
+            listRepeatsResult.push_back(*list_iter);
+    data->clear();
+
+    MPI_Aint lb, extent_bool, extent_ulong;
+    MPI_Type_get_extent(MPI::BOOL, &lb, &extent_bool);
+    MPI_Type_get_extent(MPI_UNSIGNED_LONG, &lb, &extent_ulong);
+    MPI_Group group_comm_world, group_prev, group_next;
+    MPI_Comm_group(MPI_COMM_WORLD, &group_comm_world);
+
+    bool *a = 0;
+    if (!me.isLast()) {
+        a = new bool [x_limit_right - x_limit_left + 1];
+        memset(a, 0, (x_limit_right - x_limit_left + 1) * sizeof(bool));
+
+        for (TypeAnalysis::iterator list_iter = listRepeatsNotFinish.begin();
+                list_iter != listRepeatsNotFinish.end(); list_iter++)
+            a[list_iter->x_end] = true;
+
+        for (TypeAnalysis::iterator list_iter = listRepeatsBastard.begin();
+                list_iter != listRepeatsBastard.end(); list_iter++)
+            if (list_iter->y_end == y_limit_bottom)
+                a[list_iter->x_end] = true;
+    }
+    MPI_Win win_a;
+    MPI_Win_create(a, (x_limit_right - x_limit_left + 1) * extent_bool,
+                        extent_bool, MPI_INFO_NULL, MPI_COMM_WORLD, &win_a);
+
+    if (!me.isLast()) {
+        int next = me.getRank() + 1;
+        MPI_Group_incl(group_comm_world, 1, &next, &group_next);
+        MPI_Win_post(group_next, 0, win_a);
+    }
+    if (!me.isFirst()) {
+        int prev = me.getRank() - 1;
+        MPI_Group_incl(group_comm_world, 1, &prev, &group_prev);
+        MPI_Win_start(group_prev, 0, win_a);
+        bool *a_prev = 0;
+        a_prev = new bool [listRepeatsBastard.size()];
+        TypeAnalysis::iterator list_iter;
+        list_iter   = listRepeatsBastard.begin();
+        for (int i = 0; list_iter != listRepeatsBastard.end(); i++, list_iter++)
+            MPI_Get(&a_prev[i], 1, MPI::BOOL, me.getRank() - 1, list_iter->x_begin - 1, 1, MPI::BOOL, win_a);
+        // HERE MAY BE SOME WORK.
+        MPI_Win_complete(win_a);
+        list_iter   = listRepeatsBastard.begin();
+        for (int i = 0; list_iter != listRepeatsBastard.end(); i++) {
+            if ((!a_prev[i])) {
+                if (list_iter->y_end != y_limit_bottom || me.isLast())
+                    listRepeatsResult.push_back(*list_iter);
+                else
+                    listRepeatsNotFinish.push_back(*list_iter);
+                list_iter = listRepeatsBastard.erase(list_iter);
+            } else {
+                list_iter++;
+            }
+        }
+        MPI_Group_free(&group_prev);
+        delete [] a_prev;
+    }
+    if (!me.isLast()) {
+        MPI_Win_wait(win_a);
+        MPI_Group_free(&group_next);
+    }
+
+
+    ulong *b = 0;
+    if (!me.isFirst()) {
+        b = new ulong [6 * (x_limit_right - x_limit_left + 1)];
+        memset(b, 0, 6 * (x_limit_right - x_limit_left + 1) * sizeof(ulong));
+        for (TypeAnalysis::iterator list_iter = listRepeatsBastard.begin();
+                list_iter != listRepeatsBastard.end(); list_iter++) {
+            b[list_iter->x_begin * 6 + 0] = list_iter->x_begin;
+            b[list_iter->x_begin * 6 + 1] = list_iter->y_begin;
+            b[list_iter->x_begin * 6 + 2] = list_iter->x_end;
+            b[list_iter->x_begin * 6 + 3] = list_iter->y_end;
+            b[list_iter->x_begin * 6 + 4] = list_iter->length;
+            if (list_iter->y_end == y_limit_bottom && !me.isLast())
+                b[list_iter->x_begin * 6 + 5] = 1;
+        }
+    }
+    MPI_Win win_b;
+    MPI_Win_create(b, (x_limit_right - x_limit_left) * 6 * extent_ulong,
+                        extent_ulong, MPI_INFO_NULL, MPI_COMM_WORLD, &win_b);
+
+    for (int next = me.getRank() + 1, prev = me.getRank() - 1; next < me.getSize() || prev >= 0; next++, prev--) {
+        MPI_Group group_next_proc, group_prev_proc;
+        if (prev >= 0) {
+            MPI_Group_incl(group_comm_world, 1, &prev, &group_prev_proc);
+            MPI_Win_post(group_prev_proc, 0, win_b);
+        }
+
+        if (next < me.getSize()) {
+            MPI_Group_incl(group_comm_world, 1, &next, &group_next_proc);
+            MPI_Win_start(group_next_proc, 0, win_b);
+            ulong *b_next = 0;
+            if (!listRepeatsNotFinish.empty()) {
+                b_next = new ulong [6 * listRepeatsNotFinish.size()];
+                int i = 0;
+                for (TypeAnalysis::iterator list_iter = listRepeatsNotFinish.begin();
+                        list_iter != listRepeatsNotFinish.end(); list_iter++, i++) {
+                    MPI_Get(&b_next[6 * i], 6, MPI_UNSIGNED_LONG, next,
+                        6 * (list_iter->x_end + 1), 6, MPI_UNSIGNED_LONG, win_b);
+                }
+            }
+            MPI_Win_complete(win_b);
+            if (!listRepeatsNotFinish.empty()) {
+                TypeAnalysis::iterator list_iter = listRepeatsNotFinish.begin();
+                for (int i = 0; list_iter != listRepeatsNotFinish.end(); i++) {
+                    if (b_next[6 * i]) {
+                        list_iter->x_end   = b_next[6 * i + 2];
+                        list_iter->y_end   = b_next[6 * i + 3];
+                        list_iter->length += b_next[6 * i + 4];
+                    }
+                    if (!b_next[6 * i] || !b_next[6 * i + 5]) {
+                        listRepeatsResult.push_back(*list_iter);
+                        list_iter = listRepeatsNotFinish.erase(list_iter);
+                    } else {
+                        list_iter++;
+                    }
+                }
+            }
+            MPI_Group_free(&group_next_proc);
+            delete [] b_next;
+        }
+
+        if (prev >= 0) {
+            MPI_Win_wait(win_b);
+            MPI_Group_free(&group_prev_proc);
+        }
+    }
+
+    MPI_Win_free(&win_a);
+    MPI_Win_free(&win_b);
+    MPI_Group_free(&group_comm_world);
+
+    delete [] a;
+    delete [] b;
+
+    *data = listRepeatsResult;
+    listRepeatsResult.clear();
+    listRepeatsNotFinish.clear();
+    listRepeatsBastard.clear();
+}
+
+void ListRepeats::debugInfo(const char *file, int line, const char *info)
+{
+    this->me.rootMessage("\n");
+    this->me.rootMessage("This is debugInfo(%s) of %s in %s at line %d\n", info, this->class_name, file, line);
+    this->me.allMessage("x_limit_left = %9ld x_limit_right = %9ld y_limit_above = %9ld y_limit_bottom = %9ld\n",
+        x_limit_left, x_limit_right, y_limit_above, y_limit_bottom);
+    this->me.rootMessage("\n");
+}

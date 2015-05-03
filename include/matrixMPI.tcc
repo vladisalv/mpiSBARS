@@ -1,8 +1,8 @@
 #include "matrixMPI.h"
 
 template <class DataType, class LengthData>
-MatrixMPI<DataType, LengthData>::MatrixMPI(MyMPI me, const char *class_name)
-    : DataMPI<DataType, LengthData>(me, class_name), width(0), height(0), offset_row(0), offset_column(0)
+MatrixMPI<DataType, LengthData>::MatrixMPI(MyMPI me, const char *class_name, MPI_Datatype MpiDataType)
+    : DataMPI<DataType, LengthData>(me, class_name, MpiDataType), width(0), height(0), offset_row(0), offset_column(0)
 {
 }
 
@@ -15,6 +15,8 @@ MatrixMPI<DataType, LengthData>::~MatrixMPI()
 template <class DataType, class LengthData>
 void MatrixMPI<DataType, LengthData>::readMPI(char *file_name)
 {
+#ifdef USE_MPI
+#endif
 }
 
 template <class DataType, class LengthData>
@@ -33,6 +35,7 @@ void MatrixMPI<DataType, LengthData>::readMy(char *file_name)
 template <class DataType, class LengthData>
 void MatrixMPI<DataType, LengthData>::writeMPI(char *file_name)
 {
+#ifdef USE_MPI
     LengthData *offset, *sum_offset;
     ulong common_height, common_width, common_length;
     common_width = width;
@@ -43,7 +46,7 @@ void MatrixMPI<DataType, LengthData>::writeMPI(char *file_name)
     MPI_File_open(MPI_COMM_WORLD, file_name, MPI_MODE_CREATE|MPI_MODE_WRONLY, MPI_INFO_NULL, &hFile);
     MPI_Offset offsetHead = (this->me.isRoot() ? 0 : 3);
     MPI_Offset offsetFile = offsetHead + width * sum_offset[this->me.getRank()];
-    MPI_File_set_view(hFile, offsetFile, MPI_DOUBLE, MPI_DOUBLE,
+    MPI_File_set_view(hFile, offsetFile, this->MpiDataType, this->MpiDataType,
                       (char *)"native", MPI_INFO_NULL);
 
     if (this->me.isRoot()) {
@@ -54,6 +57,7 @@ void MatrixMPI<DataType, LengthData>::writeMPI(char *file_name)
 
     MPI_File_write(hFile, this->data, this->length, MPI_DOUBLE, 0);
     MPI_File_close(&hFile);
+#endif
 }
 
 template <class DataType, class LengthData>

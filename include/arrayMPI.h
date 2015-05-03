@@ -19,7 +19,7 @@ protected:
     virtual void writeUsually(char *file_name);
     virtual void writeMy(char *file_name);
 public:
-    ArrayMPI(MyMPI me, const char *class_name);
+    ArrayMPI(MyMPI me, const char *class_name, MPI_Datatype MpiDataType);
     virtual ~ArrayMPI();
     virtual void debugInfo(const char *file, int line, const char *info = 0);
 };

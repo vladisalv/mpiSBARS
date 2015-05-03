@@ -12,11 +12,11 @@
 :tabnew src/gpu_computing_compare.cu
 :65 vs include/gpu_computing.h
 
-:tabnew src/analyze.cu
+:tabnew src/analyze.cpp
 :65 vs include/analyze.h
 
-:tabnew src/set_repeats.cpp
-:65 vs include/set_repeats.h
+:tabnew src/list_repeats.cpp
+:65 vs include/list_repeats.h
 
 :tabnew include/types.h
 

@@ -31,6 +31,8 @@ public:
 
     double getEps();
     void setEps(double eps_new);
+
+    friend class Analyze;
 };
 
 #endif /* __COMPARE_HEADER__ */

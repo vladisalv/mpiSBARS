@@ -5,7 +5,9 @@
 #include "dataMPI.h"
 #include "types.h"
 
-#include <vector>
+#include <list>
+#include <sstream>
+#include <string>
 
 using namespace std;
 
@@ -18,9 +20,9 @@ struct Repeat {
     void Print();
 };
 
-typedef vector<Repeat> TypeAnalysis;
+typedef list<Repeat> TypeAnalysis;
 
-class SetRepeats : public DataMPI<TypeAnalysis, ulong> {
+class ListRepeats : public DataMPI<TypeAnalysis, ulong> {
     virtual void readMPI(char *file_name);
     virtual void readUsually(char *file_name);
     virtual void readMy(char *file_name);
@@ -29,16 +31,20 @@ class SetRepeats : public DataMPI<TypeAnalysis, ulong> {
     virtual void writeUsually(char *file_name);
     virtual void writeMy(char *file_name);
 
-    TypeAnalysis vec;
     ulong x_limit_left, x_limit_right, y_limit_above, y_limit_bottom;
 public:
-    SetRepeats(MyMPI me);
-    ~SetRepeats();
+    ListRepeats(MyMPI me);
+    ~ListRepeats();
 
-    void analyzeOtherProcess();
+    void mergeRepeats();
     virtual void debugInfo(const char *file, int line, const char *info = 0);
 
+    void makeOffsetRow(ulong offset);
+    void mergeRepeatsRow(ListRepeats list);
+    void mergeRepeatsColumn(ListRepeats list);
     friend class Analyze;
+
+    void writeRepeat(TypeAnalysis list);
 };
 
 #endif /* __SET_REPEATS_HEADER__ */

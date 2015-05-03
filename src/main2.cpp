@@ -10,7 +10,7 @@
 #include "compare.h"
 #include "matrix_gomology.h"
 #include "analyze.h"
-#include "set_repeats.h"
+#include "list_repeats.h"
 #include "image.h"
 
 #define debugInfo() debugInfo( __FILE__, __LINE__ )
@@ -215,54 +215,52 @@ int main2(int argc, char *argv[])
     double gomology_time = me.getTime() - begin_time;
 
 
-    SetRepeats setRepeats(me);
+    ListRepeats listRepeats(me);
     if (opt.analysisMode()) {
         Analyze analyze(me, gpu, opt.getEps(), opt.getMinLengthRepeat(),
                         opt.getFidelityRepeat(), opt.getLimitMemoryMatrix());
         if (!matrixGomology.isEmpty()) {
-            setRepeats = analyze.doAnalyze(matrixGomology);
+            listRepeats = analyze.doAnalyze(matrixGomology);
             matrixGomology.free();
         } else {
-            SetRepeats repGC(me), repGA(me);
-            me.rootMessage("HERE1\n");
+            ListRepeats repGC(me), repGA(me);
             if (opt.modeGC()) {
+                me.rootMessage("GC MODE\n");
                 if (opt.selfMode())
                     repGC = analyze.doAnalyze(decomposition1GC);
                 else
                     repGC = analyze.doAnalyze(decomposition1GC, decomposition2GC);
             }
-            me.rootMessage("HERE2\n");
             if (opt.modeGA()) {
+                me.rootMessage("GA MODE\n");
                 if (opt.selfMode())
                     repGA = analyze.doAnalyze(decomposition1GA);
                 else
                     repGA = analyze.doAnalyze(decomposition1GA, decomposition2GA);
             }
-            me.rootMessage("HERE3\n");
             if (opt.modeGC() && opt.modeGA())
-                setRepeats = analyze.comparisonRepeats(repGC, repGA);
+                listRepeats = analyze.comparisonRepeats(repGC, repGA);
             else if (opt.modeGC())
-                setRepeats = repGC;
+                listRepeats = repGC;
             else if (opt.modeGA())
-                setRepeats = repGA;
-            me.rootMessage("HERE4\n");
+                listRepeats = repGA;
             decomposition1GC.free();
             decomposition1GA.free();
             decomposition2GC.free();
             decomposition2GA.free();
         }
-        setRepeats.analyzeOtherProcess();
+        listRepeats.mergeRepeats();
         me.rootMessage("analyze repeats done...\n");
         if (opt.saveAnalysis()) {
-            setRepeats.writeFile(opt.getFileAnalysisSave());
+            listRepeats.writeFile(opt.getFileAnalysisSave());
             me.rootMessage("save repeats...\n");
         }
     }
     if (opt.downloadAnalysis()) {
-        setRepeats.readFile(opt.getFileAnalysisLoad());
+        listRepeats.readFile(opt.getFileAnalysisLoad());
         me.rootMessage("load repeats...\n");
     }
-    //DEBUG(setRepeats.debugInfo());
+    //DEBUG(listRepeats.debugInfo());
     double analyze_time = me.getTime() - begin_time;
 
     double total_time = me.getTime() - begin_time;

@@ -5,8 +5,9 @@
 #include "gpu_computing.h"
 
 #include "decomposition.h"
+#include "compare.h"
 #include "matrix_gomology.h"
-#include "set_repeats.h"
+#include "list_repeats.h"
 
 #include <math.h>
 
@@ -21,20 +22,20 @@ class Analyze {
 
     TypeDecomposition *buf_tmp;
     Decomposition decomposition, dec_other;
-    ulong dec_other_height;
     MPI_Request req;
     void recvDecompositon();
     bool recvDecompositonAsync();
     void waitDecomposition();
+    int source_proc;
 
 public:
     Analyze(MyMPI me, GpuComputing gpu, double eps, ulong min_length, double fidelity_repeat, size_t limit_memory);
     ~Analyze();
 
-    SetRepeats doAnalyze(MatrixGomology matrixGomology);
-    SetRepeats doAnalyze(Decomposition decomposition);
-    SetRepeats doAnalyze(Decomposition decomposition1, Decomposition decomposition2);
-    SetRepeats comparisonRepeats(SetRepeats setRepeats1, SetRepeats setRepeats2);
+    ListRepeats doAnalyze(MatrixGomology matrixGomology);
+    ListRepeats doAnalyze(Decomposition decomposition);
+    ListRepeats doAnalyze(Decomposition decomposition1, Decomposition decomposition2);
+    ListRepeats comparisonRepeats(ListRepeats listRepeats1, ListRepeats listRepeats2);
 
     double getEps();
     ulong  getMinLengthRepeat();

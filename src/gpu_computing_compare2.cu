@@ -157,7 +157,6 @@ void GpuComputing::compareDecompositionGpu2(TypeDecomposition *decomposeHost1, u
     dim3 block(32, 16);
     dim3 grid(devC.xsize / blockSizeX, devC.ysize / blockSizeY);
 
-    me.rootMessage("GPU compare version 2\n");
     kernelSharedFast4<<< grid, block >>>(devA, devB, devC, eps);
 
     HANDLE_ERROR(cudaMemcpy2D(hostC.ptr, hostC.pitch,

@@ -124,7 +124,7 @@ ListRepeats Analyze::doAnalyze(Decomposition myDecomposition)
                 matrixGomology.height = height_block_now;
                 matrixGomology.width  = width_block_now;
                 matrixGomology.offset_row = myOffsetHeight + height_block * i;
-                matrixGomology.offset_column = myOffsetHeight + width_block * j;
+                matrixGomology.offset_column = width_block * j;
                 resultBlock = doAnalyze(matrixGomology);
                 //me.allMessage("%d %d %d %d %d %d %d \n", proc, i, j, height_block_now, width_block_now, resultBlock.y_limit_above, resultColumn.y_limit_bottom);
                 //resultBlock.writeFile("t");
@@ -132,7 +132,7 @@ ListRepeats Analyze::doAnalyze(Decomposition myDecomposition)
             }
             //me.allMessage("%d %d resultColumn\n", proc, j);
             //resultColumn.writeFile("f");
-            resultProc[proc].mergeRepeatsColumn(resultColumn);
+            resultProc[source_proc].mergeRepeatsColumn(resultColumn);
         }
         //me.allMessage("%d resultProc\n", proc);
         //resultProc[proc].writeFile("f");
@@ -141,8 +141,7 @@ ListRepeats Analyze::doAnalyze(Decomposition myDecomposition)
     ulong sum = 0;
     ulong *sum_height_other = new ulong [me.getSize()];
     for (int i = 0; i < me.getSize(); i++) {
-        //resultProc[i].makeOffsetRow(sum);
-        //resultProc[i].writeFile("f");
+        resultProc[i].makeOffsetRow(sum);
         sum += height_other[i];
     }
 

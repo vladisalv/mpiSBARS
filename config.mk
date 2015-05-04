@@ -33,12 +33,15 @@ SEQUENCE = -f $(INPUT_DIR)/$(INPUT_FILE1)                              \
 #PIC = --image-save $(OUTPUT_DIR)/$(OUTPUT_FILE_PIC)
 ANALYS = --repeats-analysis-save $(OUTPUT_DIR)/$(OUTPUT_FILE_ANA)
 
+GC = --gc-only
+#GA = --ga-only
+
 ARGUMENTS = --profiling-window     $(PROFILING_WINDOW)                  \
             --decompose-window     $(DECOMPOSE_WINDOW)                  \
             --step-decompose       $(STEP_DECOMPOSE)                    \
             --number-coefficient   $(NUMBER_COEFFICIENT)                \
             --eps                  $(EPS)                               \
-            $(GPU) $(USE_MATRIX) $(SEQUENCE) $(DEC) $(GOMOLOGY) $(PIC) $(ANALYS) --gc-only --limit-memory 10000
+            $(GPU) $(USE_MATRIX) $(SEQUENCE) $(DEC) $(GOMOLOGY) $(PIC) $(ANALYS) $(GC) $(GA) --limit-memory 10000
 
 # HOST, MPI, LOMONOSOV or BLUEGENE
 MACHINE := MPI

@@ -222,7 +222,7 @@ void ListRepeats::mergeRepeats()
     MPI_Aint lb, extent_bool, extent_ulong;
     MPI_Type_get_extent(MPI::BOOL, &lb, &extent_bool);
     MPI_Type_get_extent(MPI_UNSIGNED_LONG, &lb, &extent_ulong);
-    MPI_Group group_comm_world, group_prev, group_next;
+    MPI_Group group_comm_world, group_prev, group_next, group_prev_all;
     MPI_Comm_group(MPI_COMM_WORLD, &group_comm_world);
 
     bool *a = 0;
@@ -280,7 +280,6 @@ void ListRepeats::mergeRepeats()
         MPI_Group_free(&group_next);
     }
 
-
     ulong *b = 0;
     if (!me.isFirst()) {
         b = new ulong [6 * (x_limit_right - x_limit_left + 1)];
@@ -300,27 +299,25 @@ void ListRepeats::mergeRepeats()
     MPI_Win_create(b, (x_limit_right - x_limit_left) * 6 * extent_ulong,
                         extent_ulong, MPI_INFO_NULL, MPI_COMM_WORLD, &win_b);
 
-    for (int next = me.getRank() + 1, prev = me.getRank() - 1; next < me.getSize() || prev >= 0; next++, prev--) {
-        MPI_Group group_next_proc, group_prev_proc;
-        if (prev >= 0) {
-            MPI_Group_incl(group_comm_world, 1, &prev, &group_prev_proc);
-            MPI_Win_post(group_prev_proc, 0, win_b);
-        }
-
-        if (next < me.getSize()) {
-            MPI_Group_incl(group_comm_world, 1, &next, &group_next_proc);
-            MPI_Win_start(group_next_proc, 0, win_b);
-            ulong *b_next = 0;
+    printf("i %d %ld %ld\n", me.getRank(), x_limit_left, x_limit_right);
+    for (int next = 1; next < me.getSize(); next++) {
+        MPI_Win_fence(0, win_b);
+        ulong *b_next = 0;
+        if (next + me.getRank() < me.getSize()) {
             if (!listRepeatsNotFinish.empty()) {
                 b_next = new ulong [6 * listRepeatsNotFinish.size()];
                 int i = 0;
+                printf("i %d with %d\n", me.getRank(), next + me.getRank());
                 for (TypeAnalysis::iterator list_iter = listRepeatsNotFinish.begin();
                         list_iter != listRepeatsNotFinish.end(); list_iter++, i++) {
-                    MPI_Get(&b_next[6 * i], 6, MPI_UNSIGNED_LONG, next,
+                    printf("i %d with %d ==  ==  == %d\n", me.getRank(), next + me.getRank(), list_iter->x_end);
+                    MPI_Get(&b_next[6 * i], 6, MPI_UNSIGNED_LONG, next + me.getRank(),
                         6 * (list_iter->x_end + 1), 6, MPI_UNSIGNED_LONG, win_b);
                 }
             }
-            MPI_Win_complete(win_b);
+        }
+        MPI_Win_fence(0, win_b);
+        if (next + me.getRank() < me.getSize()) {
             if (!listRepeatsNotFinish.empty()) {
                 TypeAnalysis::iterator list_iter = listRepeatsNotFinish.begin();
                 for (int i = 0; list_iter != listRepeatsNotFinish.end(); i++) {
@@ -337,14 +334,8 @@ void ListRepeats::mergeRepeats()
                     }
                 }
             }
-            MPI_Group_free(&group_next_proc);
-            delete [] b_next;
         }
-
-        if (prev >= 0) {
-            MPI_Win_wait(win_b);
-            MPI_Group_free(&group_prev_proc);
-        }
+        delete [] b_next;
     }
 
     MPI_Win_free(&win_a);

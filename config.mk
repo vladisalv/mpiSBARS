@@ -2,6 +2,7 @@ PROGRAM_NAME := mpiSSSRDNA
 VERSION = $(TARGET_NOW)
 VERSION_NUMBER := 3.0
 TARGET_NOW := debug
+#TARGET_NOW := release
 
 PROFILING_WINDOW   = 250
 DECOMPOSE_WINDOW   = 250
@@ -17,7 +18,7 @@ INPUT_FILE1 := file50K
 #INPUT_FILE1 := $(FILE)
 
 OUTPUT_DIR     := ./test/output
-OUTPUT_FILE     = $(N)_$(DATE)_$(GPU)
+OUTPUT_FILE     = out_$(N)_$(DATE)_$(GPU)
 OUTPUT_FILE_DEC = dec_$(DATE)_$(GPU)
 OUTPUT_FILE_GOM = gom_$(DATE)_$(GPU)
 OUTPUT_FILE_PIC = pic_$(DATE)_$(GPU)
@@ -47,7 +48,7 @@ ARGUMENTS = --profiling-window     $(PROFILING_WINDOW)                  \
 MACHINE := MPI
 
 # short name NUMBER_PROC
-N           = 2
+N           = 4
 NUMBER_PROC = $(N)
 
 #short name NUMBER_NODE
@@ -55,7 +56,7 @@ NN          = 1
 NT          = 8
 NUMBER_NODE = $(NN)
 NODE_TASK   = $(NT)
-QUEUE       = regular4
+QUEUE       = gputest
 TIME        = 15:00
 
 #define mode compile

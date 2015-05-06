@@ -24,17 +24,17 @@ TIME        ?= 15:00
 RUN :=
 ifeq ($(MACHINE), MPI)
     RUN := mpirun -n $(NUMBER_PROC)
+    ARGUMENTS := $(ARGUMENTS) | tee $(OUTPUT_DIR)/$(OUTPUT_FILE)
 endif
 ifeq ($(MACHINE), LOMONOSOV)
-    RUN := sbatch --nodes=$(NUMBER_NODE) --ntasks-per-node=$(NODE_TASK) --ntasks=$(NUMBER_PROC) --partition=$(QUEUE) --time=$(TIME) ompi 
+    RUN := sbatch --nodes=$(NUMBER_NODE) --ntasks-per-node=$(NODE_TASK) --ntasks=$(NUMBER_PROC) --partition=$(QUEUE) --time=$(TIME) --output=$(OUTPUT_DIR)/$(OUTPUT_FILE) ompi 
     WATCH  := squeue
     CANCEL := scancel
 endif
 ifeq ($(MACHINE), BLUEGENE)
-    RUN := mpisubmit.bg --nproc=$(NUMBER_PROC) --wtime=$(TIME)
+    RUN := mpisubmit.bg --nproc=$(NUMBER_PROC) --wtime=$(TIME) --stdout=$(OUTPUT_DIR)/$(OUTPUT_FILE) --stderr=$(OUTPUT_DIR)/$(OUTPUT_FILE).err
     WATCH  := llq
     CANCEL := llcancel
-    #BINARY_NAME := $(BINARY_NAME) --
     ARGUMENTS := -- $(ARGUMENTS)
 endif
 # ====================  TARGET, BIN, OBJ  ======================================

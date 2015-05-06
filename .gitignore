@@ -1,4 +1,4 @@
+config.mk
 bin/
 obj/
 test/
-config.mk

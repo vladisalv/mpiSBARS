@@ -47,6 +47,15 @@ int main2(int argc, char *argv[])
         //DEBUG(gpu.debugInfo());
         ;
     }
+    if (me.isRoot()) {
+        printf("Number proc = %d\n", me.getSize());
+        printf("Input file1 = %d\n", opt.getFileSequenceLoad1());
+        printf("Input file2 = %d\n", opt.getFileSequenceLoad2());
+        printf("%s version\n", gpu.isUse() ? "GPU" : "HOST");
+        printf("%s\n", opt.gomologyMode() ? "USE MATRIX" : "BLOCK METHOD");
+        printf("%s %s\n", opt.modeGC() ? "GC" : "", opt.modeGA() ? "GA" : "");
+        printf("\n");
+    }
     me.rootMessage("init...\n");
     double init_time = me.getTime() - begin_time;
 
@@ -226,14 +235,12 @@ int main2(int argc, char *argv[])
         } else {
             ListRepeats repGC(me), repGA(me);
             if (opt.modeGC()) {
-                me.rootMessage("GC MODE\n");
                 if (opt.selfMode())
                     repGC = analyze.doAnalyze(decomposition1GC);
                 else
                     repGC = analyze.doAnalyze(decomposition1GC, decomposition2GC);
             }
             if (opt.modeGA()) {
-                me.rootMessage("GA MODE\n");
                 if (opt.selfMode())
                     repGA = analyze.doAnalyze(decomposition1GA);
                 else

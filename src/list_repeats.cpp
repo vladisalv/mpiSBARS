@@ -68,6 +68,17 @@ void ListRepeats::writeMy(char *file_name)
 void ListRepeats::makeOffsetRow(ulong offset)
 {
     for (TypeAnalysis::iterator list_iter = data->begin(); list_iter != data->end(); list_iter++) {
+        list_iter->y_begin += offset;
+        list_iter->y_end   += offset;
+    }
+    y_limit_above  += offset;
+    y_limit_bottom += offset;
+}
+
+
+void ListRepeats::makeOffsetColumn(ulong offset)
+{
+    for (TypeAnalysis::iterator list_iter = data->begin(); list_iter != data->end(); list_iter++) {
         list_iter->x_begin += offset;
         list_iter->x_end   += offset;
     }
@@ -102,7 +113,6 @@ void ListRepeats::mergeRepeatsRow(ListRepeats listNext)
         listNext.data->clear();
         x_limit_left   = listNext.x_limit_left;
         x_limit_right  = listNext.x_limit_right;
-        y_limit_above  = listNext.y_limit_above;
         y_limit_bottom = listNext.y_limit_bottom;
         return;
     }
@@ -156,7 +166,6 @@ void ListRepeats::mergeRepeatsColumn(ListRepeats listNext)
         for (list_iter = listNext.data->begin(); list_iter != listNext.data->end(); list_iter++)
             data->push_back(*list_iter);
         listNext.data->clear();
-        x_limit_left   = listNext.x_limit_left;
         x_limit_right  = listNext.x_limit_right;
         y_limit_above  = listNext.y_limit_above;
         y_limit_bottom = listNext.y_limit_bottom;
@@ -299,7 +308,7 @@ void ListRepeats::mergeRepeats()
     MPI_Win_create(b, (x_limit_right - x_limit_left) * 6 * extent_ulong,
                         extent_ulong, MPI_INFO_NULL, MPI_COMM_WORLD, &win_b);
 
-    printf("i %d %ld %ld\n", me.getRank(), x_limit_left, x_limit_right);
+    //printf("i %d board: x_left=%ld x_right=%ld y_above=%ld y_bottom=%ld\n", me.getRank(), x_limit_left, x_limit_right, y_limit_above, y_limit_bottom);
     for (int next = 1; next < me.getSize(); next++) {
         MPI_Win_fence(0, win_b);
         ulong *b_next = 0;
@@ -307,10 +316,10 @@ void ListRepeats::mergeRepeats()
             if (!listRepeatsNotFinish.empty()) {
                 b_next = new ulong [6 * listRepeatsNotFinish.size()];
                 int i = 0;
-                printf("i %d with %d\n", me.getRank(), next + me.getRank());
+                //printf("i %d with %d size %d\n", me.getRank(), next + me.getRank(), listRepeatsNotFinish.size());
                 for (TypeAnalysis::iterator list_iter = listRepeatsNotFinish.begin();
                         list_iter != listRepeatsNotFinish.end(); list_iter++, i++) {
-                    printf("i %d with %d ==  ==  == %d\n", me.getRank(), next + me.getRank(), list_iter->x_end);
+                    //printf("i %d with %d ==  ==  == %d\n", me.getRank(), next + me.getRank(), list_iter->x_end);
                     MPI_Get(&b_next[6 * i], 6, MPI_UNSIGNED_LONG, next + me.getRank(),
                         6 * (list_iter->x_end + 1), 6, MPI_UNSIGNED_LONG, win_b);
                 }

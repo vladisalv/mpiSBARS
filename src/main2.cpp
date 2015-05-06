@@ -42,9 +42,10 @@ int main2(int argc, char *argv[])
     GpuComputing gpu(me, opt.gpuMode());
 
     if (me.isRoot()) {
-        //opt.debugInfo();
-        //me.debugInfo();
-        //gpu.debugInfo();
+        //DEBUG(opt.debugInfo());
+        //DEBUG(me.debugInfo());
+        //DEBUG(gpu.debugInfo());
+        ;
     }
     me.rootMessage("init...\n");
     double init_time = me.getTime() - begin_time;

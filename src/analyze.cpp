@@ -79,9 +79,6 @@ void Analyze::waitDecomposition()
 ListRepeats Analyze::doAnalyze(Decomposition myDecomposition)
 {
     decomposition = myDecomposition;
-    ulong *length_all, *sum_length_array;
-    ulong sum_all = decomposition.offsetLength(length_all, sum_length_array, &decomposition.height);
-    ulong myOffsetHeight = sum_length_array[me.getRank()];
 
     MPI_Request *req_send = new MPI_Request [me.getSize()];
     for (int i = 0; i < me.getSize(); i++)
@@ -123,7 +120,7 @@ ListRepeats Analyze::doAnalyze(Decomposition myDecomposition)
                                     );
                 matrixGomology.height = height_block_now;
                 matrixGomology.width  = width_block_now;
-                matrixGomology.offset_row = myOffsetHeight + height_block * i;
+                matrixGomology.offset_row    = height_block * i;
                 matrixGomology.offset_column = width_block * j;
                 resultBlock = doAnalyze(matrixGomology);
                 //me.allMessage("%d %d %d %d %d %d %d \n", proc, i, j, height_block_now, width_block_now, resultBlock.y_limit_above, resultColumn.y_limit_bottom);
@@ -138,16 +135,24 @@ ListRepeats Analyze::doAnalyze(Decomposition myDecomposition)
         //resultProc[proc].writeFile("f");
     }
 
-    ulong sum = 0;
-    ulong *sum_height_other = new ulong [me.getSize()];
+    ulong *length_all, *sum_length_array;
+    ulong sum_all = decomposition.offsetLength(length_all, sum_length_array, &decomposition.height);
+    ulong myOffsetHeight = sum_length_array[me.getRank()];
+    ulong myOffsetWidth  = 0;
     for (int i = 0; i < me.getSize(); i++) {
-        resultProc[i].makeOffsetRow(sum);
-        sum += height_other[i];
+        //printf("^^^^^^^^^^^^i %d %d %d board: x_left=%ld x_right=%ld y_above=%ld y_bottom=%ld\n", me.getRank(), i, myOffsetHeight, resultProc[i].x_limit_left, resultProc[i].x_limit_right, resultProc[i].y_limit_above, resultProc[i].y_limit_bottom);
+        resultProc[i].makeOffsetColumn(myOffsetWidth);
+        resultProc[i].makeOffsetRow(myOffsetHeight);
+        //printf("************i %d %d %d board: x_left=%ld x_right=%ld y_above=%ld y_bottom=%ld\n", me.getRank(), i, myOffsetHeight, resultProc[i].x_limit_left, resultProc[i].x_limit_right, resultProc[i].y_limit_above, resultProc[i].y_limit_bottom);
+        myOffsetWidth += height_other[i];
     }
 
     ListRepeats result(me);
-    for (int i = 0; i < me.getSize(); i++)
+    for (int i = 0; i < me.getSize(); i++) {
         result.mergeRepeatsColumn(resultProc[i]);
+        //printf("------------------------------i %d %d %d board: x_left=%ld x_right=%ld y_above=%ld y_bottom=%ld\n", me.getRank(), i, myOffsetHeight, result.x_limit_left, result.x_limit_right, result.y_limit_above, result.y_limit_bottom);
+    }
+    //printf("------------------------------i %d board: x_left=%ld x_right=%ld y_above=%ld y_bottom=%ld\n", me.getRank(), result.x_limit_left, result.x_limit_right, result.y_limit_above, result.y_limit_bottom);
     //result.writeFile("fds");
 
     for (int i = 0; i < me.getSize(); i++) {
@@ -247,6 +252,26 @@ ListRepeats Analyze::doAnalyze(Decomposition decomposition1, Decomposition decom
 ListRepeats Analyze::comparisonRepeats(ListRepeats listRepeats1, ListRepeats listRepeats2)
 {
     ListRepeats result(me);
+    TypeAnalysis::iterator l1, l2;
+    for (l1 = listRepeats1.data->begin(); l1 != listRepeats1.data->end(); l1++)
+        for (l2 = listRepeats2.data->begin(); l2 != listRepeats2.data->end(); l2++)
+            if (l1->y_begin - l1->x_begin == l2->y_begin - l2->x_begin) {
+                if (l1->x_begin <= l2->x_begin && l1->x_end >= l2->x_end) {
+                    result.data->push_back(*l2);
+                } else if (l1->x_begin <= l2->x_begin && l1->x_end <= l2->x_end) {
+                    Repeat tmp(l2->x_begin, l2->y_begin, l1->x_end, l1->y_end, l1->x_end - l2->x_begin + 1);
+                    result.data->push_back(tmp);
+                } else if (l2->x_begin <= l1->x_begin && l2->x_end >= l1->x_end) {
+                    result.data->push_back(*l1);
+                } else if (l2->x_begin <= l1->x_begin && l2->x_end <= l1->x_end) {
+                    Repeat tmp(l1->x_begin, l1->y_begin, l2->x_end, l2->y_end, l2->x_end - l1->x_begin + 1);
+                    result.data->push_back(tmp);
+                }
+            }
+    result.x_limit_left   = listRepeats1.x_limit_left;
+    result.x_limit_right  = listRepeats1.x_limit_right;
+    result.y_limit_above  = listRepeats1.y_limit_above;
+    result.y_limit_bottom = listRepeats1.y_limit_bottom;
     return result;
 }
 

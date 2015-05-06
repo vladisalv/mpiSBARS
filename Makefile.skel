@@ -93,10 +93,10 @@ endif
 ifdef USE_MPI
     FLAGSCOMMON += -DUSE_MPI
 endif
-ifeq ($(TARGET_NOW), "debug")
+ifeq ($(TARGET_NOW), debug)
     FLAGSCOMMON += -DDEBUG_MODE
 endif
-ifeq ($(TARGET_NOW), "release")
+ifeq ($(TARGET_NOW), release)
     FLAGSCOMMON += -DRELEASE_MODE
 endif
 

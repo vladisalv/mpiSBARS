@@ -24,7 +24,7 @@ OUTPUT_FILE_PIC = pic_$(DATE)_$(GPU)
 OUTPUT_FILE_ANA = ana_$(DATE)_$(GPU)
 
 GPU = --gpu
-#USE_MATRIX = --use-matrix
+USE_MATRIX = --use-matrix
 SEQUENCE = -f $(INPUT_DIR)/$(INPUT_FILE1)                              \
            #-F $(INPUT_DIR)/$(INPUT_FILE2)
 #DEC = --decompose-save-firstGC $(OUTPUT_DIR)/$(OUTPUT_FILE_DEC)_GC \
@@ -33,7 +33,7 @@ SEQUENCE = -f $(INPUT_DIR)/$(INPUT_FILE1)                              \
 #PIC = --image-save $(OUTPUT_DIR)/$(OUTPUT_FILE_PIC)
 ANALYS = --repeats-analysis-save $(OUTPUT_DIR)/$(OUTPUT_FILE_ANA)
 
-GC = --gc-only
+#GC = --gc-only
 #GA = --ga-only
 
 ARGUMENTS = --profiling-window     $(PROFILING_WINDOW)                  \

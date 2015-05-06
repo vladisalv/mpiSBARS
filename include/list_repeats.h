@@ -40,6 +40,7 @@ public:
     virtual void debugInfo(const char *file, int line, const char *info = 0);
 
     void makeOffsetRow(ulong offset);
+    void makeOffsetColumn(ulong offset);
     void mergeRepeatsRow(ListRepeats list);
     void mergeRepeatsColumn(ListRepeats list);
     friend class Analyze;

@@ -49,10 +49,12 @@ int main2(int argc, char *argv[])
     }
     if (me.isRoot()) {
         printf("Number proc = %d\n", me.getSize());
-        printf("Input file1 = %d\n", opt.getFileSequenceLoad1());
-        printf("Input file2 = %d\n", opt.getFileSequenceLoad2());
+        printf("Input file1 = %s\n", opt.getFileSequenceLoad1());
+        printf("Input file2 = %s\n", opt.getFileSequenceLoad2());
         printf("%s version\n", gpu.isUse() ? "GPU" : "HOST");
-        printf("%s\n", opt.gomologyMode() ? "USE MATRIX" : "BLOCK METHOD");
+        printf("%s", opt.gomologyMode() ? "USE MATRIX\n" : "BLOCK METHOD");
+        if (!opt.gomologyMode())
+            printf(". Use block %d byte\n", opt.getLimitMemoryMatrix());
         printf("%s %s\n", opt.modeGC() ? "GC" : "", opt.modeGA() ? "GA" : "");
         printf("\n");
     }

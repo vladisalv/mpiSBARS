@@ -68,24 +68,19 @@ MatrixGomology Compare::compareSelf(Decomposition &decomposition)
     bool *send_flag = new bool [me.getSize()];
     for (int i = 0; i < me.getSize(); i++)
         send_flag[i] = false;
-    double t1, t2, t3 = 0;
     while (num_send < me.getSize()) {
         for (int i = 0; i < me.getSize(); i++) {
             if (!send_flag[i] && me.Test(&req_recv[i])) {
-                t1 = me.getTime();
                 compareDecomposition(decomposition.data, decomposition.height,
                                     &decompose_other[decompose_other_begin[i]],
                                     length_all[i],
                                     decomposition.width, matrixGomology.data,
                                     sum_length_array[i], sum_all);
-                t2 = me.getTime();
-                t3 += t2 - t1;
                 send_flag[i] = true;
                 num_send++;
             }
         }
     }
-    printf("clear compare GPU time = %lf\n", t3);
     delete [] length_all;
     delete [] sum_length_array;
     delete [] decompose_other_begin;

@@ -99,11 +99,17 @@ ListRepeats Analyze::doAnalyze(Decomposition myDecomposition)
     ulong *height_other = new ulong [me.getSize()];
     for (int proc = 0; proc < me.getSize(); proc++) {
         recvDecompositon();
+        if (me.isSingle()) { // i do not know why
+            dec_other.free();
+            dec_other.data = new TypeDecomposition [decomposition.length];
+            dec_other.length = decomposition.length;
+            dec_other.height = decomposition.height;
+            dec_other.width  = decomposition.width;
+            memcpy(dec_other.data, decomposition.data, dec_other.length * sizeof(TypeDecomposition));
+        }
         height_other[source_proc] = dec_other.height;
         for (int j = 0; j < (dec_other.height + width_block - 1) / width_block; j++) {
-        //for (int j = 0; j < 1; j++) {
             ListRepeats resultColumn(me);
-            //for (int i = 0; i < 1; i++) {
             for (int i = 0; i < (decomposition.height + height_block - 1) / height_block; i++) {
                 ListRepeats resultBlock(me);
                 ulong height_block_now = (i == decomposition.height / height_block) ? decomposition.height % height_block : height_block;

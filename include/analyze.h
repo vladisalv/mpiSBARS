@@ -27,6 +27,7 @@ class Analyze {
     bool recvDecompositonAsync();
     void waitDecomposition();
     int source_proc;
+    double timeWait; // TMP
 
 public:
     Analyze(MyMPI me, GpuComputing gpu, double eps, ulong min_length, double fidelity_repeat, size_t limit_memory);

@@ -260,6 +260,11 @@ int main2(int argc, char *argv[])
             decomposition2GA.free();
         }
         listRepeats.mergeRepeats();
+        listRepeats.convertToOriginalRepeats(opt.getLengthWindowProfile(),
+                                             opt.getLengthWindowDecompose(),
+                                             opt.getStepDecompose(),
+                                             opt.getNumberCoefDecompose()
+                                             );
         me.rootMessage("analyze repeats done...\n");
         if (opt.saveAnalysis()) {
             listRepeats.writeFile(opt.getFileAnalysisSave());

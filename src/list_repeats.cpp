@@ -52,7 +52,8 @@ void ListRepeats::writeMPI(char *file_name)
     stringstream stm;
     stm << endl;
     for (TypeAnalysis::iterator list_iter = data->begin(); list_iter != data->end(); list_iter++)
-        stm << list_iter->x_begin << " " << list_iter->y_begin << " " << list_iter->x_end << " " << list_iter->y_end << " " << list_iter->length << endl;
+        stm << list_iter->x_begin << " " << list_iter->y_begin << " " << list_iter->length << endl;
+        //stm << list_iter->x_begin << " " << list_iter->y_begin << " " << list_iter->x_end << " " << list_iter->y_end << " " << list_iter->length << endl;
     me.allMessage("%s", stm.str().c_str());
 }
 
@@ -358,6 +359,18 @@ void ListRepeats::mergeRepeats()
     listRepeatsResult.clear();
     listRepeatsNotFinish.clear();
     listRepeatsBastard.clear();
+}
+
+void ListRepeats::convertToOriginalRepeats(uint window_profiling,
+        uint window_decompose, uint step_decompose, uint number_coef)
+{
+    for (TypeAnalysis::iterator list_iter = data->begin(); list_iter != data->end(); list_iter++) {
+        list_iter->x_begin = list_iter->x_begin * step_decompose;
+        list_iter->y_begin = list_iter->y_begin * step_decompose;
+        list_iter->length  = list_iter->length * step_decompose + window_decompose + window_profiling - 1;
+        list_iter->x_end   = list_iter->x_begin + list_iter->length;
+        list_iter->y_end   = list_iter->y_begin + list_iter->length;
+    }
 }
 
 void ListRepeats::debugInfo(const char *file, int line, const char *info)

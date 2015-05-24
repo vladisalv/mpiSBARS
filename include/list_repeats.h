@@ -37,6 +37,7 @@ public:
     ~ListRepeats();
 
     void mergeRepeats();
+    void convertToOriginalRepeats(uint window_profiling, uint window_decompose, uint step_decompose, uint number_coef);
     virtual void debugInfo(const char *file, int line, const char *info = 0);
 
     void makeOffsetRow(ulong offset);

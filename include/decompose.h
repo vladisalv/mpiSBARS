@@ -20,6 +20,7 @@ public:
     ~Decompose();
 
     Decomposition doDecompose(Profile &profile);
+    Decomposition doDecomposeOld(Profile &profile);
 
     uint getLengthWindowDecompose();
     uint getStepDecompose();

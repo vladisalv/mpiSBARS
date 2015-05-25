@@ -7,12 +7,13 @@
 
 class Profiling {
     MyMPI me;
-    uint window;
+    uint window, step;
 public:
-    Profiling(MyMPI me, uint window);
+    Profiling(MyMPI me, uint window, uint step);
     ~Profiling();
 
     Profile doProfile(Sequence &sequence, char ch1, char ch2);
+    Profile doProfileOld(Sequence &sequence, char ch1, char ch2);
 
     void setLengthWindowProfile(uint new_window);
     uint getLengthWindowProfile();

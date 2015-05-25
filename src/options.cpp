@@ -6,8 +6,8 @@ Options::Options(int argc, char *argv[])
     help_mode = version_mode = debug_mode = error_mode = false;
 
     eps = 0.;
-    length_window_profile = length_window_decompose = 0;
-    step_decompose = number_coef_decompose = 0;
+    length_window_profiling = length_window_decompose = 0;
+    step_profiling = step_decompose = number_coef_decompose = 0;
     min_length_repeat = 1;
     fidelity_repeat = 1.;
     limit_memory = 100; // 100 Mb
@@ -85,6 +85,7 @@ void Options::parse(int argc, char *argv[])
         {"eps",                     required_argument, NULL, 'e'},
         {"number-coefficient",      required_argument, NULL, 'c'},
         {"profiling-window",        required_argument, NULL, 'w'},
+        {"step-profiling",          required_argument, NULL, 'k'},
         {"decompose-window",        required_argument, NULL, 'a'},
         {"step-decompose",          required_argument, NULL, 's'},
         {"fidelity-repeat",         required_argument, NULL,  28},
@@ -119,7 +120,7 @@ void Options::parse(int argc, char *argv[])
     };
     int oc;
     int longindex = -1;
-    const char *optstring = ":hvgd:e:c:w:a:s:f:F:o:O:"; // opterr = 0, because ":..."
+    const char *optstring = ":hvgd:e:c:w:k:a:s:f:F:o:O:"; // opterr = 0, because ":..."
     while ((oc = getopt_long(argc, argv, optstring, longopts, &longindex)) != -1) {
         switch (oc) {
         case 'h':
@@ -154,7 +155,10 @@ void Options::parse(int argc, char *argv[])
             number_coef_decompose = atoi(optarg);
             break;
         case 'w':
-            length_window_profile = atoi(optarg);
+            length_window_profiling = atoi(optarg);
+            break;
+        case 'k':
+            step_profiling = atoi(optarg);
             break;
         case 'a':
             length_window_decompose = atoi(optarg);
@@ -272,14 +276,17 @@ void Options::checkOptions()
 
 void Options::checkParameters()
 {
-    if (!eps || !length_window_profile || !length_window_decompose ||
-        !step_decompose || !number_coef_decompose
+    if (!eps || !length_window_profiling || !step_profiling
+        || !length_window_decompose || !step_decompose || !number_coef_decompose
     ) {
         error_mode = true; // TODO: error
         if (!eps) {
             ;
         }
-        if (!length_window_profile) {
+        if (!length_window_profiling) {
+            ;
+        }
+        if (!step_profiling) {
             ;
         }
         if (!length_window_decompose) {
@@ -480,7 +487,8 @@ void Options::debugInfo(const char *file, int line, const char *info)
     /*
     printf("\n");
     printf("Information about options:\n");
-    printf("length_window_profile = %d\n", length_window_profile);
+    printf("length_window_profiling = %d\n", length_window_profiling);
+    printf("step_profiling = %d\n", step_profiling);
     printf("length_window_decompose = %d\n", length_window_decompose);
     printf("step_decompose = %d\n", step_decompose);
     printf("number_coef_decompose = %d\n", number_coef_decompose);
@@ -623,9 +631,14 @@ double Options::getEps()
     return eps;
 }
 
-unsigned int Options::getLengthWindowProfile()
+unsigned int Options::getLengthWindowProfiling()
 {
-    return length_window_profile;
+    return length_window_profiling;
+}
+
+unsigned int Options::getStepProfiling()
+{
+    return step_profiling;
 }
 
 unsigned int Options::getLengthWindowDecompose()
@@ -657,6 +670,7 @@ size_t Options::getLimitMemoryMatrix()
 {
     return limit_memory; // limit_memory MB
     //return 1048576 * limit_memory; // limit_memory MB
+    //return 1024 * limit_memory; // limit_memory MB
 }
 
 

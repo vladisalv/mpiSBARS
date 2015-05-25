@@ -1,7 +1,7 @@
 #include "profiling.h"
 
-Profiling::Profiling(MyMPI new_me, uint new_window)
-    : me(new_me), window(new_window)
+Profiling::Profiling(MyMPI new_me, uint new_window, uint new_step)
+    : me(new_me), window(new_window), step(new_step)
 {
 }
 
@@ -9,16 +9,130 @@ Profiling::~Profiling()
 {
 }
 
+Profile Profiling::doProfileOld(Sequence &seq, char ch1, char ch2)
+{
+    ulong length_other = seq.length;
+
+    MPI_Request req_send, req_recv;
+    if (me.isRoot()) {
+        me.iSend(&length_other, 1, MPI_UNSIGNED_LONG, me.whoLast(), 1, &req_send);
+    } else  if (me.isLast()) {
+        MPI_Request req_len;
+        me.iRecv(&length_other, 1, MPI_UNSIGNED_LONG, me.whoRoot(), 1, &req_len);
+        me.wait(&req_len, MPI_STATUS_IGNORE);
+    }
+
+    uint modulo1 = (length_other * me.getRank()) % step; // modulo before you
+    uint offset_profile = (length_other * me.getRank() + step - 1) / step;
+
+    ulong length_send_message = modulo1 ? window - modulo1 : window - step;
+    if (!me.isFirst())
+        me.iSend(seq.data, length_send_message, MPI_CHAR,
+                me.getRank() - 1, 0, &req_send);
+
+    uint begin = modulo1 ? step - modulo1 : 0;
+    ulong work_length_seq = seq.length - begin;
+    uint modulo2 = work_length_seq % step; // modulo after you
+    ulong length_recv_message = modulo2 ? window - modulo2 : window - step;
+
+    uint number_all_window, number_my_window, number_another_window;
+    if (me.isLast()) {
+        number_all_window = (work_length_seq - window + step - 1) / step;
+        number_my_window = number_all_window;
+        number_another_window = 0;
+    } else {
+        number_all_window = (work_length_seq + step - 1) / step;
+        number_my_window  = (work_length_seq - window + step - 1) / step;
+        number_another_window = number_all_window - number_my_window;
+    }
+
+    ulong length_your_elem = modulo2 ? (number_another_window - 1) * step + modulo2
+                                     :  number_another_window * step;
+
+    TypeSequence *buf_recv;
+    if (!me.isLast()) {
+        buf_recv = new TypeSequence [length_your_elem + length_recv_message];
+        me.iRecv(&buf_recv[length_your_elem], length_recv_message, MPI_CHAR,
+                    me.getRank() + 1, 0, &req_recv);
+    }
+
+    Profile profile(me);
+    profile.offset = offset_profile;
+    profile.length = number_all_window;
+    profile.data   = new TypeProfile [profile.length];
+
+    me.allMessage("%d \
+    module1 = %d\n \
+    module2 = %d\n \
+    length_other = %d\n \
+    begin = %d\n \
+    offset_profile = %d\n \
+    profile.offset = %d\n \
+    profile.length = %d\n \
+    work_length_seq = %d\n \
+    length_send_message = %d\n \
+    length_recv_message = %d\n \
+    number_all_window = %d\n \
+    number_my_window = %d\n \
+    number_another_window = %d\n \
+    ", me.getRank(), modulo1, modulo2, length_other, begin, offset_profile, profile.offset, profile.length, work_length_seq,
+    length_send_message, length_recv_message, number_all_window, number_my_window, number_another_window);
+
+    TypeProfile count = 0;
+    for (uint i = 0; i < window; i++)
+        if (seq.data[begin + i] == ch1 || seq.data[begin + i] == ch2)
+            count++;
+    profile.data[0] = count;
+
+    ulong offset = begin;
+    for (int i = 1; i < number_my_window; i++) {
+        for (int j = 0; j < step; j++, offset++) {
+            if (seq.data[offset + window] == ch1 || seq.data[offset + window] == ch2)
+                count++;
+            if (seq.data[offset] == ch1 || seq.data[offset] == ch2 && count > 0)
+                count--;
+        }
+        profile.data[i] = count;
+    }
+
+    if (!me.isLast()) {
+        for (int i = 0; i < length_your_elem; i++)
+            buf_recv[i] = seq.data[length_your_elem - length_your_elem + i];
+
+        me.wait(&req_recv, MPI_STATUS_IGNORE);
+
+        TypeProfile count = 0;
+        for (uint i = 0; i < window; i++)
+            if (buf_recv[i] == ch1 || buf_recv[i] == ch2)
+                count++;
+        profile.data[number_my_window] = count;
+
+        for (int i = 1, offset = 0; i < number_another_window; i++) {
+            for (int j = 0; j < step; j++, offset++) {
+                if (buf_recv[offset + window] == ch1 || buf_recv[offset + window] == ch2)
+                    count++;
+                if (buf_recv[offset] == ch1 || buf_recv[offset] == ch2 && count > 0)
+                    count--;
+            }
+            profile.data[number_my_window + i] = count;
+        }
+    }
+
+    me.wait(&req_send, MPI_STATUS_IGNORE); // first wait message to last
+    return profile;
+}
+
 Profile Profiling::doProfile(Sequence &seq, char ch1, char ch2)
 {
     // @TODO: error, when you don't have data in seq_letter
+    me.rootMessage("step_profiling = %ld\n", step);
     Profile profile(me);
     profile.offset = seq.offset;
     ulong length_without_exchange;
     char *buffer = 0;
 
     if (me.isLast()) {
-        profile.length= seq.length - window + 1;
+        profile.length = seq.length - window + 1;
         length_without_exchange = profile.length;
     } else {
         profile.length = seq.length;

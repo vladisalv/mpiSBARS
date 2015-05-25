@@ -36,7 +36,8 @@ class Options {
     char *analysis_load, *analysis_save;
 
     double eps; // fidelity of compute
-    unsigned int length_window_profile;    // length window of profiling
+    unsigned int length_window_profiling;    // length window of profiling
+    unsigned int step_profiling;    // step window of profiling
     unsigned int length_window_decompose;  // length window of decomposition
     unsigned int step_decompose; // step window of approximation
     unsigned int number_coef_decompose; // number coefficient of decomposition
@@ -82,7 +83,8 @@ public:
     bool debugMode();
 
     double getEps();
-    unsigned int getLengthWindowProfile();
+    unsigned int getLengthWindowProfiling();
+    unsigned int getStepProfiling();
     unsigned int getLengthWindowDecompose();
     unsigned int getStepDecompose();
     unsigned int getNumberCoefDecompose();

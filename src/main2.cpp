@@ -81,7 +81,7 @@ int main2(int argc, char *argv[])
 
     Profile profile1GC(me), profile1GA(me), profile2GC(me), profile2GA(me);
     if (opt.profileMode()) {
-        Profiling profiling(me, opt.getLengthWindowProfile());
+        Profiling profiling(me, opt.getLengthWindowProfiling(), opt.getStepProfiling());
         if (opt.modeGC())
             profile1GC = profiling.doProfile(sequence1, 'G', 'C');
         if (opt.modeGA())
@@ -260,7 +260,7 @@ int main2(int argc, char *argv[])
             decomposition2GA.free();
         }
         listRepeats.mergeRepeats();
-        listRepeats.convertToOriginalRepeats(opt.getLengthWindowProfile(),
+        listRepeats.convertToOriginalRepeats(opt.getLengthWindowProfiling(),
                                              opt.getLengthWindowDecompose(),
                                              opt.getStepDecompose(),
                                              opt.getNumberCoefDecompose()

@@ -13,7 +13,6 @@ public:
     ~Profiling();
 
     Profile doProfile(Sequence &sequence, char ch1, char ch2);
-    Profile doProfileOld(Sequence &sequence, char ch1, char ch2);
 
     void setLengthWindowProfile(uint new_window);
     uint getLengthWindowProfile();

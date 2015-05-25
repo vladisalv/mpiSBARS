@@ -27,12 +27,12 @@ Decomposition Decompose::doDecompose(Profile &profile)
 
     uint number_all_window, number_my_window, number_another_window;
     if (me.isLast()) {
-        number_all_window = (work_length_profile - window + step - 1) / step;
+        number_all_window = (work_length_profile - window + 1 + step - 1) / step;
         number_my_window = number_all_window;
         number_another_window = 0;
     } else {
         number_all_window = (work_length_profile + step - 1) / step;
-        number_my_window  = (work_length_profile - window + step - 1) / step;
+        number_my_window  = (work_length_profile - window + 1 + step - 1) / step;
         number_another_window = number_all_window - number_my_window;
     }
 
@@ -85,127 +85,7 @@ Decomposition Decompose::doDecompose(Profile &profile)
     }
 
     if (!me.isFirst())
-        me.wait(&req_send, MPI_STATUS_IGNORE); // first wait message to last
-    return decomposition;
-}
-
-Decomposition Decompose::doDecomposeOld(Profile &profile)
-{
-    ulong length_other; // for last process. He must know length another process
-    if (me.isRoot()) {
-        MPI_Request req_len;
-        me.iSend(&profile.length, 1, MPI_LONG, me.whoLast(), 1, &req_len);
-    } else  if (me.isLast()) {
-        MPI_Request req_len;
-        MPI_Status status_len;
-        me.iRecv(&length_other, 1, MPI_LONG, me.whoRoot(), 1, &req_len);
-        me.wait(&req_len, &status_len);
-    }
-
-    uint modulo1; // modulo before you
-    uint offset_decomposition;
-    if (me.isLast()) {
-        modulo1 = (length_other * me.getRank()) % step;
-        offset_decomposition = (length_other * me.getRank()) / step;
-    } else {
-        modulo1 = (profile.length * me.getRank()) % step;
-        offset_decomposition = (profile.length * me.getRank()) / step;
-    }
-
-    ulong length_send_message;
-    if (modulo1)
-        length_send_message = window - modulo1;
-    else
-        length_send_message = window - step;
-
-    MPI_Request req_send;
-    if (!me.isFirst())
-        me.iSend(profile.data, length_send_message, MPI_INT, me.getRank() - 1,
-                    0, &req_send);
-
-    uint begin;
-    if (modulo1)
-        begin = step - modulo1;
-    else
-        begin = 0;
-
-    ulong work_length_profile = profile.length - begin;
-    uint modulo2 = work_length_profile % step; // modulo after you
-
-    ulong length_recv_message;
-    if (modulo2)
-        length_recv_message = window - modulo2;
-    else
-        length_recv_message = window - step;
-
-    uint number_all_window, number_my_window, number_another_window;
-    if (me.isLast()) {
-        number_all_window = ceil((double)(work_length_profile - window) / (double)step);
-        number_my_window = number_all_window;
-        number_another_window = 0;
-    } else {
-        number_all_window = ceil((double)work_length_profile / (double)step);
-        number_my_window  = ceil((double)(work_length_profile - window) / (double)step);
-        number_another_window = number_all_window - number_my_window;
-    }
-
-    ulong length_your_elem;
-    if (modulo2)
-        length_your_elem = (number_another_window - 1) * step + modulo2;
-    else
-        length_your_elem = number_another_window * step;
-
-    TypeProfile *buf_recv;
-    if (!me.isLast())
-        buf_recv = new TypeProfile [length_your_elem + length_recv_message];
-
-    MPI_Request req_recv;
-    if (!me.isLast())
-        me.iRecv(&buf_recv[length_your_elem], length_recv_message, MPI_INT,
-                    me.getRank() + 1, 0, &req_recv);
-
-    Decomposition decomposition(me);
-    decomposition.height = number_all_window;
-    decomposition.offset_row = offset_decomposition;
-    decomposition.width = number_coef;
-    decomposition.offset_column = 0;
-    decomposition.length = number_all_window * number_coef;
-    decomposition.data = new TypeDecomposition [decomposition.length];
-
-    // do decompose with my profile
-    if (gpu.isUse()) {
-        gpu.doDecomposeGPU(decomposition.data, number_my_window, number_coef,
-                        profile.data, window, step);
-    } else {
-        for (uint i = 0; i < number_my_window; i++)
-            decomposeFourier(&decomposition.data[i * number_coef], number_coef,
-                                &profile.data[begin + i * step], window);
-    }
-
-    if (!me.isLast()) {
-        // copy to buffer your elem
-        for (uint i = 0; i < length_your_elem; i++)
-            buf_recv[i] = profile.data[profile.length - length_your_elem + i];
-
-        MPI_Status status_recv;
-        me.wait(&req_recv, &status_recv);
-
-        // do decompose with buf
-        // TODO: use here only HOST. gpu work async
-        if (gpu.isUse()) {
-            gpu.doDecomposeGPU(&decomposition.data[number_coef * number_my_window],
-                        number_another_window, number_coef, buf_recv, window, step);
-        } else {
-            for (uint i = 0; i < number_another_window; i++)
-                decomposeFourier(&decomposition.data[(i + number_my_window) * number_coef],
-                                    number_coef, &buf_recv[i * step], window);
-        }
-    }
-
-    if (!me.isFirst()) {
-        MPI_Status status_send;
-        me.wait(&req_send, &status_send);
-    }
+        me.wait(&req_send, MPI_STATUS_IGNORE);
     return decomposition;
 }
 

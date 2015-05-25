@@ -12,21 +12,9 @@ Decompose::~Decompose()
 
 Decomposition Decompose::doDecompose(Profile &profile)
 {
-    ulong length_other = profile.length;
-
-    MPI_Request req_send, req_recv;
-    if (me.isRoot()) {
-        me.iSend(&length_other, 1, MPI_UNSIGNED_LONG, me.whoLast(), 1, &req_send);
-    } else  if (me.isLast()) {
-        MPI_Request req_len;
-        me.iRecv(&length_other, 1, MPI_UNSIGNED_LONG, me.whoRoot(), 1, &req_len);
-        me.wait(&req_len, MPI_STATUS_IGNORE);
-    }
-
-    uint modulo1 = (length_other * me.getRank()) % step; // modulo before you
-    uint offset_decomposition = (length_other * me.getRank() + step - 1) / step;
-
+    uint modulo1 = profile.offset % step; // modulo before you
     ulong length_send_message = modulo1 ? window - modulo1 : window - step;
+    MPI_Request req_send;
     if (!me.isFirst())
         // MPI_INT -> MPI_TYPE_PROFILE
         me.iSend(profile.data, length_send_message, MPI_INT,
@@ -51,6 +39,7 @@ Decomposition Decompose::doDecompose(Profile &profile)
     ulong length_your_elem = modulo2 ? (number_another_window - 1) * step + modulo2
                                      :  number_another_window * step;
 
+    MPI_Request req_recv;
     TypeProfile *buf_recv;
     if (!me.isLast()) {
         buf_recv = new TypeProfile [length_your_elem + length_recv_message];
@@ -60,7 +49,7 @@ Decomposition Decompose::doDecompose(Profile &profile)
 
     Decomposition decomposition(me);
     decomposition.height = number_all_window;
-    decomposition.offset_row = offset_decomposition;
+    decomposition.offset_row = (profile.offset + step - 1) / step;
     decomposition.width = number_coef;
     decomposition.offset_column = 0;
     decomposition.length = number_all_window * number_coef;
@@ -95,7 +84,8 @@ Decomposition Decompose::doDecompose(Profile &profile)
         }
     }
 
-    me.wait(&req_send, MPI_STATUS_IGNORE); // first wait message to last
+    if (!me.isFirst())
+        me.wait(&req_send, MPI_STATUS_IGNORE); // first wait message to last
     return decomposition;
 }
 

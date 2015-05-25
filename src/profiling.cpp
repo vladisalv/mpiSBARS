@@ -11,21 +11,9 @@ Profiling::~Profiling()
 
 Profile Profiling::doProfileOld(Sequence &seq, char ch1, char ch2)
 {
-    ulong length_other = seq.length;
-
-    MPI_Request req_send, req_recv;
-    if (me.isRoot()) {
-        me.iSend(&length_other, 1, MPI_UNSIGNED_LONG, me.whoLast(), 1, &req_send);
-    } else  if (me.isLast()) {
-        MPI_Request req_len;
-        me.iRecv(&length_other, 1, MPI_UNSIGNED_LONG, me.whoRoot(), 1, &req_len);
-        me.wait(&req_len, MPI_STATUS_IGNORE);
-    }
-
-    uint modulo1 = (length_other * me.getRank()) % step; // modulo before you
-    uint offset_profile = (length_other * me.getRank() + step - 1) / step;
-
+    uint modulo1 = seq.offset % step; // modulo before you
     ulong length_send_message = modulo1 ? window - modulo1 : window - step;
+    MPI_Request req_send;
     if (!me.isFirst())
         me.iSend(seq.data, length_send_message, MPI_CHAR,
                 me.getRank() - 1, 0, &req_send);
@@ -49,6 +37,7 @@ Profile Profiling::doProfileOld(Sequence &seq, char ch1, char ch2)
     ulong length_your_elem = modulo2 ? (number_another_window - 1) * step + modulo2
                                      :  number_another_window * step;
 
+    MPI_Request req_recv;
     TypeSequence *buf_recv;
     if (!me.isLast()) {
         buf_recv = new TypeSequence [length_your_elem + length_recv_message];
@@ -57,16 +46,14 @@ Profile Profiling::doProfileOld(Sequence &seq, char ch1, char ch2)
     }
 
     Profile profile(me);
-    profile.offset = offset_profile;
+    profile.offset = (seq.offset + step - 1) / step;
     profile.length = number_all_window;
     profile.data   = new TypeProfile [profile.length];
 
     me.allMessage("%d \
     module1 = %d\n \
     module2 = %d\n \
-    length_other = %d\n \
     begin = %d\n \
-    offset_profile = %d\n \
     profile.offset = %d\n \
     profile.length = %d\n \
     work_length_seq = %d\n \
@@ -75,8 +62,9 @@ Profile Profiling::doProfileOld(Sequence &seq, char ch1, char ch2)
     number_all_window = %d\n \
     number_my_window = %d\n \
     number_another_window = %d\n \
-    ", me.getRank(), modulo1, modulo2, length_other, begin, offset_profile, profile.offset, profile.length, work_length_seq,
-    length_send_message, length_recv_message, number_all_window, number_my_window, number_another_window);
+    length_your_elem = %d\n",
+    me.getRank(), modulo1, modulo2, begin, profile.offset, profile.length, work_length_seq,
+    length_send_message, length_recv_message, number_all_window, number_my_window, number_another_window, length_your_elem);
 
     TypeProfile count = 0;
     for (uint i = 0; i < window; i++)
@@ -87,17 +75,17 @@ Profile Profiling::doProfileOld(Sequence &seq, char ch1, char ch2)
     ulong offset = begin;
     for (int i = 1; i < number_my_window; i++) {
         for (int j = 0; j < step; j++, offset++) {
-            if (seq.data[offset + window] == ch1 || seq.data[offset + window] == ch2)
-                count++;
             if (seq.data[offset] == ch1 || seq.data[offset] == ch2 && count > 0)
                 count--;
+            if (seq.data[offset + window] == ch1 || seq.data[offset + window] == ch2)
+                count++;
         }
         profile.data[i] = count;
     }
 
     if (!me.isLast()) {
         for (int i = 0; i < length_your_elem; i++)
-            buf_recv[i] = seq.data[length_your_elem - length_your_elem + i];
+            buf_recv[i] = seq.data[seq.length - length_your_elem + i];
 
         me.wait(&req_recv, MPI_STATUS_IGNORE);
 
@@ -109,16 +97,17 @@ Profile Profiling::doProfileOld(Sequence &seq, char ch1, char ch2)
 
         for (int i = 1, offset = 0; i < number_another_window; i++) {
             for (int j = 0; j < step; j++, offset++) {
-                if (buf_recv[offset + window] == ch1 || buf_recv[offset + window] == ch2)
-                    count++;
                 if (buf_recv[offset] == ch1 || buf_recv[offset] == ch2 && count > 0)
                     count--;
+                if (buf_recv[offset + window] == ch1 || buf_recv[offset + window] == ch2)
+                    count++;
             }
             profile.data[number_my_window + i] = count;
         }
     }
 
-    me.wait(&req_send, MPI_STATUS_IGNORE); // first wait message to last
+    if (!me.isFirst())
+        me.wait(&req_send, MPI_STATUS_IGNORE); // first wait message to last
     return profile;
 }
 
@@ -145,6 +134,12 @@ Profile Profiling::doProfile(Sequence &seq, char ch1, char ch2)
         me.iSend(seq.data, window - 1, MPI_CHAR, me.getRank() - 1, 0, &req_send);
     if (!me.isLast() && !me.isSingle())
         me.iRecv(buffer, window - 1, MPI_CHAR, me.getRank() + 1, 0, &req_recv);
+
+    me.allMessage("%d \
+    profile.offset = %ld\n \
+    profile.length = %ld\n \
+    length_without_exchange = %ld\n \
+    ", me.getRank(), profile.offset, profile.length, length_without_exchange);
 
     profile.data = new TypeProfile [profile.length];
     TypeProfile count = 0;

@@ -14,9 +14,10 @@ EPS                = 0.01
 INPUT_DIR := ./test/input
 #INPUT_FILE1 := rat165M
 #INPUT_FILE1 := file20M
-#INPUT_FILE1 := file5M
-INPUT_FILE1 := file50K
-INPUT_FILE2 := file50K
+INPUT_FILE1 := file5M
+#INPUT_FILE1 := filesmall
+#INPUT_FILE1 := file50K
+#INPUT_FILE2 := file50K
 #INPUT_FILE1 := $(FILE)
 
 OUTPUT_DIR     := ./test/output/
@@ -27,13 +28,13 @@ OUTPUT_FILE_PIC = pic_$(DATE)_$(GPU)
 OUTPUT_FILE_ANA = ana_$(DATE)_$(GPU)
 
 GPU = --gpu
-USE_MATRIX = --use-matrix
+#USE_MATRIX = --use-matrix
 SEQUENCE = -f $(INPUT_DIR)/$(INPUT_FILE1)                              \
-           -F $(INPUT_DIR)/$(INPUT_FILE2)
+           #-F $(INPUT_DIR)/$(INPUT_FILE2)
 #DEC = --decompose-save-firstGC $(OUTPUT_DIR)/$(OUTPUT_FILE_DEC)_GC \
       --decompose-save-firstGA $(OUTPUT_DIR)/$(OUTPUT_FILE_DEC)_GA
 #GOMOLOGY = --matrix-gomology-save $(OUTPUT_DIR)/$(OUTPUT_FILE_GOM)
-PIC = --image-save $(OUTPUT_DIR)/$(OUTPUT_FILE_PIC)
+#PIC = --image-save $(OUTPUT_DIR)/$(OUTPUT_FILE_PIC)
 ANALYS = --repeats-analysis-save $(OUTPUT_DIR)/$(OUTPUT_FILE_ANA)
 
 #GC = --gc-only
@@ -49,7 +50,7 @@ ARGUMENTS = --profiling-window     $(PROFILING_WINDOW)                  \
             $(GPU) $(USE_MATRIX) $(SEQUENCE) $(DEC) $(GOMOLOGY) $(PIC) $(ANALYS) $(GC) $(GA) --limit-memory $(BLOCK)
 
 # HOST, MPI, LOMONOSOV or BLUEGENE
-MACHINE := LOMONOSOV
+MACHINE := MPI
 
 # short name NUMBER_PROC
 N           = 4

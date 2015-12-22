@@ -13,7 +13,7 @@
 #include "list_repeats.h"
 #include "image.h"
 
-#define debugInfo() debugInfo( __FILE__, __LINE__ )
+#define debugInfo() debugInfo( __FILE__ , __LINE__ )
 
 using namespace std;
 
@@ -75,8 +75,8 @@ int main2(int argc, char *argv[])
             sequence2.writeFile(opt.getFileSequenceSave2());
         me.rootMessage("save sequence...\n");
     }
-    //DEBUG(sequence1.debugInfo());
-    //DEBUG(sequence2.debugInfo());
+    DEBUG(sequence1.debugInfo());
+    DEBUG(sequence2.debugInfo());
     double sequence_time = me.getTime() - begin_time;
 
     Profile profile1GC(me), profile1GA(me), profile2GC(me), profile2GA(me);
@@ -118,10 +118,10 @@ int main2(int argc, char *argv[])
             profile2GA.readFile(opt.getFileProfileLoad2GA());
         me.rootMessage("load profile...\n");
     }
-    //DEBUG(profile1GC.debugInfo());
-    //DEBUG(profile1GA.debugInfo());
-    //DEBUG(profile2GC.debugInfo());
-    //DEBUG(profile2GA.debugInfo());
+    DEBUG(profile1GC.debugInfo());
+    DEBUG(profile1GA.debugInfo());
+    DEBUG(profile2GC.debugInfo());
+    DEBUG(profile2GA.debugInfo());
     double profile_time = me.getTime() - begin_time;
 
     Decomposition decomposition1GC(me), decomposition1GA(me);
@@ -168,10 +168,10 @@ int main2(int argc, char *argv[])
             decomposition2GA.readFile(opt.getFileDecompositionLoad2GA());
         me.rootMessage("load decomposition...\n");
     }
-    //DEBUG(decomposition1GC.debugInfo());
-    //DEBUG(decomposition1GA.debugInfo());
-    //DEBUG(decomposition2GC.debugInfo());
-    //DEBUG(decomposition2GA.debugInfo());
+    DEBUG(decomposition1GC.debugInfo());
+    DEBUG(decomposition1GA.debugInfo());
+    DEBUG(decomposition2GC.debugInfo());
+    DEBUG(decomposition2GA.debugInfo());
     double decompose_time = me.getTime() - begin_time;
 
     MatrixGomology matrixGomologyGC(me), matrixGomologyGA(me), matrixGomology(me);

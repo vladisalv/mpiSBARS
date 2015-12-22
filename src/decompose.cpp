@@ -27,11 +27,13 @@ Decomposition Decompose::doDecompose(Profile &profile)
 
     uint number_all_window, number_my_window, number_another_window;
     if (me.isLast()) {
+        //number_all_window = (work_length_profile - window + step - 1) / step;
         number_all_window = (work_length_profile - window + 1 + step - 1) / step;
         number_my_window = number_all_window;
         number_another_window = 0;
     } else {
         number_all_window = (work_length_profile + step - 1) / step;
+        //number_my_window  = (work_length_profile - window + step - 1) / step;
         number_my_window  = (work_length_profile - window + 1 + step - 1) / step;
         number_another_window = number_all_window - number_my_window;
     }
@@ -54,6 +56,16 @@ Decomposition Decompose::doDecompose(Profile &profile)
     decomposition.offset_column = 0;
     decomposition.length = number_all_window * number_coef;
     decomposition.data = new TypeDecomposition [decomposition.length];
+
+    /*
+    me.allMessage("HERE step = %ld window = %ld\n", step, window);
+    printf("%d \
+    %ld == %ld\n \
+    number_all_window = %ld\n \
+    number_my_window = %ld\n",
+    me.getRank(), length_your_elem + length_recv_message, (number_another_window - 1) * step + window,
+    number_all_window, number_my_window);
+    */
 
     // do decompose with my profile
     if (gpu.isUse()) {

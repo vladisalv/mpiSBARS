@@ -628,7 +628,7 @@ bool Options::debugMode()
 
 double Options::getEps()
 {
-    return eps;
+    return 2 * eps * length_window_profiling * length_window_profiling;
 }
 
 unsigned int Options::getLengthWindowProfiling()

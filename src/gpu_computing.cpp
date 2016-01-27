@@ -13,15 +13,17 @@ void HandleError(cudaError_t err, const char *file, int line)
 GpuComputing::GpuComputing(MyMPI new_me, bool use)
     : me(new_me), use_gpu(use), decomposition1(0), decomposition2(0)
 {
-    int deviceCount;
-    HANDLE_ERROR(cudaGetDeviceCount(&deviceCount));
-    int myDevice;
-    int coef = 1; // LOMONOSOV OR TESLA
-    if (me.getRank() % 2)
-        myDevice = 0 + coef;
-    else
-        myDevice = 1 + coef;
-    HANDLE_ERROR(cudaSetDevice(myDevice));
+    if (use) {
+        int deviceCount;
+        HANDLE_ERROR(cudaGetDeviceCount(&deviceCount));
+        int myDevice;
+        int coef = 0; // LOMONOSOV OR TESLA
+        if (me.getRank() % 2)
+            myDevice = 0 + coef;
+        else
+            myDevice = 1 + coef;
+        HANDLE_ERROR(cudaSetDevice(myDevice));
+    }
 }
 
 GpuComputing::~GpuComputing()

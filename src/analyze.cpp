@@ -117,11 +117,13 @@ ListRepeats Analyze::doAnalyze(Decomposition myDecomposition)
         for (int j = 0; j < (dec_other.height + width_block - 1) / width_block; j++) {
             ListRepeats resultColumn(me);
             for (int i = 0; i < (decomposition.height + height_block - 1) / height_block; i++) {
+                /*
                 if (recvDecompositonAsync() && !flag) {
                     if (i > 2 || j > 0)
                         printf("%d:h = %d w = %d\n", me.getRank(), i, j);
                     flag = true;
                 }
+                */
                 ListRepeats resultBlock(me);
                 ulong height_block_now = (i == decomposition.height / height_block) ? decomposition.height % height_block : height_block;
                 ulong width_block_now  = (j == dec_other.height     / width_block ) ? dec_other.height     % width_block  : width_block;

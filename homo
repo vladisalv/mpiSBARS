@@ -1,0 +1,11 @@
+#!/bin/sh
+
+mpirun -n 2 ./bin//debug//mpiSSSRDNA \
+--profiling-window 30000 --step-profiling 1 --decompose-window 102000 \
+--step-decompose 25540 --number-coefficient 5 --eps  0.000095 --use-matrix \
+-f ./test/input/homoY \
+-F ./test/input/homoY \
+--image-save ./test/output//pic_big_expr \
+--repeats-analysis-save ./test/output//out
+
+

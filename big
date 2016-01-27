@@ -1,0 +1,14 @@
+#!/bin/sh
+
+mpirun -n 4 ./bin//debug//mpiSSSRDNA \
+--profiling-window 300000 --step-profiling 1 --decompose-window 800000 \
+--step-decompose 160000 --number-coefficient 5 --eps  0.00004 --use-matrix \
+-f ./test/input/rat165M \
+-F ./test/input/mus \
+--image-save ./test/output//pic_big_expr \
+--repeats-analysis-save ./test/output//out
+
+#make run PROFILING_WINDOW=300000 STEP_PROFILING=64 \
+#         DECOMPOSE_WINDOW=800000 STEP_DECOMPOSE=160000 \
+#         NUMBER_COEFFICIENT=5 EPS=0.00004 \
+#         INPUT_FILE1=rat165M GPU=

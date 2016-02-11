@@ -3,6 +3,7 @@
 
 #include <stdlib.h> // exit()
 #include "myMPI.h"
+#include "types.h"
 
 #ifdef USE_CUDA
 

@@ -1,6 +1,10 @@
 #ifndef __TYPES_HEADER__
 #define __TYPES_HEADER__
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 typedef unsigned int uint;
 typedef unsigned long ulong;
 

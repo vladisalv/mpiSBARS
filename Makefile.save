@@ -10,7 +10,7 @@
 
 # ====================  INCLUDE CONFIG FILE  ===================================
 
-include $(wildcard config.mk)
+include $(wildcard config.mk.save)
 
 # ========================  REDEFINE NAME  =====================================
 PROGRAM_NAME ?= "PROGRAM"

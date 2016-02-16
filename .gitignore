@@ -2,6 +2,8 @@ config.mk
 bin/
 obj/
 test/
+src/*.o
+src/mpisbars
 
 Makefile
 Makefile.in

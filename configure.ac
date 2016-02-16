@@ -8,27 +8,38 @@ AC_CONFIG_SRCDIR([src/main.cpp])
 #AC_CONFIG_HEADERS([config.h])
 
 # Checks for programs.
-AC_PROG_CXX
 AC_PROG_CC
+# AC_PROG_CXX do not use, cause we use mpic++
 
-# Checks for libraries.
-#AC_HAVE_LIBRARY(cudart, AC_DEFINE(HAVE_CUDART, 1, have cudart library))
-#AC_HAVE_LIBRARY(cublas, AC_DEFINE(HAVE_CUBLAS, 1, have cublas library))
-#AC_HAVE_LIBRARY(cudart)
-#AC_HAVE_LIBRARY(cublas)
+AC_ARG_WITH([mpi], [AS_HELP_STRING([--with-mpi],
+    [compile with MPI (parallelization) support. If none is found,
+    MPI is not used. Default: yes])
+],,[with_mpi=yes])
+
+if test x"${with_mpi}" = x"yes"; then
+# check MPI compiler avaliable
+    m4_include([m4/ax_prog_cxx_mpi.m4])
+    AX_PROG_CXX_MPI([test x"${with_mpi}" != x"no"],
+        [ AC_DEFINE(USE_MPI, 1, use MPI parallelization)],
+        [AC_MSG_FAILURE([MPI compiler requested, but could not use MPI.])]
+    )
+fi
+AM_CONDITIONAL([HAVE_USE_MPI], [test x"${with_mpi}" = x"yes"])
+
 
 AC_ARG_ENABLE([gpu],
               [AS_HELP_STRING([--enable-gpu], [Enable feature using GPU device])],
               [enable_gpu=yes],
-              [enable_gpu=no])
+              [enable_gpu=no]
+             )
 
 if test x"${enable_gpu}" = x"yes"; then
+# TODO: we need check nvcc
     AC_CHECK_HEADERS([cuda_runtime.h], , AC_MSG_ERROR(cannot find cuda_runtime.h))
     AC_CHECK_LIB([cudart], [main], , [AC_MSG_ERROR(cannot find cudart)])
-# we need check nvcc
-# install nvcc option
     AC_DEFINE(USE_CUDA, 1, use CUDA massage)
 fi
+AM_CONDITIONAL([HAVE_USE_CUDA], [test x"${enable_gpu}" = x"yes"])
 
 # Checks for header files.
 AC_CHECK_HEADERS([stdlib.h string.h ])
@@ -44,6 +55,5 @@ AC_CHECK_FUNCS([memset sqrt])
 
 AC_DEFINE(USE_MPI,  1, use MPI massage)
 
-AM_CONDITIONAL([HAVE_USE_CUDA], [test x"${enable_gpu}" = x"yes"])
 
 AC_OUTPUT(Makefile src/Makefile)

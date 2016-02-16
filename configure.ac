@@ -9,7 +9,6 @@ AC_CONFIG_SRCDIR([src/main.cpp])
 
 # Checks for programs.
 AC_PROG_CC
-# AC_PROG_CXX do not use, cause we use mpic++
 
 AC_ARG_WITH([mpi], [AS_HELP_STRING([--with-mpi],
     [compile with MPI (parallelization) support. If none is found,
@@ -23,6 +22,8 @@ if test x"${with_mpi}" = x"yes"; then
         [ AC_DEFINE(USE_MPI, 1, use MPI parallelization)],
         [AC_MSG_FAILURE([MPI compiler requested, but could not use MPI.])]
     )
+else
+    AC_PROG_CXX
 fi
 AM_CONDITIONAL([HAVE_USE_MPI], [test x"${with_mpi}" = x"yes"])
 
@@ -52,8 +53,5 @@ AC_TYPE_SIZE_T
 # Checks for library functions.
 AC_FUNC_MALLOC
 AC_CHECK_FUNCS([memset sqrt])
-
-AC_DEFINE(USE_MPI,  1, use MPI massage)
-
 
 AC_OUTPUT(Makefile src/Makefile)

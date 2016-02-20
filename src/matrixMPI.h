@@ -1,9 +1,9 @@
 #ifndef __MATRIX_MPI_HEADER__
 #define __MATRIX_MPI_HEADER__
 
+#include "types.h"
 #include "myMPI.h"
 #include "dataMPI.h"
-#include "types.h"
 
 template<class DataType, class LengthData>
 class MatrixMPI : public DataMPI<DataType, LengthData> {

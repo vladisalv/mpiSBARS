@@ -1,7 +1,6 @@
-#ifdef USE_CUDA
-
 #include "gpu_computing.h"
 
+#ifdef USE_CUDA
 
 #define get_elem(array, Row, Column) \
 (((TypeDecomposition*)((char*)array.ptr + (Row) * array.pitch))[(Column)])

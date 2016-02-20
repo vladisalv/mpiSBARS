@@ -1,9 +1,9 @@
 #ifndef __ARRAY_MPI_HEADER__
 #define __ARRAY_MPI_HEADER__
 
+#include "types.h"
 #include "myMPI.h"
 #include "dataMPI.h"
-#include "types.h"
 
 template <class DataType, class LengthData>
 class ArrayMPI : public DataMPI<DataType, LengthData> {

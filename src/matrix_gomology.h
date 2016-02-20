@@ -1,8 +1,8 @@
 #ifndef __MATRIX_GOMOLOGYY_HEADER__
 #define __MATRIX_GOMOLOGYY_HEADER__
 
-#include "matrixMPI.h"
 #include "types.h"
+#include "matrixMPI.h"
 
 class MatrixGomology : public MatrixMPI<TypeGomology, ulong> {
 public:

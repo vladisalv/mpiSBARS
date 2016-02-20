@@ -1,9 +1,10 @@
 #ifndef __GPU_COMPUTING_HEADER__
 #define __GPU_COMPUTING_HEADER__
 
-#include <stdlib.h> // exit()
-#include "myMPI.h"
 #include "types.h"
+#include "myMPI.h"
+
+#include <stdlib.h> // exit()
 
 #ifdef USE_CUDA
 

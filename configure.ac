@@ -5,7 +5,7 @@ AC_PREREQ([2.68])
 AC_INIT([mpiSBARS], [0.8], [Vladislav.Toigildin@cs.msu.su])
 AM_INIT_AUTOMAKE([mpiSBARS], [0.8])
 AC_CONFIG_SRCDIR([src/main.cpp])
-#AC_CONFIG_HEADERS([config.h])
+AC_CONFIG_HEADERS([config.h])
 
 # Checks for programs.
 AC_PROG_CC

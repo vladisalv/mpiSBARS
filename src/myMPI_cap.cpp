@@ -1,7 +1,7 @@
-#ifndef USE_MPI
-
 #include "myMPI.h"
 #include "time_measure.h"
+
+#ifndef USE_MPI
 
 int MyMPI::numberObject = 0;
 

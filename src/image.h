@@ -1,9 +1,9 @@
 #ifndef __IMAGE_HEADER__
 #define __IMAGE_HEADER__
 
+#include "types.h"
 #include "myMPI.h"
 #include "matrix_gomology.h"
-#include "types.h"
 
 typedef struct TMyPixel
 {

@@ -1,9 +1,9 @@
 #ifndef __ANALYZE_HEADER__
 #define __ANALYZE_HEADER__
 
+#include "types.h"
 #include "myMPI.h"
 #include "gpu_computing.h"
-#include "types.h"
 
 #include "decomposition.h"
 #include "compare.h"

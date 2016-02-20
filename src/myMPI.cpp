@@ -1,8 +1,8 @@
-#ifdef USE_MPI
-
 #include "myMPI.h"
 #include "time_measure.h"
 #include "support.h"
+
+#ifdef USE_MPI
 
 int MyMPI::numberObject = 0;
 

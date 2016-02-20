@@ -1,8 +1,8 @@
 #ifndef __SEQUENCE_HEADER__
 #define __SEQUENCE_HEADER__
 
-#include "arrayMPI.h"
 #include "types.h"
+#include "arrayMPI.h"
 
 class Sequence : public ArrayMPI<TypeSequence, ulong> {
 public:

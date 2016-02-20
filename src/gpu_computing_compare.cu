@@ -1,6 +1,6 @@
-#ifdef USE_CUDA
-
 #include "gpu_computing.h"
+
+#ifdef USE_CUDA
 
 __global__ void kernelCompare(TypeDecomposition *dec1, ulong length_decompose1,
                        TypeDecomposition *dec2, ulong length_decompose2,

@@ -1,8 +1,9 @@
 #ifndef __PROFILE_HEADER__
 #define __PROFILE_HEADER__
 
-#include "arrayMPI.h"
+#include "config.h"
 #include "types.h"
+#include "arrayMPI.h"
 
 class Profile : public ArrayMPI<TypeProfile, ulong> {
 public:

@@ -1,3 +1,4 @@
+#include "types.h"
 #include "myMPI.h"
 #include "options.h"
 #include "gpu_computing.h"

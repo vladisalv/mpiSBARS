@@ -1,10 +1,10 @@
 #ifndef __DECOMPOSE_HEADER__
 #define __DECOMPOSE_HEADER__
 
+#include "types.h"
 #include "gpu_computing.h"
 #include "profile.h"
 #include "decomposition.h"
-#include "types.h"
 
 class Decompose {
     MyMPI me;

@@ -1,8 +1,8 @@
 #ifndef __TIME_MEASURE_HEADER__
 #define __TIME_MEASURE_HEADER__
 
-#include "myMPI.h"
 #include "types.h"
+#include "myMPI.h"
 
 struct CheckPoint  {
     char  *label;

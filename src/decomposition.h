@@ -1,8 +1,8 @@
 #ifndef __DECOMPOSITION_HEADER__
 #define __DECOMPOSITION_HEADER__
 
-#include "matrixMPI.h"
 #include "types.h"
+#include "matrixMPI.h"
 
 class Decomposition : public MatrixMPI<TypeDecomposition, ulong> {
 public:

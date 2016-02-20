@@ -1,10 +1,10 @@
 #ifndef __COMPARE_HEADER__
 #define __COMPARE_HEADER__
 
+#include "types.h"
 #include "gpu_computing.h"
 #include "decomposition.h"
 #include "matrix_gomology.h"
-#include "types.h"
 
 class Compare {
     MyMPI me;

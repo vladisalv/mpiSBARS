@@ -4,11 +4,11 @@
 // @TODO: time_measure in myMPI and myMPI in time_measure
 //class TimeMeasure;
 
+#include "types.h"
+
 #ifdef USE_MPI
     #include <mpi.h>
 #endif
-
-#include "types.h"
 
 #include <stdarg.h>
 

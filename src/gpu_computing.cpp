@@ -1,6 +1,6 @@
-#ifdef USE_CUDA
-
 #include "gpu_computing.h"
+
+#ifdef USE_CUDA
 
 void HandleError(cudaError_t err, const char *file, int line)
 {

@@ -1,8 +1,8 @@
 #ifndef __DATA_MPI_HEADER__
 #define __DATA_MPI_HEADER__
 
-#include "myMPI.h"
 #include "types.h"
+#include "myMPI.h"
 
 template<class DataType, class LengthData>
 class DataMPI {

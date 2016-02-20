@@ -1,6 +1,6 @@
-#ifndef USE_CUDA
-
 #include "gpu_computing.h"
+
+#ifndef USE_CUDA
 
 GpuComputing::GpuComputing(MyMPI new_me, bool use)
     : me(new_me), use_gpu(false)

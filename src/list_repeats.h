@@ -1,9 +1,9 @@
 #ifndef __SET_REPEATS_HEADER__
 #define __SET_REPEATS_HEADER__
 
+#include "types.h"
 #include "myMPI.h"
 #include "dataMPI.h"
-#include "types.h"
 
 #include <list>
 

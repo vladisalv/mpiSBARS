@@ -1,6 +1,6 @@
-#ifdef USE_CUDA
-
 #include "gpu_computing.h"
+
+#ifdef USE_CUDA
 
 __global__ void kernelDecompose(TypeDecomposition *decompose, uint number_coef, TypeProfile *profile,
                        uint step, uint number_window, uint window_size)

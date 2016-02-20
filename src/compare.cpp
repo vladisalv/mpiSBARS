@@ -173,7 +173,7 @@ void Compare::compareDecompositionHost(TypeDecomposition *decompose1, ulong leng
 bool Compare::compareVector(TypeDecomposition *vec1, TypeDecomposition *vec2, ulong length)
 {
     TypeDecomposition sum = 0;
-    double eps_2 = eps;// * eps;
+    double eps_2 = eps;
     for (int i = 0; i < length; i++) {
         sum += (vec1[i] - vec2[i]) * (vec1[i] - vec2[i]);
         if (sum > eps_2)

@@ -2,6 +2,7 @@
 #define __TIME_MEASURE_HEADER__
 
 #include "myMPI.h"
+#include "types.h"
 
 struct CheckPoint  {
     char  *label;

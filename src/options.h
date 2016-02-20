@@ -1,9 +1,9 @@
 #ifndef __OPTIONS_HEADER__
 #define __OPTIONS_HEADER__
 
-#include <stdio.h>
+#include "types.h"
+
 #include <stdlib.h>
-#include <getopt.h>
 
 class Options {
     bool help_mode, version_mode, debug_mode, error_mode;

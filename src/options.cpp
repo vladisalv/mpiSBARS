@@ -1,5 +1,8 @@
 #include "options.h"
 
+#include <stdio.h>
+#include <getopt.h>
+
 Options::Options(int argc, char *argv[])
 {
     program_name = version_name = version_number = 0;

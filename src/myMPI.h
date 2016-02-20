@@ -8,7 +8,6 @@
     #include <mpi.h>
 #endif
 
-#include "support.h"
 #include "types.h"
 
 #include <stdarg.h>

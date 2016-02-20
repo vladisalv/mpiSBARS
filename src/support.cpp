@@ -1,5 +1,8 @@
 #include "support.h"
 
+#include <string.h>
+#include <ctype.h>
+
 char *do_file_name(char *path, char *type, char *label, char *who, char *extension)
 {
     uint path_len = strlen(path);

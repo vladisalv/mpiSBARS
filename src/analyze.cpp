@@ -1,4 +1,5 @@
 #include "analyze.h"
+#include <math.h> // sqrt()
 
 Analyze::Analyze(MyMPI me_new, GpuComputing gpu_new, double eps_new, ulong min_length_new, double fidelity_repeat_new, size_t limit_memory_new)
     : me(me_new), gpu(gpu_new),  eps(eps_new), min_length(min_length_new),

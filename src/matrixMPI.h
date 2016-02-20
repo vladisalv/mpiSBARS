@@ -3,8 +3,7 @@
 
 #include "myMPI.h"
 #include "dataMPI.h"
-
-#include <fstream>
+#include "types.h"
 
 template<class DataType, class LengthData>
 class MatrixMPI : public DataMPI<DataType, LengthData> {

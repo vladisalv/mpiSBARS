@@ -6,8 +6,6 @@
 #include "decomposition.h"
 #include "types.h"
 
-#include <math.h> // ceil()
-
 class Decompose {
     MyMPI me;
     GpuComputing gpu;

@@ -3,13 +3,12 @@
 
 #include "myMPI.h"
 #include "gpu_computing.h"
+#include "types.h"
 
 #include "decomposition.h"
 #include "compare.h"
 #include "matrix_gomology.h"
 #include "list_repeats.h"
-
-#include <math.h>
 
 class Analyze {
     MyMPI me;

@@ -1,5 +1,8 @@
 #include "list_repeats.h"
 
+#include <sstream>
+#include <string>
+
 Repeat::Repeat(ulong x_bn, ulong y_bn, ulong x_en, ulong y_en, ulong len)
     : x_begin(x_bn), y_begin(y_bn), x_end(x_en), y_end(y_en), length(len)
 {

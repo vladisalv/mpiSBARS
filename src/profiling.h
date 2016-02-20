@@ -1,9 +1,9 @@
 #ifndef __PROFILING_HEADER__
 #define __PROFILING_HEADER__
 
-#include "types.h"
 #include "sequence.h"
 #include "profile.h"
+#include "types.h"
 
 class Profiling {
     MyMPI me;

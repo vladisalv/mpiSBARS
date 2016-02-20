@@ -1,4 +1,5 @@
 #include "decompose.h"
+#include <math.h> // ceil()
 
 Decompose::Decompose(MyMPI new_me, GpuComputing new_gpu, uint window_new, uint step_new, uint number_coef_new)
     : me(new_me), gpu(new_gpu), window(window_new), step(step_new), number_coef(number_coef_new)
@@ -56,16 +57,6 @@ Decomposition Decompose::doDecompose(Profile &profile)
     decomposition.offset_column = 0;
     decomposition.length = number_all_window * number_coef;
     decomposition.data = new TypeDecomposition [decomposition.length];
-
-    /*
-    me.allMessage("HERE step = %ld window = %ld\n", step, window);
-    printf("%d \
-    %ld == %ld\n \
-    number_all_window = %ld\n \
-    number_my_window = %ld\n",
-    me.getRank(), length_your_elem + length_recv_message, (number_another_window - 1) * step + window,
-    number_all_window, number_my_window);
-    */
 
     // do decompose with my profile
     if (gpu.isUse()) {

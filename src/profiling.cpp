@@ -1,9 +1,5 @@
 #include "profiling.h"
 
-#include <iostream>
-#include <fstream>
-#include <string>
-
 using namespace std;
 
 Profiling::Profiling(MyMPI new_me, uint new_window, uint new_step)
@@ -57,17 +53,11 @@ Profile Profiling::doProfile(Sequence &seq, char ch1, char ch2)
     profile.length = number_all_window;
     profile.data   = new TypeProfile [profile.length];
 
-    //ofstream file;
-    //char fileName[5];
-    //sprintf(fileName, "%d", me.getRank());
-    //file.open(fileName);
-
     TypeProfile count = 0;
     for (uint i = 0; i < window; i++)
         if (seq.data[begin + i] == ch1 || seq.data[begin + i] == ch2)
             count++;
     profile.data[0] = count;
-//file << count << endl;
 
     ulong offset = begin;
     for (int i = 1; i < number_my_window; i++) {
@@ -78,7 +68,6 @@ Profile Profiling::doProfile(Sequence &seq, char ch1, char ch2)
                 count--;
         }
         profile.data[i] = count;
-//file << count << endl;
     }
 
     if (!me.isLast()) {
@@ -93,7 +82,6 @@ Profile Profiling::doProfile(Sequence &seq, char ch1, char ch2)
             if (buf_recv[i] == ch1 || buf_recv[i] == ch2)
                 count++;
         profile.data[number_my_window] = count;
-//file << count << endl;
 
         for (int i = 1, offset = 0; i < number_another_window; i++) {
             for (int j = 0; j < step; j++, offset++) {
@@ -103,10 +91,8 @@ Profile Profiling::doProfile(Sequence &seq, char ch1, char ch2)
                     count--;
             }
             profile.data[number_my_window + i] = count;
-//file << count << endl;
         }
     }
-    //file.close();
 
     if (!me.isFirst())
         me.wait(&req_send, MPI_STATUS_IGNORE);

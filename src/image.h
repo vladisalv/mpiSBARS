@@ -5,8 +5,6 @@
 #include "matrix_gomology.h"
 #include "types.h"
 
-#include <math.h>
-
 typedef struct TMyPixel
 {
     unsigned char Blue;

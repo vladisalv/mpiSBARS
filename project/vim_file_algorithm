@@ -27,8 +27,8 @@
 :tabnew src/analyze.cpp
 :65 vs src/analyze.h
 
-:tabnew src/set_repeats.cpp
-:65 vs src/set_repeats.h
+:tabnew src/list_repeats.cpp
+:65 vs src/list_repeats.h
 
 :tabnew src/arrayMPI.tcc
 :65 vs src/arrayMPI.h

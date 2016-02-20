@@ -33,6 +33,9 @@
 :tabnew src/myMPI.cpp
 :65 vs src/myMPI.h
 
+:tabnew src/myMPI_cap.cpp
+:65 vs src/myMPI.h
+
 :tabnew src/support.cpp
 :65 vs src/support.h
 
@@ -51,11 +54,20 @@
 :tabnew src/dataMPI.tcc
 :65 vs src/dataMPI.h
 
-:tabnew src/decomposition_gpu.cu
-:65 vs src/decomposition_gpu.h
+:tabnew src/gpu_computing.cpp
+:65 vs src/gpu_computing.h
 
-:tabnew src/compare_gpu.cu
-:65 vs src/compare_gpu.h
+:tabnew src/gpu_computing_decompose.cu
+:65 vs src/gpu_computing.h
+
+:tabnew src/gpu_computing_compare.cu
+:65 vs src/gpu_computing.h
+
+:tabnew src/gpu_computing_compare2.cu
+:65 vs src/gpu_computing.h
+
+:tabnew src/gpu_computing_cap.cpp
+:65 vs src/gpu_computing.h
 
 :tabnew src/types.h
 

@@ -1,23 +1,23 @@
 :e src/main2.cpp
 
 :tabnew src/compare.cpp
-:65 vs include/compare.h
+:65 vs src/compare.h
 
 :tabnew src/gpu_computing.cpp
-:65 vs include/gpu_computing.h
+:65 vs src/gpu_computing.h
 
 :tabnew src/gpu_computing_decompose.cu
-:65 vs include/gpu_computing.h
+:65 vs src/gpu_computing.h
 
 :tabnew src/gpu_computing_compare.cu
-:65 vs include/gpu_computing.h
+:65 vs src/gpu_computing.h
 
 :tabnew src/analyze.cpp
-:65 vs include/analyze.h
+:65 vs src/analyze.h
 
 :tabnew src/list_repeats.cpp
-:65 vs include/list_repeats.h
+:65 vs src/list_repeats.h
 
-:tabnew include/types.h
+:tabnew src/types.h
 
 gt

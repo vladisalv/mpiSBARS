@@ -1,44 +1,44 @@
 :e src/main2.cpp
 
 :tabnew src/options.cpp
-:65 vs include/options.h
+:65 vs src/options.h
 
 :tabnew src/sequence.cpp
-:65 vs include/sequence.h
+:65 vs src/sequence.h
 
 :tabnew src/profiling.cpp
-:65 vs include/profiling.h
+:65 vs src/profiling.h
 
 :tabnew src/profile.cpp
-:65 vs include/profile.h
+:65 vs src/profile.h
 
 :tabnew src/decompose.cpp
-:65 vs include/decompose.h
+:65 vs src/decompose.h
 
 :tabnew src/decomposition.cpp
-:65 vs include/decomposition.h
+:65 vs src/decomposition.h
 
 :tabnew src/compare.cpp
-:65 vs include/compare.h
+:65 vs src/compare.h
 
 :tabnew src/matrix_gomology.cpp
-:65 vs include/matrix_gomology.h
+:65 vs src/matrix_gomology.h
 
 :tabnew src/analyze.cpp
-:65 vs include/analyze.h
+:65 vs src/analyze.h
 
 :tabnew src/set_repeats.cpp
-:65 vs include/set_repeats.h
+:65 vs src/set_repeats.h
 
-:tabnew include/arrayMPI.tcc
-:65 vs include/arrayMPI.h
+:tabnew src/arrayMPI.tcc
+:65 vs src/arrayMPI.h
 
-:tabnew include/matrixMPI.tcc
-:65 vs include/matrixMPI.h
+:tabnew src/matrixMPI.tcc
+:65 vs src/matrixMPI.h
 
-:tabnew include/dataMPI.tcc
-:65 vs include/dataMPI.h
+:tabnew src/dataMPI.tcc
+:65 vs src/dataMPI.h
 
-:tabnew include/types.h
+:tabnew src/types.h
 
 gt

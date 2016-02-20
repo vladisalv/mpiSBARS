@@ -1,32 +1,32 @@
 :e src/main2.cpp
 
 :tabnew src/sequence.cpp
-:65 vs include/sequence.h
+:65 vs src/sequence.h
 
 :tabnew src/profile.cpp
-:65 vs include/profile.h
+:65 vs src/profile.h
 
 :tabnew src/decomposition.cpp
-:65 vs include/decomposition.h
+:65 vs src/decomposition.h
 
 :tabnew src/matrix_gomology.cpp
-:65 vs include/matrix_gomology.h
+:65 vs src/matrix_gomology.h
 
 :tabnew src/list_repeats.cpp
-:65 vs include/list_repeats.h
+:65 vs src/list_repeats.h
 
-:tabnew include/arrayMPI.tcc
-:65 vs include/arrayMPI.h
+:tabnew src/arrayMPI.tcc
+:65 vs src/arrayMPI.h
 
-:tabnew include/matrixMPI.tcc
-:65 vs include/matrixMPI.h
+:tabnew src/matrixMPI.tcc
+:65 vs src/matrixMPI.h
 
-:tabnew include/dataMPI.tcc
-:65 vs include/dataMPI.h
+:tabnew src/dataMPI.tcc
+:65 vs src/dataMPI.h
 
 :tabnew src/myMPI.cpp
-:65 vs include/myMPI.h
+:65 vs src/myMPI.h
 
-:tabnew include/types.h
+:tabnew src/types.h
 
 gt

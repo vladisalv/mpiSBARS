@@ -1,0 +1,55 @@
+#!/bin/sh
+
+PROFILING_WINDOW=250
+STEP_PROFILING=1
+DECOMPOSE_WINDOW=250
+STEP_DECOMPOSE=100
+NUMBER_COEFFICIENT=75
+EPS=0.00001
+
+INPUT_DIR=./input
+#INPUT_FILE1=rat165M
+#INPUT_FILE1=file20M
+#INPUT_FILE1=file5M
+#INPUT_FILE1=filesmall
+INPUT_FILE1=file50K
+#INPUT_FILE1=$(FILE)
+INPUT_FILE2=file100K
+
+OUTPUT_DIR=./output/
+OUTPUT_FILE=out_$N_$DATE_$GPU
+OUTPUT_FILE_DEC=dec_$DATE_$GPU
+OUTPUT_FILE_GOM=gom_$DATE_$GPU
+OUTPUT_FILE_PIC=pic_$DATE_$GPU
+OUTPUT_FILE_ANA=ana_$DATE_$GPU
+
+#GPU=--gpu
+#USE_MATRIX=--use-matrix
+SEQUENCE1="-f $INPUT_DIR/$INPUT_FILE1"
+if ! [ -z ${INPUT_FILE2+x} ]; then
+    SEQUENCE2="-F $INPUT_DIR/$INPUT_FILE2"
+fi
+#DEC="--decompose-save-firstGC $OUTPUT_DIR/$OUTPUT_FILE_DEC_GC \
+#      --decompose-save-firstGA $OUTPUT_DIR/$OUTPUT_FILE_DEC_GA"
+#GOMOLOGY="--matrix-gomology-save $OUTPUT_DIR/$OUTPUT_FILE_GOM"
+#PIC="--image-save $OUTPUT_DIR/$OUTPUT_FILE_PIC"
+ANALYS="--repeats-analysis-save $OUTPUT_DIR/$OUTPUT_FILE_ANA"
+
+#GC="--gc-only"
+#GA="--ga-only
+BLOCK=100000000
+
+ARGUMENTS="--profiling-window     $PROFILING_WINDOW        \
+           --step-profiling       $STEP_PROFILING          \
+           --decompose-window     $DECOMPOSE_WINDOW        \
+           --step-decompose       $STEP_DECOMPOSE          \
+           --number-coefficient   $NUMBER_COEFFICIENT      \
+           --eps                  $EPS                     \
+           $GPU $USE_MATRIX $SEQUENCE1 $SEQUENCE2          \
+           $DEC $GOMOLOGY $PIC $ANALYS                     \
+           $GC $GA --limit-memory $BLOCK"
+
+# short name NUMBER_PROC
+N=4
+
+./MPIRUN l -n $N ../src/mpisbars $ARGUMENTS

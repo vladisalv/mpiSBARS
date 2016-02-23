@@ -279,9 +279,126 @@ ListRepeats Analyze::doAnalyze(Decomposition myDecomposition)
 }
 */
 
+// merge it with doAnalyze(Decomposition myDecomposition)
 ListRepeats Analyze::doAnalyze(Decomposition decomposition1, Decomposition decomposition2)
 {
+    double time, timeCom = 0., timeAnal = 0., timeMerge = 0.; // TMP
+    decomposition = decomposition1;
+
+    MPI_Request *req_send = new MPI_Request [me.getSize()];
+    for (int i = 0; i < me.getSize(); i++)
+        me.iSend(decomposition2.data, decomposition2.length, MPI_TFLOAT, i, 1, &req_send[i]);
+
+    ListRepeats *resultProc = static_cast<ListRepeats*>(operator new[](me.getSize() * sizeof(ListRepeats)));
+    for (int i = 0; i < me.getSize(); i++) {
+        new (resultProc + i) ListRepeats(me);
+    }
+
+    MatrixGomology matrixGomology(me);
+    ulong height_block, width_block;
+    height_block = width_block = sqrt(limit_memory);
+    size_t size_block = height_block * width_block * sizeof(TypeGomology);
+    matrixGomology.data = (TypeGomology *)malloc(size_block);
+    memset(matrixGomology.data, 0, size_block);
+    Compare compare(me, gpu, eps);
+    ulong *height_other = new ulong [me.getSize()];
+    timeWait = 0;
+    for (int proc = 0; proc < me.getSize(); proc++) {
+        recvDecompositon();
+        int source_proc_now = source_proc;
+        if (me.isSingle()) { // i do not know why
+            dec_other.free();
+            dec_other.data = new TypeDecomposition [decomposition.length];
+            dec_other.length = decomposition.length;
+            dec_other.height = decomposition.height;
+            dec_other.width  = decomposition.width;
+            memcpy(dec_other.data, decomposition.data, dec_other.length * sizeof(TypeDecomposition));
+        }
+        height_other[source_proc_now] = dec_other.height;
+        bool flag = false;
+        for (int j = 0; j < (dec_other.height + width_block - 1) / width_block; j++) {
+            ListRepeats resultColumn(me);
+            for (int i = 0; i < (decomposition.height + height_block - 1) / height_block; i++) {
+                /*
+                if (recvDecompositonAsync() && !flag) {
+                    if (i > 2 || j > 0)
+                        printf("%d:h = %d w = %d\n", me.getRank(), i, j);
+                    flag = true;
+                }
+                */
+                ListRepeats resultBlock(me);
+                ulong height_block_now = (i == decomposition.height / height_block) ? decomposition.height % height_block : height_block;
+                ulong width_block_now  = (j == dec_other.height     / width_block ) ? dec_other.height     % width_block  : width_block;
+                memset(matrixGomology.data, 0, size_block);
+                time = me.getTime(); // TMP
+                compare.compareDecomposition(
+                                    &decomposition.data[(i * height_block) * decomposition.width],
+                                    height_block_now,
+                                    &dec_other.data[(j * width_block) * decomposition.width],
+                                    width_block_now,
+                                    decomposition.width,
+                                    matrixGomology.data,
+                                    0, width_block_now
+                                    );
+                timeCom += me.getTime() - time; // TMP
+                matrixGomology.height = height_block_now;
+                matrixGomology.width  = width_block_now;
+                matrixGomology.offset_row    = height_block * i;
+                matrixGomology.offset_column = width_block * j;
+                time = me.getTime(); // TMP
+                resultBlock = doAnalyze(matrixGomology);
+                timeAnal += me.getTime() - time; // TMP
+                //me.allMessage("%d %d %d %d %d %d %d \n", proc, i, j, height_block_now, width_block_now, resultBlock.y_limit_above, resultColumn.y_limit_bottom);
+                //resultBlock.writeFile("t");
+                time = me.getTime(); // TMP
+                resultColumn.mergeRepeatsRow(resultBlock);
+                timeMerge += me.getTime() - time; // TMP
+            }
+            //me.allMessage("%d %d resultColumn\n", proc, j);
+            //resultColumn.writeFile("f");
+            time = me.getTime(); // TMP
+            resultProc[source_proc_now].mergeRepeatsColumn(resultColumn);
+            timeMerge += me.getTime() - time; // TMP
+        }
+        //me.allMessage("%d resultProc\n", proc);
+        //resultProc[proc].writeFile("f");
+    }
+
+    ulong *length_all, *sum_length_array;
+    ulong sum_all = decomposition.offsetLength(length_all, sum_length_array, &decomposition.height);
+    ulong myOffsetHeight = sum_length_array[me.getRank()];
+    ulong myOffsetWidth  = 0;
+    for (int i = 0; i < me.getSize(); i++) {
+        //printf("^^^^^^^^^^^^i %d %d %d board: x_left=%ld x_right=%ld y_above=%ld y_bottom=%ld\n", me.getRank(), i, myOffsetHeight, resultProc[i].x_limit_left, resultProc[i].x_limit_right, resultProc[i].y_limit_above, resultProc[i].y_limit_bottom);
+        resultProc[i].makeOffsetColumn(myOffsetWidth);
+        resultProc[i].makeOffsetRow(myOffsetHeight);
+        //printf("************i %d %d %d board: x_left=%ld x_right=%ld y_above=%ld y_bottom=%ld\n", me.getRank(), i, myOffsetHeight, resultProc[i].x_limit_left, resultProc[i].x_limit_right, resultProc[i].y_limit_above, resultProc[i].y_limit_bottom);
+        myOffsetWidth += height_other[i];
+    }
+
     ListRepeats result(me);
+    time = me.getTime(); // TMP
+    for (int i = 0; i < me.getSize(); i++) {
+        result.mergeRepeatsColumn(resultProc[i]);
+        //printf("------------------------------i %d %d %d board: x_left=%ld x_right=%ld y_above=%ld y_bottom=%ld\n", me.getRank(), i, myOffsetHeight, result.x_limit_left, result.x_limit_right, result.y_limit_above, result.y_limit_bottom);
+    }
+    timeMerge += me.getTime() - time; // TMP
+    //printf("------------------------------i %d board: x_left=%ld x_right=%ld y_above=%ld y_bottom=%ld\n", me.getRank(), result.x_limit_left, result.x_limit_right, result.y_limit_above, result.y_limit_bottom);
+    //result.writeFile("fds");
+
+    // TMP
+    me.rootMessage("compare_time = %f\n", timeCom);
+    me.rootMessage("analyze time = %f\n", timeAnal);
+    me.rootMessage("merge_time   = %f\n", timeMerge);
+    me.allMessage("%d: wait_time    = %f\n", me.getRank(), timeWait);
+
+    for (int i = 0; i < me.getSize(); i++) {
+        resultProc[i].~ListRepeats();
+    }
+    operator delete [] (resultProc);
+    dec_other.free();
+    delete [] height_other;
+
     return result;
 }
 

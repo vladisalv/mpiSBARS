@@ -1,7 +1,7 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 
-AC_PREREQ([2.68])
+AC_PREREQ([2.59])
 AC_INIT([mpiSBARS], [0.8], [Vladislav.Toigildin@cs.msu.su])
 AM_INIT_AUTOMAKE([mpiSBARS], [0.8])
 AC_CONFIG_SRCDIR([src/main.cpp])

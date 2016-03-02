@@ -1,0 +1,53 @@
+#!/bin/sh
+
+if [ -z ${FLAG+x} ]; then
+
+test_dir=`dirname $0`
+
+PROFILING_WINDOW=${PROFILING_WINDOW:-"250"}
+STEP_PROFILING=${STEP_PROFILING:-"1"}
+DECOMPOSE_WINDOW=${DECOMPOSE_WINDOW:-"250"}
+STEP_DECOMPOSE=${STEP_DECOMPOSE:-"100"}
+NUMBER_COEFFICIENT=${NUMBER_COEFFICIENT:-"75"}
+EPS=${EPS:-"0.00001"}
+
+OUTPUT_DIR=${OUTPUT_DIR:-"$test_dir/output/"}
+INPUT_DIR=${INPUT_DIR:-"$test_dir/input/"}
+INPUT_FILE1=${INPUT_FILE1:-"file50K"}
+
+SEQUENCE1="-f $INPUT_DIR/$INPUT_FILE1"
+SEQUENCE2=${INPUT_FILE2:+"-F $INPUT_DIR/$INPUT_FILE2"}
+
+GPU=${GPU+"--gpu"}
+USE_MATRIX=${USE_MATRIX+"--use-matrix"}
+
+BLOCK=${BLOCK-"100000000"}
+BLOCK=${BLOCK:+"--limit-memory $BLOCK"}
+
+fi
+
+DATE=`date +%F_%T`
+POSTFIX=$INPUT_FILE1-$INPUT_FILE2-$N-$GPU-$DATE
+OUTPUT_FILE_OUT=out_$POSTFIX
+OUTPUT_FILE_DEC=dec_$POSTFIX
+OUTPUT_FILE_GOM=gom_$POSTFIX
+OUTPUT_FILE_PIC=pic_$POSTFIX
+OUTPUT_FILE_ANA=ana_$POSTFIX
+
+if [ -z ${FLAG+x} ]; then
+    PIC=${PIC+"--image-save $OUTPUT_DIR/$OUTPUT_FILE_PIC"}
+    ANALYS=${ANALYS:-"--repeats-analysis-save $OUTPUT_DIR/$OUTPUT_FILE_ANA"}
+else
+    PIC=
+fi
+
+ARGUMENTS="--profiling-window     $PROFILING_WINDOW   \
+           --step-profiling       $STEP_PROFILING     \
+           --decompose-window     $DECOMPOSE_WINDOW   \
+           --step-decompose       $STEP_DECOMPOSE     \
+           --number-coefficient   $NUMBER_COEFFICIENT \
+           --eps                  $EPS                \
+           $SEQUENCE1 $SEQUENCE2 $PIC $ANALYS         \
+           $GPU $USE_MATRIX $GC $GA $BLOCK"
+
+FLAG=1

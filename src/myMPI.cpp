@@ -2,6 +2,8 @@
 #include "time_measure.h"
 #include "support.h"
 
+#include <string.h>
+
 #ifdef USE_MPI
 
 int MyMPI::numberObject = 0;

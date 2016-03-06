@@ -1,9 +1,6 @@
-config.mk
-bin/
-obj/
 test/
-src/*.o
-src/mpisbars
+test/experiment
+
 
 Makefile
 Makefile.in
@@ -22,4 +19,6 @@ missing
 src/.deps/
 src/Makefile
 src/Makefile.in
+src/*.o
+src/mpisbars
 stamp-h1

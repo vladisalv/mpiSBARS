@@ -1,22 +1,33 @@
+:let vssize=60
+:if (exists( "$VSSIZE" ))
+:let vssize=$VSSIZE
+:endif
+
 :e src/main2.cpp
 
 :tabnew src/compare.cpp
-:65 vs src/compare.h
+:vs src/compare.h
+:execute ':vertical-resize' . vssize
 
 :tabnew src/gpu_computing.cpp
-:65 vs src/gpu_computing.h
+:vs src/gpu_computing.h
+:execute ':vertical-resize' . vssize
 
 :tabnew src/gpu_computing_decompose.cu
-:65 vs src/gpu_computing.h
+:vs src/gpu_computing.h
+:execute ':vertical-resize' . vssize
 
 :tabnew src/gpu_computing_compare.cu
-:65 vs src/gpu_computing.h
+:vs src/gpu_computing.h
+:execute ':vertical-resize' . vssize
 
 :tabnew src/analyze.cpp
-:65 vs src/analyze.h
+:vs src/analyze.h
+:execute ':vertical-resize' . vssize
 
 :tabnew src/list_repeats.cpp
-:65 vs src/list_repeats.h
+:vs src/list_repeats.h
+:execute ':vertical-resize' . vssize
 
 :tabnew src/types.h
 

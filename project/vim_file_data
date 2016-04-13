@@ -1,31 +1,45 @@
+:let vssize=60
+:if (exists( "$VSSIZE" ))
+:let vssize=$VSSIZE
+:endif
+
 :e src/main2.cpp
 
 :tabnew src/sequence.cpp
-:65 vs src/sequence.h
+:vs src/sequence.h
+:execute ':vertical-resize' . vssize
 
 :tabnew src/profile.cpp
-:65 vs src/profile.h
+:vs src/profile.h
+:execute ':vertical-resize' . vssize
 
 :tabnew src/decomposition.cpp
-:65 vs src/decomposition.h
+:vs src/decomposition.h
+:execute ':vertical-resize' . vssize
 
 :tabnew src/matrix_gomology.cpp
-:65 vs src/matrix_gomology.h
+:vs src/matrix_gomology.h
+:execute ':vertical-resize' . vssize
 
 :tabnew src/list_repeats.cpp
-:65 vs src/list_repeats.h
+:vs src/list_repeats.h
+:execute ':vertical-resize' . vssize
 
 :tabnew src/arrayMPI.tcc
-:65 vs src/arrayMPI.h
+:vs src/arrayMPI.h
+:execute ':vertical-resize' . vssize
 
 :tabnew src/matrixMPI.tcc
-:65 vs src/matrixMPI.h
+:vs src/matrixMPI.h
+:execute ':vertical-resize' . vssize
 
 :tabnew src/dataMPI.tcc
-:65 vs src/dataMPI.h
+:vs src/dataMPI.h
+:execute ':vertical-resize' . vssize
 
 :tabnew src/myMPI.cpp
-:65 vs src/myMPI.h
+:vs src/myMPI.h
+:execute ':vertical-resize' . vssize
 
 :tabnew src/types.h
 

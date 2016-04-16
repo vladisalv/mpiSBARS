@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 PROFILING_WINDOW=100
 STEP_PROFILING=1

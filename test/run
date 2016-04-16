@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 test_dir=`dirname $0`
 NN=${NN:-"4"}

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 if [ -z ${FLAG+x} ]; then
 
@@ -19,8 +19,8 @@ INPUT_FILE1=${INPUT_FILE1:-"file50K"}
 SEQUENCE1="-f $INPUT_DIR/$INPUT_FILE1"
 SEQUENCE2=${INPUT_FILE2:+"-F $INPUT_DIR/$INPUT_FILE2"}
 
-GPU=${GPU+"--gpu"}
 USE_MATRIX=${USE_MATRIX+"--use-matrix"}
+GPU=${GPU+"--gpu"}
 
 BLOCK=${BLOCK-"100000000"}
 BLOCK=${BLOCK:+"--limit-memory $BLOCK"}
@@ -39,9 +39,10 @@ OUTPUT_FILE_OUT=$OUTPUT_OUT/$OUTPUT_FILE_OUT
 
 if [ -z ${FLAG+x} ]; then
     PIC=${PIC+"--image-save $OUTPUT_DIR/$OUTPUT_FILE_PIC"}
-    ANALYS=${ANALYS:-"--repeats-analysis-save $OUTPUT_DIR/$OUTPUT_FILE_ANA"}
+    ANALYS=${ANALYS-"--repeats-analysis-save $OUTPUT_DIR/$OUTPUT_FILE_ANA"}
 else
-    PIC=
+    PIC=${PIC:+"--image-save $OUTPUT_DIR/$OUTPUT_FILE_PIC"}
+    ANALYS=${ANALYS:+"--repeats-analysis-save $OUTPUT_DIR/$OUTPUT_FILE_ANA"}
 fi
 
 ARGUMENTS="--profiling-window     $PROFILING_WINDOW   \

@@ -8,6 +8,8 @@
 class Options {
     bool help_mode, version_mode, debug_mode, error_mode;
 
+    int largc;
+    char **largv;
     const char *program_name;
     const char *version_name, *version_number;
 
@@ -66,6 +68,7 @@ public:
     ~Options();
 
     void debugInfo(const char *file, int line, const char *info = 0);
+    void info(int number_proc, bool use_gpu);
 
     void helpPrint();
     void versionPrint();

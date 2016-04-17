@@ -5,6 +5,8 @@
 
 Options::Options(int argc, char *argv[])
 {
+    largc = argc;
+    largv = argv;
     program_name = version_name = version_number = 0;
     help_mode = version_mode = debug_mode = error_mode = false;
 
@@ -530,6 +532,23 @@ void Options::debugInfo(const char *file, int line, const char *info)
         printf("\t\t save_analysis\n");
     if (download_analysis)
         printf("download_analysis\n");
+}
+
+void Options::info(int number_proc, bool use_gpu)
+{
+        printf("You use next command: ");
+        for (int i = 0; i < largc; i++)
+            printf("%s ", largv[i]);
+        printf("\n");
+        printf("Number proc = %d\n", number_proc);
+        printf("Input file1 = %s\n", getFileSequenceLoad1());
+        printf("Input file2 = %s\n", getFileSequenceLoad2());
+        printf("%s version\n", use_gpu ? "GPU" : "HOST");
+        printf("%s", gomologyMode() ? "USE MATRIX\n" : "BLOCK METHOD");
+        if (!gomologyMode())
+            printf(". Use block %d byte\n", getLimitMemoryMatrix());
+        printf("%s %s\n", modeGC() ? "GC" : "", modeGA() ? "GA" : "");
+        printf("\n");
 }
 
 

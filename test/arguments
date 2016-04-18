@@ -27,7 +27,7 @@ BLOCK=${BLOCK:+"--limit-memory $BLOCK"}
 
 fi
 
-DATE=`date +%F_%T`
+DATE=`date +%F_%H-%M-%S`
 POSTFIX=$INPUT_FILE1-$INPUT_FILE2-$N-$GPU-$DATE
 OUTPUT_FILE_OUT=out_$POSTFIX
 OUTPUT_FILE_DEC=dec_$POSTFIX

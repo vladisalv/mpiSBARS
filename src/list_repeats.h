@@ -45,6 +45,7 @@ public:
     friend class Analyze;
 
     void writeRepeat(TypeAnalysis list);
+    void sort();
 };
 
 #endif /* __SET_REPEATS_HEADER__ */

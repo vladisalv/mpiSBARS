@@ -49,15 +49,68 @@ void ListRepeats::writeRepeat(TypeAnalysis list)
     me.allMessage("%s", stm.str().c_str());
 }
 
+void ListRepeats::sort()
+{
+    for (TypeAnalysis::iterator i = data->begin(); i != data->end(); i++) {
+        for (TypeAnalysis::iterator j = i; j != data->end(); j++) {
+            if (i->y_begin > j->y_begin) {
+                ulong tmp;
+                tmp = i->x_begin;
+                i->x_begin = j->x_begin;
+                j->x_begin = tmp;
+                tmp = i->y_begin;
+                i->y_begin = j->y_begin;
+                j->y_begin = tmp;
+                tmp = i->x_end;
+                i->x_end = j->x_end;
+                j->x_end = tmp;
+                tmp = i->y_end;
+                i->y_end = j->y_end;
+                j->y_end = tmp;
+                tmp = i->length;
+                i->length = j->length;
+                j->length = tmp;
+            } else if (i->y_begin == j->y_begin && i->x_begin > j->x_begin) {
+                ulong tmp;
+                tmp = i->x_begin;
+                i->x_begin = j->x_begin;
+                j->x_begin = tmp;
+                tmp = i->y_begin;
+                i->y_begin = j->y_begin;
+                j->y_begin = tmp;
+                tmp = i->x_end;
+                i->x_end = j->x_end;
+                j->x_end = tmp;
+                tmp = i->y_end;
+                i->y_end = j->y_end;
+                j->y_end = tmp;
+                tmp = i->length;
+                i->length = j->length;
+                j->length = tmp;
+            }
+        }
+    }
+}
+
 void ListRepeats::writeMPI(char *file_name)
 {
     string str;
     stringstream stm;
-    stm << endl;
+    stm << "i proc " << me.getRank() << endl;
+    sort();
     for (TypeAnalysis::iterator list_iter = data->begin(); list_iter != data->end(); list_iter++)
         stm << list_iter->x_begin << " " << list_iter->y_begin << " " << list_iter->length << endl;
-        //stm << list_iter->x_begin << " " << list_iter->y_begin << " " << list_iter->x_end << " " << list_iter->y_end << " " << list_iter->length << endl;
-    me.allMessage("%s", stm.str().c_str());
+    MPI_File hFile;
+    MPI_File_open(MPI_COMM_WORLD, file_name, MPI_MODE_CREATE|MPI_MODE_WRONLY, MPI_INFO_NULL, &hFile);
+    MPI_File_set_view(hFile, 0, MPI_CHAR, MPI_CHAR, (char *)"native", MPI_INFO_NULL);
+    for (int i = 0; i < me.getSize(); i++) {
+        me.Synchronize();
+        if (i == me.getRank()) {
+            MPI_File_write_shared(hFile, (void *)stm.str().c_str(), stm.str().size(), MPI_CHAR, MPI_STATUS_IGNORE);
+            MPI_File_sync(hFile);
+        }
+    }
+    MPI_File_close(&hFile);
 }
 
 void ListRepeats::writeUsually(char *file_name)

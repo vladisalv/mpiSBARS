@@ -9,9 +9,7 @@ class DataMPI {
 protected:
     MyMPI me;
     DataType *data;
-    MPI_Datatype MpiDataType;
     ulong length;
-    const char *class_name;
 
     virtual void readMPI(char *file_name) = 0;
     virtual void readUsually(char *file_name) = 0;
@@ -23,7 +21,7 @@ protected:
 
     ulong offsetLength(ulong* &offset, ulong* &sum_offset, ulong *var);
 public:
-    DataMPI(MyMPI new_me, const char *class_name_, MPI_Datatype new_MpiDataType);
+    DataMPI(MyMPI new_me);
     virtual ~DataMPI();
 
     bool isEmpty();
@@ -31,8 +29,9 @@ public:
     virtual void readFile(char *file_name);
     virtual void writeFile(char *file_name);
     virtual void debugInfo(const char *file, int line, const char *info = 0) = 0;
-    template<class T> MPI_Datatype getMpiDataType();
+    MPI_Datatype getMpiDataType();
     void free();
+    typedef DataType data_type;
 };
 
 #include "dataMPI.tcc"

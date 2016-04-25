@@ -1,8 +1,8 @@
 #include "arrayMPI.h"
 
 template <class DataType>
-ArrayMPI<DataType>::ArrayMPI(MyMPI me, const char *class_name, MPI_Datatype MpiDataType)
-    : DataMPI<DataType>(me, class_name, MpiDataType), offset(0)
+ArrayMPI<DataType>::ArrayMPI(MyMPI me)
+    : DataMPI<DataType>(me), offset(0)
 {
 }
 
@@ -28,7 +28,7 @@ void ArrayMPI<DataType>::readMPI(char *file_name)
 
     delete [] this->data; // if you forget about old data
     this->data = new DataType [this->length];
-    this->me.readFile(fh, offset, this->data, this->length, this->MpiDataType, MPI_INFO_NULL);
+    this->me.readFile(fh, offset, this->data, this->length, this->getMpiDataType(), MPI_INFO_NULL);
     this->me.closeFile(&fh);
 #endif
 }
@@ -65,7 +65,7 @@ template <class DataType>
 void ArrayMPI<DataType>::debugInfo(const char *file, int line, const char *info)
 {
     this->me.rootMessage("\n");
-    this->me.rootMessage("This is debugInfo(%s) of %s in %s at line %d\n", info, this->class_name, file, line);
+    this->me.rootMessage("This is debugInfo(%s) in %s at line %d\n", info, file, line);
     this->me.allMessage("offset = %9ld length = %9ld\n", this->offset, this->length);
     this->me.rootMessage("\n");
 }

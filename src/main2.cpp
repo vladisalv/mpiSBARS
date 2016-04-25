@@ -13,6 +13,7 @@
 #include "analyze.h"
 #include "list_repeats.h"
 #include "image.h"
+//#include "process_chain.h"
 
 #define debugInfo() debugInfo( __FILE__ , __LINE__ )
 
@@ -74,6 +75,9 @@ int main2(int argc, char *argv[])
     me.rootMessage("%5.2lf\n", sequence_time);
 
     Profile profile1GC(me), profile1GA(me), profile2GC(me), profile2GA(me);
+    //ArrayMPI<TypeSequence> seqT(me, "sequence", MPI_CHAR);
+    //ProcessChain<ArrayMPI<TypeSequence> > seq(me, gpu, 10, 10, 10);
+    //seq.func(seqT);
     if (opt.profileMode()) {
         Profiling profiling(me, opt.getLengthWindowProfiling(), opt.getStepProfiling());
         if (opt.modeGC())

@@ -15,7 +15,7 @@ void Repeat::Print()
 
 
 ListRepeats::ListRepeats(MyMPI me)
-    : DataMPI<TypeAnalysis>(me, "ListRepeats", MPI_TYPE_LIST_REPEAT),
+    : DataMPI<TypeAnalysis>(me),
     x_limit_left(0), x_limit_right(0), y_limit_above(0), y_limit_bottom(0)
 {
     data = new TypeAnalysis;
@@ -432,7 +432,7 @@ void ListRepeats::convertToOriginalRepeats(uint window_profiling,
 void ListRepeats::debugInfo(const char *file, int line, const char *info)
 {
     this->me.rootMessage("\n");
-    this->me.rootMessage("This is debugInfo(%s) of %s in %s at line %d\n", info, this->class_name, file, line);
+    this->me.rootMessage("This is debugInfo(%s) in %s at line %d\n", info, file, line);
     this->me.allMessage("x_limit_left = %9ld x_limit_right = %9ld y_limit_above = %9ld y_limit_bottom = %9ld\n",
         x_limit_left, x_limit_right, y_limit_above, y_limit_bottom);
     this->me.rootMessage("\n");

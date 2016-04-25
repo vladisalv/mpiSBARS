@@ -1,8 +1,8 @@
 #include "dataMPI.h"
 
 template <class DataType>
-DataMPI<DataType>::DataMPI(MyMPI new_me, const char *class_name_, MPI_Datatype new_MpiDataType)
-    : data(0), length(0), me(new_me), class_name(class_name_), MpiDataType(new_MpiDataType)
+DataMPI<DataType>::DataMPI(MyMPI new_me)
+    : data(0), length(0), me(new_me)
 {
 }
 
@@ -52,47 +52,48 @@ ulong DataMPI<DataType>::offsetLength(ulong* &offset, ulong* &sum_offset, ulong 
     return sum_length;
 }
 
-template <class T>
-inline MPI_Datatype getMpiDataType()
+template <class DataType>
+inline MPI_Datatype DataMPI<DataType>::getMpiDataType()
 {
     return MPI_BYTE;
 }
-
+/*
 template <>
-inline MPI_Datatype getMpiDataType<char>()
+inline MPI_Datatype DataMPI::getMpiDataType<char>()
 {
     return MPI_CHAR;
 }
 
 template <>
-inline MPI_Datatype getMpiDataType<int>()
+inline MPI_Datatype DataMPI::getMpiDataType<int>()
 {
     return MPI_CHAR;
 }
 
 template <>
-inline MPI_Datatype getMpiDataType<uint>()
+inline MPI_Datatype DataMPI::getMpiDataType<uint>()
 {
     return MPI_CHAR;
 }
 
 template <>
-inline MPI_Datatype getMpiDataType<float>()
+inline MPI_Datatype DataMPI::getMpiDataType<float>()
 {
     return MPI_CHAR;
 }
 
 template <>
-inline MPI_Datatype getMpiDataType<double>()
+inline MPI_Datatype DataMPI::getMpiDataType<double>()
 {
     return MPI_CHAR;
 }
 
 template <>
-inline MPI_Datatype getMpiDataType<bool>()
+inline MPI_Datatype DataMPI::getMpiDataType<bool>()
 {
     return MPI_CHAR;
 }
+*/
 
 /*
 template <>

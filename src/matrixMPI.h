@@ -19,7 +19,7 @@ protected:
     virtual void writeUsually(char *file_name);
     virtual void writeMy(char *file_name);
 public:
-    MatrixMPI(MyMPI me, const char *class_name, MPI_Datatype MpiDataType);
+    MatrixMPI(MyMPI me);
     ~MatrixMPI();
     virtual void debugInfo(const char *file, int line, const char *info = 0);
 };

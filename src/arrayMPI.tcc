@@ -1,18 +1,18 @@
 #include "arrayMPI.h"
 
-template <class DataType, class LengthData>
-ArrayMPI<DataType, LengthData>::ArrayMPI(MyMPI me, const char *class_name, MPI_Datatype MpiDataType)
-    : DataMPI<DataType, LengthData>(me, class_name, MpiDataType), offset(0)
+template <class DataType>
+ArrayMPI<DataType>::ArrayMPI(MyMPI me, const char *class_name, MPI_Datatype MpiDataType)
+    : DataMPI<DataType>(me, class_name, MpiDataType), offset(0)
 {
 }
 
-template <class DataType, class LengthData>
-ArrayMPI<DataType, LengthData>::~ArrayMPI()
+template <class DataType>
+ArrayMPI<DataType>::~ArrayMPI()
 {
 }
 
-template <class DataType, class LengthData>
-void ArrayMPI<DataType, LengthData>::readMPI(char *file_name)
+template <class DataType>
+void ArrayMPI<DataType>::readMPI(char *file_name)
 {
 #ifdef USE_MPI
     MPI_File fh;
@@ -33,36 +33,36 @@ void ArrayMPI<DataType, LengthData>::readMPI(char *file_name)
 #endif
 }
 
-template <class DataType, class LengthData>
-void ArrayMPI<DataType, LengthData>::readUsually(char *file_name)
+template <class DataType>
+void ArrayMPI<DataType>::readUsually(char *file_name)
 {
 }
 
-template <class DataType, class LengthData>
-void ArrayMPI<DataType, LengthData>::readMy(char *file_name)
+template <class DataType>
+void ArrayMPI<DataType>::readMy(char *file_name)
 {
 }
 
-template <class DataType, class LengthData>
-void ArrayMPI<DataType, LengthData>::writeMPI(char *file_name)
+template <class DataType>
+void ArrayMPI<DataType>::writeMPI(char *file_name)
 {
 #ifdef USE_MPI
 #endif
 }
 
-template <class DataType, class LengthData>
-void ArrayMPI<DataType, LengthData>::writeUsually(char *file_name)
+template <class DataType>
+void ArrayMPI<DataType>::writeUsually(char *file_name)
 {
 }
 
-template <class DataType, class LengthData>
-void ArrayMPI<DataType, LengthData>::writeMy(char *file_name)
+template <class DataType>
+void ArrayMPI<DataType>::writeMy(char *file_name)
 {
 }
 
 
-template <class DataType, class LengthData>
-void ArrayMPI<DataType, LengthData>::debugInfo(const char *file, int line, const char *info)
+template <class DataType>
+void ArrayMPI<DataType>::debugInfo(const char *file, int line, const char *info)
 {
     this->me.rootMessage("\n");
     this->me.rootMessage("This is debugInfo(%s) of %s in %s at line %d\n", info, this->class_name, file, line);

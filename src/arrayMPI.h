@@ -5,10 +5,10 @@
 #include "myMPI.h"
 #include "dataMPI.h"
 
-template <class DataType, class LengthData>
-class ArrayMPI : public DataMPI<DataType, LengthData> {
+template <class DataType>
+class ArrayMPI : public DataMPI<DataType> {
 protected:
-    LengthData offset;
+    ulong offset;
 
     virtual void readMPI(char *file_name);
     virtual void readUsually(char *file_name);

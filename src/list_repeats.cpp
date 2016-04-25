@@ -15,7 +15,7 @@ void Repeat::Print()
 
 
 ListRepeats::ListRepeats(MyMPI me)
-    : DataMPI<TypeAnalysis, ulong>(me, "ListRepeats", MPI_TYPE_LIST_REPEAT),
+    : DataMPI<TypeAnalysis>(me, "ListRepeats", MPI_TYPE_LIST_REPEAT),
     x_limit_left(0), x_limit_right(0), y_limit_above(0), y_limit_bottom(0)
 {
     data = new TypeAnalysis;

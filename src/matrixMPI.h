@@ -5,11 +5,11 @@
 #include "myMPI.h"
 #include "dataMPI.h"
 
-template<class DataType, class LengthData>
-class MatrixMPI : public DataMPI<DataType, LengthData> {
+template<class DataType>
+class MatrixMPI : public DataMPI<DataType> {
 protected:
-    LengthData width, height;
-    LengthData offset_row, offset_column;
+    ulong width, height;
+    ulong offset_row, offset_column;
 
     virtual void readMPI(char *file_name);
     virtual void readUsually(char *file_name);

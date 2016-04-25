@@ -4,13 +4,13 @@
 #include "types.h"
 #include "myMPI.h"
 
-template<class DataType, class LengthData>
+template<class DataType>
 class DataMPI {
 protected:
     MyMPI me;
     DataType *data;
     MPI_Datatype MpiDataType;
-    LengthData length;
+    ulong length;
     const char *class_name;
 
     virtual void readMPI(char *file_name) = 0;
@@ -21,7 +21,7 @@ protected:
     virtual void writeUsually(char *file_name) = 0;
     virtual void writeMy(char *file_name) = 0;
 
-    LengthData offsetLength(LengthData* &offset, LengthData* &sum_offset, LengthData *var);
+    ulong offsetLength(ulong* &offset, ulong* &sum_offset, ulong *var);
 public:
     DataMPI(MyMPI new_me, const char *class_name_, MPI_Datatype new_MpiDataType);
     virtual ~DataMPI();

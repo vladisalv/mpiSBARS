@@ -4,7 +4,7 @@
 #include "types.h"
 #include "matrixMPI.h"
 
-class Decomposition : public MatrixMPI<TypeDecomposition, ulong> {
+class Decomposition : public MatrixMPI<TypeDecomposition> {
 public:
     Decomposition(MyMPI me);
     ~Decomposition();

@@ -5,7 +5,7 @@
 #include "types.h"
 #include "arrayMPI.h"
 
-class Profile : public ArrayMPI<TypeProfile, ulong> {
+class Profile : public ArrayMPI<TypeProfile> {
 public:
     Profile(MyMPI me);
     ~Profile();

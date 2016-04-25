@@ -4,7 +4,7 @@
 #include "types.h"
 #include "arrayMPI.h"
 
-class Sequence : public ArrayMPI<TypeSequence, ulong> {
+class Sequence : public ArrayMPI<TypeSequence> {
 public:
     Sequence(MyMPI me);
     ~Sequence();

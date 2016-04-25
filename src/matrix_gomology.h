@@ -4,7 +4,7 @@
 #include "types.h"
 #include "matrixMPI.h"
 
-class MatrixGomology : public MatrixMPI<TypeGomology, ulong> {
+class MatrixGomology : public MatrixMPI<TypeGomology> {
 public:
     MatrixGomology(MyMPI me);
     ~MatrixGomology();

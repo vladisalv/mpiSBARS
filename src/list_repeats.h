@@ -20,7 +20,7 @@ struct Repeat {
 
 typedef list<Repeat> TypeAnalysis;
 
-class ListRepeats : public DataMPI<TypeAnalysis, ulong> {
+class ListRepeats : public DataMPI<TypeAnalysis> {
     virtual void readMPI(char *file_name);
     virtual void readUsually(char *file_name);
     virtual void readMy(char *file_name);

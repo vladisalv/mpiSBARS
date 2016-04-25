@@ -1,50 +1,50 @@
 #include "dataMPI.h"
 
-template <class DataType, class LengthData>
-DataMPI<DataType, LengthData>::DataMPI(MyMPI new_me, const char *class_name_, MPI_Datatype new_MpiDataType)
+template <class DataType>
+DataMPI<DataType>::DataMPI(MyMPI new_me, const char *class_name_, MPI_Datatype new_MpiDataType)
     : data(0), length(0), me(new_me), class_name(class_name_), MpiDataType(new_MpiDataType)
 {
 }
 
-template <class DataType, class LengthData>
-DataMPI<DataType, LengthData>::~DataMPI()
+template <class DataType>
+DataMPI<DataType>::~DataMPI()
 {
 }
 
 
-template <class DataType, class LengthData>
-bool DataMPI<DataType, LengthData>::isEmpty()
+template <class DataType>
+bool DataMPI<DataType>::isEmpty()
 {
     return data ? false : true;
 }
 
-template <class DataType, class LengthData>
-void DataMPI<DataType, LengthData>::readFile(char *file_name)
+template <class DataType>
+void DataMPI<DataType>::readFile(char *file_name)
 {
     readMPI(file_name);
 }
 
-template <class DataType, class LengthData>
-void DataMPI<DataType, LengthData>::writeFile(char *file_name)
+template <class DataType>
+void DataMPI<DataType>::writeFile(char *file_name)
 {
     writeMPI(file_name);
 }
 
-template <class DataType, class LengthData>
-void DataMPI<DataType, LengthData>::free()
+template <class DataType>
+void DataMPI<DataType>::free()
 {
     delete [] data;
     data = 0;
 }
 
 
-template <class DataType, class LengthData>
-LengthData DataMPI<DataType, LengthData>::offsetLength(LengthData* &offset, LengthData* &sum_offset, LengthData *var)
+template <class DataType>
+ulong DataMPI<DataType>::offsetLength(ulong* &offset, ulong* &sum_offset, ulong *var)
 {
-    offset = new LengthData [me.getSize()];
-    sum_offset = new LengthData [me.getSize()];
+    offset = new ulong [me.getSize()];
+    sum_offset = new ulong [me.getSize()];
     me.Allgather(var, 1, MPI_UNSIGNED_LONG, offset, 1, MPI_UNSIGNED_LONG);
-    LengthData sum_length = 0;
+    ulong sum_length = 0;
     for (int i = 0; i < me.getSize(); i++) {
         sum_offset[i] = sum_length;
         sum_length += offset[i];

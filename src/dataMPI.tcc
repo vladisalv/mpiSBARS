@@ -57,54 +57,39 @@ inline MPI_Datatype DataMPI<DataType>::getMpiDataType()
 {
     return MPI_BYTE;
 }
-/*
+
 template <>
-inline MPI_Datatype DataMPI::getMpiDataType<char>()
+inline MPI_Datatype DataMPI<char>::getMpiDataType()
 {
     return MPI_CHAR;
 }
 
 template <>
-inline MPI_Datatype DataMPI::getMpiDataType<int>()
+inline MPI_Datatype DataMPI<int>::getMpiDataType()
 {
     return MPI_CHAR;
 }
 
 template <>
-inline MPI_Datatype DataMPI::getMpiDataType<uint>()
+inline MPI_Datatype DataMPI<uint>::getMpiDataType()
 {
     return MPI_CHAR;
 }
 
 template <>
-inline MPI_Datatype DataMPI::getMpiDataType<float>()
+inline MPI_Datatype DataMPI<float>::getMpiDataType()
 {
     return MPI_CHAR;
 }
 
 template <>
-inline MPI_Datatype DataMPI::getMpiDataType<double>()
+inline MPI_Datatype DataMPI<double>::getMpiDataType()
 {
     return MPI_CHAR;
 }
 
 template <>
-inline MPI_Datatype DataMPI::getMpiDataType<bool>()
+inline MPI_Datatype DataMPI<bool>::getMpiDataType()
 {
     return MPI_CHAR;
 }
-*/
-
-/*
-template <>
-inline MPI_Datatype getMpiDataType<Sequence>()
-{
-    return MPI_CHAR;
-}
-
-template <>
-inline MPI_Datatype getMpiDataType<Profile>()
-{
-    return MPI_CHAR;
-}
-*/

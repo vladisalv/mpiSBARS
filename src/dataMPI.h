@@ -31,6 +31,7 @@ public:
     virtual void readFile(char *file_name);
     virtual void writeFile(char *file_name);
     virtual void debugInfo(const char *file, int line, const char *info = 0) = 0;
+    template<class T> MPI_Datatype getMpiDataType();
     void free();
 };
 

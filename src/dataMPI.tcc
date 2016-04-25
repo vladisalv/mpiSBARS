@@ -51,3 +51,59 @@ LengthData DataMPI<DataType, LengthData>::offsetLength(LengthData* &offset, Leng
     }
     return sum_length;
 }
+
+template <class T>
+inline MPI_Datatype getMpiDataType()
+{
+    return MPI_BYTE;
+}
+
+template <>
+inline MPI_Datatype getMpiDataType<char>()
+{
+    return MPI_CHAR;
+}
+
+template <>
+inline MPI_Datatype getMpiDataType<int>()
+{
+    return MPI_CHAR;
+}
+
+template <>
+inline MPI_Datatype getMpiDataType<uint>()
+{
+    return MPI_CHAR;
+}
+
+template <>
+inline MPI_Datatype getMpiDataType<float>()
+{
+    return MPI_CHAR;
+}
+
+template <>
+inline MPI_Datatype getMpiDataType<double>()
+{
+    return MPI_CHAR;
+}
+
+template <>
+inline MPI_Datatype getMpiDataType<bool>()
+{
+    return MPI_CHAR;
+}
+
+/*
+template <>
+inline MPI_Datatype getMpiDataType<Sequence>()
+{
+    return MPI_CHAR;
+}
+
+template <>
+inline MPI_Datatype getMpiDataType<Profile>()
+{
+    return MPI_CHAR;
+}
+*/

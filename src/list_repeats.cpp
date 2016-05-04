@@ -42,7 +42,6 @@ void ListRepeats::writeRepeat(TypeAnalysis list)
     string str;
     stringstream stm;
     stm << endl;
-    stm << "proc" << this->me.getRank() << endl;
     for (TypeAnalysis::iterator list_iter = list.begin(); list_iter != list.end(); list_iter++)
         stm << list_iter->x_begin << " " << list_iter->y_begin << " " << list_iter->x_end << " " << list_iter->y_end << " " << list_iter->length << endl;
     stm << endl;
@@ -96,7 +95,7 @@ void ListRepeats::writeMPI(char *file_name)
 {
     string str;
     stringstream stm;
-    stm << "i proc " << me.getRank() << endl;
+    //stm << "i proc " << me.getRank() << endl;
     sort();
     for (TypeAnalysis::iterator list_iter = data->begin(); list_iter != data->end(); list_iter++)
         stm << list_iter->x_begin << " " << list_iter->y_begin << " " << list_iter->length << endl;

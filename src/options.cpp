@@ -546,7 +546,7 @@ void Options::info(int number_proc, bool use_gpu)
         printf("%s version\n", use_gpu ? "GPU" : "HOST");
         printf("%s", gomologyMode() ? "USE MATRIX\n" : "BLOCK METHOD");
         if (!gomologyMode())
-            printf(". Use block %d byte\n", getLimitMemoryMatrix());
+            printf(". Use block %zu byte\n", getLimitMemoryMatrix());
         printf("%s %s\n", modeGC() ? "GC" : "", modeGA() ? "GA" : "");
         printf("\n");
 }

@@ -1,0 +1,24 @@
+#!/bin/sh
+
+# experiment with rat and mus like from article Paaytkov, Pankratov
+# "SBARS: fast creation of dotplots for DNA sequences on different
+# scales using GA,GC-content"
+# result test/output/.rat_mus_article.bmp from article
+# result execute of program gc-count test/output/.rat_mus.bmp
+
+PROFILING_WINDOW=300000
+STEP_PROFILING=1
+DECOMPOSE_WINDOW=800000
+STEP_DECOMPOSE=160000
+NUMBER_COEFFICIENT=5
+EPS=0.00004
+
+INPUT_FILE1=rat
+INPUT_FILE2=mus
+
+PIC=
+
+NN=${NN:-"4"}
+
+test_dir=`dirname $0`
+source $test_dir/run

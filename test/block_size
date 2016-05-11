@@ -1,0 +1,30 @@
+#!/bin/bash
+
+test_dir=`dirname $0`
+
+mkdir -p $test_dir/BLOCK_SIZE
+
+NN=1
+OUTPUT_EXTRA=block_size
+OUTPUT_OUT=$test_dir/BLOCK_SIZE
+EXTRA="ompi"
+
+case $1 in
+     1) BLOCK=1000000    _PARTITION="gpu" GPU= source $test_dir/experiment;;
+     2) BLOCK=1000000    _PARTITION="regular4" source $test_dir/experiment;;
+     3) BLOCK=4000000    _PARTITION="gpu" GPU= source $test_dir/experiment;;
+     4) BLOCK=4000000    _PARTITION="regular4" _TIME="72:00:00" source $test_dir/experiment;;
+     5) BLOCK=25000000   _PARTITION="gpu" GPU= source $test_dir/experiment;;
+     6) BLOCK=25000000   _PARTITION="regular4" source $test_dir/experiment;;
+     7) BLOCK=100000000  _PARTITION="gpu" GPU= source $test_dir/experiment;;
+     8) BLOCK=100000000  _PARTITION="regular4" source $test_dir/experiment;;
+     9) BLOCK=400000000  _PARTITION="gpu" GPU= source $test_dir/experiment;;
+    10) BLOCK=400000000  _PARTITION="regular4" source $test_dir/experiment;;
+    11) BLOCK=1600000000 _PARTITION="gpu" GPU= source $test_dir/experiment;;
+    12) BLOCK=1600000000 _PARTITION="regular4" source $test_dir/experiment;;
+    13) BLOCK=2500000000 _PARTITION="gpu" GPU= source $test_dir/experiment;;
+    14) BLOCK=2500000000 _PARTITION="regular4" _TIME="40:00:00" source $test_dir/experiment;;
+    15) BLOCK=4900000000 _PARTITION="gpu" GPU= source $test_dir/experiment;;
+    16) BLOCK=4900000000 _PARTITION="regular4" _TIME="30:00:00" source $test_dir/experiment;;
+     *) echo WHAT???
+esac

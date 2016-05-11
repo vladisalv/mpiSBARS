@@ -1,0 +1,8 @@
+#!/bin/sh
+
+test_dir=`dirname $0`
+
+for i in `ls $test_dir/output`
+do
+    diff $1 $test_dir/output/$i
+done

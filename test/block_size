@@ -13,7 +13,7 @@ case $1 in
      1) BLOCK=1000000    _PARTITION="gpu" GPU= source $test_dir/experiment;;
      2) BLOCK=1000000    _PARTITION="regular4" source $test_dir/experiment;;
      3) BLOCK=4000000    _PARTITION="gpu" GPU= source $test_dir/experiment;;
-     4) BLOCK=4000000    _PARTITION="regular4" _TIME="72:00:00" source $test_dir/experiment;;
+     4) BLOCK=4000000    _PARTITION="regular4" source $test_dir/experiment;;
      5) BLOCK=25000000   _PARTITION="gpu" GPU= source $test_dir/experiment;;
      6) BLOCK=25000000   _PARTITION="regular4" source $test_dir/experiment;;
      7) BLOCK=100000000  _PARTITION="gpu" GPU= source $test_dir/experiment;;

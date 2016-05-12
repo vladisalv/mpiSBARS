@@ -1,0 +1,19 @@
+#!/bin/bash
+
+test_dir=`dirname $0`
+
+mkdir -p $test_dir/SCALABILITY
+
+OUTPUT_EXTRA=scalability
+OUTPUT_OUT=$test_dir/SCALABILITY
+EXTRA="--ntasks-per-node 8 ompi"
+
+case $1 in
+     1) NN="  1   2    4" _TIME="05:00:00" _PARTITION="gpu" GPU= BLOCK=100000000 source $test_dir/experiment;;
+     2) NN="  8  16   32" _TIME="01:30:00" _PARTITION="gpu" GPU= BLOCK=100000000 source $test_dir/experiment;;
+     3) NN=" 64 128  256" _TIME="00:10:00" _PARTITION="gpu" GPU= BLOCK=100000000 source $test_dir/experiment;;
+     4) NN="  1 2 4    8" _TIME="10:00:00" _PARTITION="regular4" BLOCK=1000000   source $test_dir/experiment;;
+     5) NN=" 16  32   64" _TIME="02:00:00" _PARTITION="regular4" BLOCK=1000000   source $test_dir/experiment;;
+     6) NN="128 256 1024" _TIME="01:00:00" _PARTITION="regular4" BLOCK=1000000   source $test_dir/experiment;;
+     *) echo WHAT???
+esac

@@ -28,7 +28,6 @@ int main2(int argc, char *argv[])
     if (opt.errorMode()) {
         if (me.isRoot()) {
             opt.errorPrint();
-            opt.helpPrint();
         }
         return 1;
     } else if (opt.versionMode()) {

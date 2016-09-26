@@ -627,7 +627,7 @@ Report bugs to vladisalv@yandex.ru\n",
     program_name, program_name, program_name);
     /*
     GC_LOG((
-        " GC_COUNT v0.2\n"
+        " GC_COUNT v0.2\n    "
         " USAGE: ./gc_count [-h] [-l] [-d] [-w N] [-a N] [-s N] [-c N] [-e E]\n"
         "                   [-m N] -QWER <abhkxz[d|i|t][:N]> [-p F] [-P F] -i <DNA_FILE>\n"
         "                   [-I <DNA_FILE2>] -o <IMAGE_FILE>\n"
@@ -670,6 +670,7 @@ void Options::versionPrint()
 void Options::errorPrint()
 {
     printf("Error\n");
+    printf("Try `%s --help` for more information\n", program_name);
 }
 // ==================  FUNCTION MODE  ===============================================
 

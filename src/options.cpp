@@ -664,7 +664,9 @@ Report bugs to vladisalv@yandex.ru\n",
 
 void Options::versionPrint()
 {
-    printf("Version\n");
+    printf("%s version %s(%s)\n", program_name, version_name, version_number);
+    printf("Originally written by Vladislav Toigildin.\n");
+    printf("Please send bug reports and questions to <vladisalv@yandex.ru>.\n");
 }
 
 void Options::errorPrint()

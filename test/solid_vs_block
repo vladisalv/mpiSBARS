@@ -1,0 +1,18 @@
+#!/bin/bash
+
+test_dir=`dirname $0`
+mkdir -p $test_dir/SOLID_VS_BLOCK
+
+NN=${NN:-"1"}
+OUTPUT_OUT=$test_dir/SOLID_VS_BLOCK
+EXTRA="ompi"
+INPUT_FILE1=file5M
+INPUT_FILE2=
+
+case $1 in
+    1) OUTPUT_EXTRA=solid_vs_BLOCK _PARTITION="regular4" BLOCK=1000000   source $test_dir/experiment;;
+    2) OUTPUT_EXTRA=solid_vs_BLOCK _PARTITION="gpu" GPU= BLOCK=100000000 source $test_dir/experiment;;
+    3) OUTPUT_EXTRA=sOLID_vs_block _PARTITION="regular4" USE_MATRIX=     source $test_dir/experiment;;
+    4) OUTPUT_EXTRA=sOLID_vs_block _PARTITION="gpu" GPU= USE_MATRIX=     source $test_dir/experiment;;
+    *) echo WHAT???
+esac

@@ -1,0 +1,21 @@
+#!/bin/bash
+
+test_dir=`dirname $0`
+
+mkdir -p $test_dir/MPIxGPU
+
+OUTPUT_EXTRA=mpiXgpu
+OUTPUT_OUT=$test_dir/MPIxGPU
+EXTRA="--ntasks-per-node 8 ompi"
+
+case $1 in
+     1) EXEC="$test_dir/../src/mpisbars1x1" NN=1 BLOCK=100000000 _TIME="05:00:00" _PARTITION="gpu" GPU= source $test_dir/experiment;;
+     2) EXEC="$test_dir/../src/mpisbars2x1" NN=2 BLOCK=100000000 _TIME="05:00:00" _PARTITION="gpu" GPU= source $test_dir/experiment;;
+     3) EXEC="$test_dir/../src/mpisbars4x1" NN=4 BLOCK=100000000 _TIME="05:00:00" _PARTITION="gpu" GPU= source $test_dir/experiment;;
+     4) EXEC="$test_dir/../src/mpisbars8x1" NN=8 BLOCK=100000000 _TIME="05:00:00" _PARTITION="gpu" GPU= source $test_dir/experiment;;
+     5)                                     NN=1 BLOCK=1000000   _TIME="10:00:00" _PARTITION="regular4" source $test_dir/experiment;;
+     6)                                     NN=2 BLOCK=1000000   _TIME="08:00:00" _PARTITION="regular4" source $test_dir/experiment;;
+     7)                                     NN=4 BLOCK=1000000   _TIME="06:00:00" _PARTITION="regular4" source $test_dir/experiment;;
+     8)                                     NN=8 BLOCK=1000000   _TIME="05:00:00" _PARTITION="regular4" source $test_dir/experiment;;
+     *) echo WHAT???
+esac

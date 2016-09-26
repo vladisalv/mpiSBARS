@@ -555,6 +555,76 @@ void Options::info(int number_proc, bool use_gpu)
 void Options::helpPrint()
 {
     printf("Help\n");
+    printf("\
+Usage: %s -w number -k number -a number -s number -c number -e float [OPTIONS]...\n\
+       %s -h | --help\n\
+       %s -v | --version\n\
+\n\
+Parallel program for recognition of extended inexact repeats in genome.\n\
+\n\
+OPTIONS:\n\
+\n\
+Parametrs of algorithm:\n\
+\n\
+	-w, --profiling-window=NUMER    set length of profiling window\n\
+	-k, --step-profiling=NUMER      set shift of next profile window\n\
+	-a, --decompose-window=NUMER    set length of decompose window\n\
+	-s, --step-decompose=NUMER      set shift of next decompose window\n\
+	-c, --number-coefficient=NUMBER set number of coefficient in decompose of spectrum\n\
+	-e, --eps=FLOAT                 set epsilon\n\
+\n\
+	--min-length-repeat=NUMBER      parameter of filter for repeats\n\
+	--fidelity-repeat=FLOAT         parameter of filter for repeats (experimental)\n\
+\n\
+Load/Save data:\n\
+\n\
+	-f, --sequence-load-first=FILE  load first sequence of characters from FILE\n\
+	-f, --sequence-load-second=FILE load second sequence of characters from FILE\n\
+	--sequence-save-first=FILE      save first sequence of characters to FILE\n\
+	--sequence-save-second=FILE     save second sequence of characters to FILE\n\
+\n\
+	--profile-load-firstGC=FILE     load GC profile of first sequence from FILE\n\
+	--profile-load-firstGA=FILE     load GA profile of first sequence from FILE\n\
+	--profile-load-secondGC=FILE    load GC profile of second sequence from FILE\n\
+	--profile-load-secondGA=FILE    load GA profile of second sequence from FILE\n\
+\n\
+	--profile-save-firstGC=FILE     save GC profile of first sequence to FILE\n\
+	--profile-save-firstGA=FILE     save GA profile of first sequence to FILE\n\
+	--profile-save-secondGC=FILE    save GC profile of second sequence to FILE\n\
+	--profile-save-secondGA=FILE    save GA profile of second sequence to FILE\n\
+\n\
+	--decompose-load-firstGC=FILE   load GC decompose of first sequence from FILE\n\
+	--decompose-load-firstGA=FILE   load GA decompose of first sequence from FILE\n\
+	--decompose-load-secondGC=FILE  load GC decompose of second sequence from FILE\n\
+	--decompose-load-secondGA=FILE  load GA decompose of second sequence from FILE\n\
+\n\
+	--decompose-save-firstGC=FILE   save GC decompose of first sequence to FILE\n\
+	--decompose-save-firstGA=FILE   save GA decompose of first sequence to FILE\n\
+	--decompose-save-secondGC=FILE  save GC decompose of second sequence to FILE\n\
+	--decompose-save-secondGA=FILE  save GA decompose of second sequence to FILE\n\
+\n\
+	--matrix-gomology-load=FILE     load matrix of gomology from FILE\n\
+	--matrix-gomology-save=FILE     save matrix of gomology to FILE\n\
+\n\
+	--image-load=FILE               load matrix of gomology from FILE\n\
+	-O, --image-save=FILE           save matrix of gomology to FILE\n\
+\n\
+	--repeats-analysis-load=FILE    load repeats from FILE\n\
+	-o,--repeats-analysis-save=FILE save repeats to FILE\n\
+\n\
+Modes:\n\
+	-d, --debug-mode=NUMBER set level of output debug message from 1 to 4 (default)\n\
+	-g, --gpu               use GPU (graphic process unit)\n\
+	--use-matrix            use matrix of gomology in process computing\n\
+	--limit-memory=NUMBER   use small matrix of gomology not more NUMBER megabytes\n\
+	--gc-only               compute just GC profile\n\
+	--ga-only               compute just GA profile\n\
+\n\
+	-h, --help              display this help and exit\n\
+	-v, --version           output version information and exit\n\
+\n\
+Report bugs to vladisalv@yandex.ru\n",
+    program_name, program_name, program_name);
     /*
     GC_LOG((
         " GC_COUNT v0.2\n"

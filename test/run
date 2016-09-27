@@ -7,6 +7,6 @@ EXEC=${EXEC:-"$test_dir/../src/mpisbars"}
 for N in $NN
 do
     source $test_dir/arguments
-    source MPIRUN l -n $N -o $OUTPUT_FILE_OUT $EXEC $ARGUMENTS
+    source $test_dir/MPIRUN l -n $N -o $OUTPUT_FILE_OUT $EXEC $ARGUMENTS
     sleep 1
 done

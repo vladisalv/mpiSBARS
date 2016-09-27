@@ -1,8 +1,24 @@
-#!/bin/sh
+#!/bin/bash
 
 test_dir=`dirname $0`
 
-for i in `ls $test_dir/output`
-do
-    diff $1 $test_dir/output/$i
-done
+PIC= source $test_dir/run
+
+echo "Press any key when your task will completed"
+read -rsn1
+
+diff $OUTPUT_DIR/$OUTPUT_FILE_PIC $test_dir/output/.cool.bmp
+if [ "$?" -ne "0" ]
+then
+    echo "TEST FAILED!!!"
+    exit 1
+fi
+
+diff $OUTPUT_DIR/$OUTPUT_FILE_ANA $test_dir/output/.anafile50K
+if [ "$?" -ne "0" ]
+then
+    echo "TEST FAILED!!!"
+    exit 1
+fi
+
+echo "Test is OK."
